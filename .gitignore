@@ -60,6 +60,7 @@ dist/
 build/
 out/
 *.min.js
+!js/lib/*.min.js
 *.min.css
 
 # Image editor temp files

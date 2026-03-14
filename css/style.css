@@ -1,0 +1,377 @@
+/* Magical Map Maker — Core Styles */
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #F5F0E8;
+  --color-text: #2C2416;
+  --color-accent: #4A7C59;
+  --color-accent-hover: #3A6347;
+  --color-border: #C8BFA9;
+  --color-surface: #FAF7F2;
+  --color-surface-hover: #F0EBE1;
+  --font-primary: 'OpenDyslexic', 'Comic Sans MS', 'Comic Sans', cursive;
+  --min-touch: 44px;
+  --radius: 8px;
+  --transition: 150ms ease;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+}
+
+body.editor-active {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+/* Screen containers — only .active is visible */
+.screen {
+  display: none;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* Buttons */
+button {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  min-width: var(--min-touch);
+  min-height: var(--min-touch);
+  padding: 10px 20px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background var(--transition), border-color var(--transition);
+  line-height: 1.5;
+}
+
+button:hover,
+button:focus-visible {
+  background: var(--color-surface-hover);
+  border-color: var(--color-accent);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+button.primary {
+  background: var(--color-accent);
+  color: #FFFFFF;
+  border-color: var(--color-accent);
+  font-size: 1.125rem;
+  font-weight: 700;
+  padding: 14px 32px;
+}
+
+button.primary:hover,
+button.primary:focus-visible {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Text inputs */
+input[type="text"] {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  line-height: 1.5;
+  min-height: var(--min-touch);
+  padding: 8px 14px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #FFFFFF;
+  color: var(--color-text);
+  width: 100%;
+  max-width: 360px;
+}
+
+input[type="text"]:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+/* Status region for screen reader announcements */
+#status-message {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* Tooltip for disabled buttons */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-wrapper .tooltip-text {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 200;
+}
+
+.tooltip-wrapper:hover .tooltip-text,
+.tooltip-wrapper:focus-within .tooltip-text {
+  display: block;
+}
+
+/* ==================== TITLE SCREEN ==================== */
+#title-screen {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-container {
+  text-align: center;
+  max-width: 480px;
+  padding: 24px;
+}
+
+.title-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.title-subtitle {
+  font-size: 1.125rem;
+  margin-bottom: 40px;
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.title-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ==================== SETUP SCREEN ==================== */
+#setup-screen {
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px;
+}
+
+.setup-container {
+  max-width: 520px;
+  width: 100%;
+}
+
+.setup-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.setup-section {
+  border: none;
+  margin-bottom: 24px;
+}
+
+.setup-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* Theme cards */
+#theme-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-width: 120px;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  transition: border-color var(--transition);
+}
+
+.theme-card[aria-checked="true"],
+.theme-card.selected {
+  border-color: var(--color-accent);
+  background: rgba(74, 124, 89, 0.08);
+}
+
+.theme-card:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.theme-preview {
+  width: 100px;
+  height: 60px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.theme-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* Shape cards */
+#shape-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.shape-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-width: var(--min-touch);
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  transition: border-color var(--transition);
+}
+
+.shape-card[aria-checked="true"],
+.shape-card.selected {
+  border-color: var(--color-accent);
+  background: rgba(74, 124, 89, 0.08);
+}
+
+.shape-card:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.shape-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.shape-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* Size cards */
+#size-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.size-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-width: 120px;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  transition: border-color var(--transition);
+}
+
+.size-card[aria-checked="true"] {
+  border-color: var(--color-accent);
+  background: rgba(74, 124, 89, 0.08);
+}
+
+.size-card:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.size-name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.size-detail {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* Setup buttons row */
+.setup-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* Safe area insets for notch devices */
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}

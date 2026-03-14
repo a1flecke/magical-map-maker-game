@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magical Map Maker</title>
+
+  <!-- OpenDyslexic font via CDN -->
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/opendyslexic">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/editor.css">
+
+  <!-- jsPDF for future export (session 6) -->
+  <script src="js/lib/jspdf.umd.min.js" defer></script>
+
+  <!-- Game scripts -->
+  <script src="js/camera.js" defer></script>
+  <script src="js/grid.js" defer></script>
+  <script src="js/tiles.js" defer></script>
+  <script src="js/themes.js" defer></script>
+  <script src="js/palette.js" defer></script>
+  <script src="js/input.js" defer></script>
+  <script src="js/editor.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <!-- Screen reader announcements -->
+  <div id="status-message" role="status"></div>
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div id="title-screen" class="screen">
+    <div class="title-container">
+      <h1 class="title-heading">Magical Map Maker</h1>
+      <p class="title-subtitle">Create your own fantasy worlds!</p>
+      <div class="title-buttons">
+        <button id="btn-new-map" class="primary" aria-label="Create a new map">New Map</button>
+        <div class="tooltip-wrapper">
+          <button disabled aria-label="My Maps — coming soon">My Maps</button>
+          <span class="tooltip-text" role="tooltip">Coming Soon</span>
+        </div>
+        <div class="tooltip-wrapper">
+          <button disabled aria-label="Settings — coming soon">
+            <span aria-hidden="true">&#9881;</span> Settings
+          </button>
+          <span class="tooltip-text" role="tooltip">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SETUP SCREEN ==================== -->
+  <div id="setup-screen" class="screen">
+    <div class="setup-container">
+      <h2 class="setup-heading">Create Your Map</h2>
+
+      <!-- Theme selector (session 1: Fantasy only) -->
+      <div class="setup-section">
+        <span class="setup-label" id="theme-label">Theme</span>
+        <div id="theme-selector" role="radiogroup" aria-labelledby="theme-label">
+          <div class="theme-card" role="radio" aria-checked="true" tabindex="0" data-theme="fantasy-overworld">
+            <div class="theme-preview" style="background: linear-gradient(135deg, #4A7C59 0%, #7CB342 50%, #1565C0 100%);" aria-hidden="true"></div>
+            <span class="theme-name">Fantasy Overworld</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shape selector (session 1: Square only) -->
+      <div class="setup-section">
+        <span class="setup-label" id="shape-label">Piece Shape</span>
+        <div id="shape-selector" role="radiogroup" aria-labelledby="shape-label">
+          <div class="shape-card" role="radio" aria-checked="true" tabindex="0" data-shape="square">
+            <div class="shape-icon" aria-hidden="true">&#9632;</div>
+            <span class="shape-name">Square</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Size selector -->
+      <div class="setup-section">
+        <span class="setup-label" id="size-label">Map Size</span>
+        <div id="size-selector" role="radiogroup" aria-labelledby="size-label">
+          <div class="size-card" role="radio" aria-checked="false" tabindex="-1" data-size="small">
+            <span class="size-name">Small</span>
+            <span class="size-detail">12 &times; 10 (120 pieces)</span>
+          </div>
+          <div class="size-card" role="radio" aria-checked="true" tabindex="0" data-size="medium">
+            <span class="size-name">Medium</span>
+            <span class="size-detail">20 &times; 16 (320 pieces)</span>
+          </div>
+          <div class="size-card" role="radio" aria-checked="false" tabindex="-1" data-size="large">
+            <span class="size-name">Large</span>
+            <span class="size-detail">30 &times; 24 (720 pieces)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map name -->
+      <div class="setup-section">
+        <label class="setup-label" for="map-name-input">Map Name</label>
+        <input type="text" id="map-name-input" placeholder="My Fantasy Map" maxlength="50">
+      </div>
+
+      <!-- Buttons -->
+      <div class="setup-buttons">
+        <button id="btn-setup-back" aria-label="Go back to title screen">Back</button>
+        <button id="btn-create-map" class="primary" aria-label="Create map and open editor">Create Map</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== EDITOR SCREEN ==================== -->
+  <div id="editor-screen" class="screen">
+    <!-- Toolbar -->
+    <div class="editor-toolbar" role="toolbar" aria-label="Map editor tools">
+      <div class="toolbar-left">
+        <button id="btn-editor-back" aria-label="Back to title screen">&#8592; Back</button>
+      </div>
+      <div class="toolbar-center"></div>
+      <div class="toolbar-right">
+        <button id="btn-grid-toggle" aria-label="Toggle grid lines" aria-pressed="true">Grid</button>
+        <div class="brush-group" role="group" aria-label="Brush size">
+          <span class="brush-label" aria-hidden="true">Brush:</span>
+          <button class="brush-btn" data-brush="1" aria-label="Brush size 1" aria-pressed="true">1</button>
+          <button class="brush-btn" data-brush="2" aria-label="Brush size 2 by 2" aria-pressed="false">2</button>
+          <button class="brush-btn" data-brush="3" aria-label="Brush size 3 by 3" aria-pressed="false">3</button>
+        </div>
+        <button id="btn-fill-tool" aria-label="Toggle fill tool" aria-pressed="false">Fill</button>
+      </div>
+    </div>
+
+    <!-- Editor body: sidebar + canvas -->
+    <div class="editor-body">
+      <!-- Tile palette (left sidebar) -->
+      <aside class="tile-palette" aria-label="Terrain tile palette">
+        <div class="palette-header">Terrain Tiles</div>
+        <div class="palette-list" role="listbox" aria-label="Available terrain tiles"></div>
+      </aside>
+
+      <!-- Map canvas -->
+      <div class="canvas-container">
+        <canvas id="map-canvas" role="application" aria-label="Map editor grid. Select a tile from the palette, then tap or drag to paint."></canvas>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

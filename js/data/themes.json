@@ -1,0 +1,15 @@
+[
+  {
+    "id": "fantasy-overworld",
+    "name": "Fantasy Overworld",
+    "description": "Classic RPG world map: forests, castles, villages, roads.",
+    "colors": { "bg": "#F5F0E8", "accent": "#4A7C59", "grid": "#C8BFA9" },
+    "baseTiles": [
+      "grassland", "tall-grass", "wildflower-field", "wheat-field", "savanna", "farmland",
+      "forest", "light-woods", "pine-forest", "clearing",
+      "ocean", "shallow-water", "river", "lake", "swamp",
+      "hills", "mountain", "desert-sand", "road", "bridge"
+    ],
+    "overlays": []
+  }
+]

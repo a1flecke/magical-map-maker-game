@@ -1,0 +1,162 @@
+[
+  {
+    "id": "grassland",
+    "name": "Grassland",
+    "category": "grassland-plains",
+    "colors": { "primary": "#7CB342", "secondary": "#8BC34A", "accent": "#558B2F" },
+    "pattern": "grass",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "tall-grass",
+    "name": "Tall Grass",
+    "category": "grassland-plains",
+    "colors": { "primary": "#689F38", "secondary": "#7CB342", "accent": "#33691E" },
+    "pattern": "tall-grass",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "wildflower-field",
+    "name": "Wildflower Field",
+    "category": "grassland-plains",
+    "colors": { "primary": "#7CB342", "secondary": "#E91E63", "accent": "#FFC107" },
+    "pattern": "wildflowers",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "wheat-field",
+    "name": "Wheat Field",
+    "category": "grassland-plains",
+    "colors": { "primary": "#F9A825", "secondary": "#FBC02D", "accent": "#F57F17" },
+    "pattern": "wheat",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "savanna",
+    "name": "Savanna",
+    "category": "grassland-plains",
+    "colors": { "primary": "#C6A953", "secondary": "#D4B96A", "accent": "#8D7B3E" },
+    "pattern": "savanna",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "farmland",
+    "name": "Farmland",
+    "category": "grassland-plains",
+    "colors": { "primary": "#795548", "secondary": "#8D6E63", "accent": "#4E342E" },
+    "pattern": "farmland",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "forest",
+    "name": "Dense Forest",
+    "category": "forest-vegetation",
+    "colors": { "primary": "#2E7D32", "secondary": "#388E3C", "accent": "#1B5E20" },
+    "pattern": "dense-forest",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "light-woods",
+    "name": "Light Woods",
+    "category": "forest-vegetation",
+    "colors": { "primary": "#43A047", "secondary": "#66BB6A", "accent": "#2E7D32" },
+    "pattern": "light-woods",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "pine-forest",
+    "name": "Pine Forest",
+    "category": "forest-vegetation",
+    "colors": { "primary": "#1B5E20", "secondary": "#2E7D32", "accent": "#0D3B0F" },
+    "pattern": "pine-forest",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "clearing",
+    "name": "Clearing",
+    "category": "forest-vegetation",
+    "colors": { "primary": "#9CCC65", "secondary": "#AED581", "accent": "#7CB342" },
+    "pattern": "clearing",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "ocean",
+    "name": "Ocean",
+    "category": "water",
+    "colors": { "primary": "#1565C0", "secondary": "#1976D2", "accent": "#0D47A1" },
+    "pattern": "ocean",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "shallow-water",
+    "name": "Shallow Water",
+    "category": "water",
+    "colors": { "primary": "#29B6F6", "secondary": "#4FC3F7", "accent": "#0288D1" },
+    "pattern": "shallow-water",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "river",
+    "name": "River",
+    "category": "water",
+    "colors": { "primary": "#1E88E5", "secondary": "#42A5F5", "accent": "#1565C0" },
+    "pattern": "river",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "lake",
+    "name": "Lake",
+    "category": "water",
+    "colors": { "primary": "#2196F3", "secondary": "#64B5F6", "accent": "#1976D2" },
+    "pattern": "lake",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "swamp",
+    "name": "Swamp",
+    "category": "water",
+    "colors": { "primary": "#4E6B3A", "secondary": "#6D8B4E", "accent": "#33472A" },
+    "pattern": "swamp",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "hills",
+    "name": "Hills",
+    "category": "elevation",
+    "colors": { "primary": "#8BC34A", "secondary": "#9CCC65", "accent": "#689F38" },
+    "pattern": "hills",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "mountain",
+    "name": "Mountain",
+    "category": "elevation",
+    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#546E7A" },
+    "pattern": "mountain",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "desert-sand",
+    "name": "Desert Sand",
+    "category": "desert-arid",
+    "colors": { "primary": "#E8C96A", "secondary": "#F0D78A", "accent": "#C9A83C" },
+    "pattern": "desert",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "road",
+    "name": "Road",
+    "category": "constructed",
+    "colors": { "primary": "#A1887F", "secondary": "#BCAAA4", "accent": "#795548" },
+    "pattern": "road",
+    "themes": ["fantasy-overworld"]
+  },
+  {
+    "id": "bridge",
+    "name": "Bridge",
+    "category": "constructed",
+    "colors": { "primary": "#8D6E63", "secondary": "#A1887F", "accent": "#5D4037" },
+    "pattern": "bridge",
+    "themes": ["fantasy-overworld"]
+  }
+]

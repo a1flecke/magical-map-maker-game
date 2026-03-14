@@ -1,0 +1,194 @@
+/* Magical Map Maker — Editor Layout */
+
+/* Z-index stacking: canvas(0) < sidebars(10) < toolbar(20) < properties(30) < modals(100) < toasts(200) */
+
+/* Editor screen uses CSS Grid */
+#editor-screen {
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Toolbar */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+  z-index: 20;
+  min-height: 56px;
+  flex-shrink: 0;
+}
+
+@supports (padding: env(safe-area-inset-top)) {
+  .editor-toolbar {
+    padding-top: calc(8px + env(safe-area-inset-top));
+  }
+}
+
+.editor-toolbar .toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-toolbar .toolbar-center {
+  flex: 1;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 8px;
+}
+
+.editor-toolbar .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-toolbar button {
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  border: 2px solid transparent;
+  background: transparent;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button:focus-visible {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border);
+}
+
+.editor-toolbar button.active {
+  background: var(--color-accent);
+  color: #FFFFFF;
+  border-color: var(--color-accent);
+}
+
+/* Brush size buttons */
+.brush-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.brush-group .brush-label {
+  font-size: 0.75rem;
+  margin-right: 2px;
+}
+
+.brush-btn {
+  min-width: var(--min-touch);
+  min-height: var(--min-touch);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Editor body: sidebar + canvas */
+.editor-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left sidebar — tile palette */
+.tile-palette {
+  width: 180px;
+  min-width: 180px;
+  background: var(--color-surface);
+  border-right: 2px solid var(--color-border);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@supports (padding: env(safe-area-inset-left)) {
+  .tile-palette {
+    padding-left: env(safe-area-inset-left);
+  }
+}
+
+.tile-palette .palette-header {
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.tile-palette .palette-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tile option in palette */
+.tile-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px;
+  margin-bottom: 4px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.tile-option:hover,
+.tile-option:focus-visible {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border);
+}
+
+.tile-option[aria-selected="true"] {
+  border-color: var(--color-accent);
+  background: rgba(74, 124, 89, 0.1);
+}
+
+.tile-option:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.tile-option canvas {
+  border-radius: 4px;
+}
+
+.tile-option .tile-name {
+  font-size: 0.6875rem;
+  margin-top: 4px;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Canvas container */
+.canvas-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--theme-bg, var(--color-bg));
+}
+
+.canvas-container canvas {
+  display: block;
+  touch-action: none;
+}
