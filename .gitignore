@@ -1,0 +1,71 @@
+# Realm Brew assets (large PNGs, not redistributable)
+assets/realm-brew/**
+!assets/realm-brew/README.md
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Editor files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# Claude Code
+.claude/settings.local.json
+.claude/todos.json
+.claude/statsig/
+
+# Node (in case any tooling is ever added)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# OS generated
+.Spotlight-V100
+.Trashes
+._*
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Build artifacts (shouldn't exist, but just in case)
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# Image editor temp files
+*.psd
+*.ai
+*.sketch
+
+# Backup files
+*.backup
