@@ -2,7 +2,7 @@
 name: validate-map-data
 description: Validate all magical-map-maker data/*.json files for schema integrity, referential consistency, and completeness against the spec.
 argument-hint:
-disable-model-invocation: true
+disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Bash, Grep, Glob
 ---

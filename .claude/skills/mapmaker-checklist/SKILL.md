@@ -2,7 +2,7 @@
 name: mapmaker-checklist
 description: Pre-implementation checklist for magical-map-maker sessions. Prints the coding rules most likely to cause bugs. Run this before writing any session code.
 argument-hint:
-disable-model-invocation: true
+disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read
 ---

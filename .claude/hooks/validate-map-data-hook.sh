@@ -44,7 +44,7 @@ case "$BASENAME" in
       exit 2
     fi
     # Check required fields
-    MISSING=$(jq -r '.[] | select(.id == null or .name == null or .category == null or .icon == null) | .id // "unknown"' "$FILE_PATH")
+    MISSING=$(jq -r '.[] | select(.id == null or .name == null or .category == null or .svgSymbolId == null) | .id // "unknown"' "$FILE_PATH")
     if [ -n "$MISSING" ]; then
       echo "❌ Overlays missing required fields: $MISSING" >&2
       exit 2
