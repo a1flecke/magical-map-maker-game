@@ -67,13 +67,25 @@
         </div>
       </div>
 
-      <!-- Shape selector (session 1: Square only) -->
+      <!-- Shape selector -->
       <div class="setup-section">
         <span class="setup-label" id="shape-label">Piece Shape</span>
         <div id="shape-selector" role="radiogroup" aria-labelledby="shape-label">
           <div class="shape-card" role="radio" aria-checked="true" tabindex="0" data-shape="square">
             <div class="shape-icon" aria-hidden="true">&#9632;</div>
             <span class="shape-name">Square</span>
+          </div>
+          <div class="shape-card" role="radio" aria-checked="false" tabindex="-1" data-shape="hex">
+            <div class="shape-icon" aria-hidden="true">&#11043;</div>
+            <span class="shape-name">Hexagon</span>
+          </div>
+          <div class="shape-card" role="radio" aria-checked="false" tabindex="-1" data-shape="diamond">
+            <div class="shape-icon" aria-hidden="true">&#9670;</div>
+            <span class="shape-name">Diamond</span>
+          </div>
+          <div class="shape-card" role="radio" aria-checked="false" tabindex="-1" data-shape="octagon">
+            <div class="shape-icon" aria-hidden="true">&#11200;</div>
+            <span class="shape-name">Octagon</span>
           </div>
         </div>
       </div>
@@ -84,15 +96,15 @@
         <div id="size-selector" role="radiogroup" aria-labelledby="size-label">
           <div class="size-card" role="radio" aria-checked="false" tabindex="-1" data-size="small">
             <span class="size-name">Small</span>
-            <span class="size-detail">12 &times; 10 (120 pieces)</span>
+            <span class="size-detail">8 &times; 6 (48 pieces)</span>
           </div>
           <div class="size-card" role="radio" aria-checked="true" tabindex="0" data-size="medium">
             <span class="size-name">Medium</span>
-            <span class="size-detail">20 &times; 16 (320 pieces)</span>
+            <span class="size-detail">13 &times; 10 (130 pieces)</span>
           </div>
           <div class="size-card" role="radio" aria-checked="false" tabindex="-1" data-size="large">
             <span class="size-name">Large</span>
-            <span class="size-detail">30 &times; 24 (720 pieces)</span>
+            <span class="size-detail">20 &times; 16 (320 pieces)</span>
           </div>
         </div>
       </div>
@@ -120,6 +132,7 @@
       </div>
       <div class="toolbar-center"></div>
       <div class="toolbar-right">
+        <button id="btn-pan-mode" aria-label="Toggle pan mode" aria-pressed="false">Pan</button>
         <button id="btn-grid-toggle" aria-label="Toggle grid lines" aria-pressed="true">Grid</button>
         <div class="brush-group" role="group" aria-label="Brush size">
           <span class="brush-label" aria-hidden="true">Brush:</span>
@@ -128,6 +141,12 @@
           <button class="brush-btn" data-brush="3" aria-label="Brush size 3 by 3" aria-pressed="false">3</button>
         </div>
         <button id="btn-fill-tool" aria-label="Toggle fill tool" aria-pressed="false">Fill</button>
+        <div class="zoom-group" role="group" aria-label="Zoom controls">
+          <button id="btn-zoom-out" aria-label="Zoom out">&minus;</button>
+          <button id="btn-zoom-fit" aria-label="Fit map to screen">Fit</button>
+          <button id="btn-zoom-in" aria-label="Zoom in">+</button>
+        </div>
+        <span id="coord-display" class="coord-display" aria-hidden="true"></span>
       </div>
     </div>
 

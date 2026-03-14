@@ -7,6 +7,30 @@ function escHtml(str) {
   return div.innerHTML;
 }
 
+/** Size estimate labels per shape */
+const SIZE_LABELS = {
+  square: {
+    small:  '8 \u00d7 6 (48 pieces)',
+    medium: '13 \u00d7 10 (130 pieces)',
+    large:  '20 \u00d7 16 (320 pieces)'
+  },
+  hex: {
+    small:  '7 \u00d7 6 (~42 hexes)',
+    medium: '11 \u00d7 10 (~110 hexes)',
+    large:  '18 \u00d7 15 (~270 hexes)'
+  },
+  diamond: {
+    small:  '8 \u00d7 7 (~56 diamonds)',
+    medium: '13 \u00d7 10 (~130 diamonds)',
+    large:  '20 \u00d7 16 (~320 diamonds)'
+  },
+  octagon: {
+    small:  '7 \u00d7 6 (~72 pieces)',
+    medium: '11 \u00d7 9 (~179 pieces)',
+    large:  '18 \u00d7 14 (~473 pieces)'
+  }
+};
+
 class App {
   constructor() {
     this._screens = {};
@@ -30,7 +54,6 @@ class App {
   }
 
   showScreen(name) {
-    // Editor cleanup when leaving editor screen
     if (this._currentScreen === 'editor' && name !== 'editor' && this._editor) {
       this._editor.destroy();
       this._editor = null;
@@ -46,9 +69,7 @@ class App {
       }
     }
 
-    // Toggle body class for editor (prevents elastic scroll on iPad)
     document.body.classList.toggle('editor-active', name === 'editor');
-
     this._currentScreen = name;
   }
 
@@ -73,25 +94,32 @@ class App {
       backBtn.addEventListener('click', () => this.showScreen('title'));
     }
 
+    // Shape radio cards
+    this._bindRadioGroup('shape-selector', () => this._updateSizeLabels());
+
     // Size radio cards
-    const sizeGroup = document.getElementById('size-selector');
-    if (sizeGroup) {
-      const options = sizeGroup.querySelectorAll('[role="radio"]');
-      options.forEach(opt => {
-        opt.addEventListener('click', () => {
-          this._selectRadio(options, opt);
-        });
-        opt.addEventListener('keydown', (e) => {
-          this._handleRadioKeydown(e, options);
-        });
-      });
-    }
+    this._bindRadioGroup('size-selector');
 
     // Create map button
     const createBtn = document.getElementById('btn-create-map');
     if (createBtn) {
       createBtn.addEventListener('click', () => this._createMap());
     }
+  }
+
+  _bindRadioGroup(groupId, onChange) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    const options = group.querySelectorAll('[role="radio"]');
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        this._selectRadio(options, opt);
+        if (onChange) onChange();
+      });
+      opt.addEventListener('keydown', (e) => {
+        this._handleRadioKeydown(e, options, onChange);
+      });
+    });
   }
 
   _selectRadio(options, selected) {
@@ -103,7 +131,7 @@ class App {
     });
   }
 
-  _handleRadioKeydown(e, options) {
+  _handleRadioKeydown(e, options, onChange) {
     const optArr = Array.from(options);
     const idx = optArr.indexOf(e.target);
     let next = -1;
@@ -119,7 +147,13 @@ class App {
     if (next >= 0) {
       this._selectRadio(optArr, optArr[next]);
       optArr[next].focus();
+      if (onChange) onChange();
     }
+  }
+
+  _getSelectedShape() {
+    const checked = document.querySelector('#shape-selector [aria-checked="true"]');
+    return checked ? checked.dataset.shape : 'square';
   }
 
   _getSelectedSize() {
@@ -132,7 +166,22 @@ class App {
     return (input && input.value.trim()) || 'My Fantasy Map';
   }
 
+  /** Update size detail labels when shape changes */
+  _updateSizeLabels() {
+    const shape = this._getSelectedShape();
+    const labels = SIZE_LABELS[shape] || SIZE_LABELS.square;
+    const sizeCards = document.querySelectorAll('#size-selector [role="radio"]');
+    sizeCards.forEach(card => {
+      const sizeKey = card.dataset.size;
+      const detailEl = card.querySelector('.size-detail');
+      if (detailEl && labels[sizeKey]) {
+        detailEl.textContent = labels[sizeKey];
+      }
+    });
+  }
+
   async _createMap() {
+    const shape = this._getSelectedShape();
     const size = this._getSelectedSize();
     const name = this._getMapName();
 
@@ -144,7 +193,7 @@ class App {
       toolbarEl: document.querySelector('.editor-toolbar'),
       paletteEl: document.querySelector('.tile-palette'),
       themeId: 'fantasy-overworld',
-      shape: 'square',
+      shape: shape,
       size: size,
       mapName: name,
       app: this

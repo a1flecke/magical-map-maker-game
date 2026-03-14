@@ -49,7 +49,7 @@ css/
 js/
   app.js                      Entry point, screen routing
   editor.js                   Editor state machine, RAF loop owner
-  grid.js                     Grid rendering (square/hex/tri/oct)
+  grid.js                     Grid rendering (square/hex/diamond/oct)
   tiles.js                    Tile definitions, procedural rendering
   overlays.js                 Overlay definitions and rendering
   palette.js                  Sidebar palette UI

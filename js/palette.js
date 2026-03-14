@@ -1,11 +1,12 @@
 /* Magical Map Maker — Sidebar Palette UI */
 
 class Palette {
-  constructor(paletteEl, tileRenderer, onTileSelected) {
+  constructor(paletteEl, tileRenderer, onTileSelected, shape) {
     this._el = paletteEl;
     this._listEl = paletteEl.querySelector('.palette-list');
     this._tileRenderer = tileRenderer;
     this._onTileSelected = onTileSelected;
+    this._shape = shape || 'square';
     this._selectedId = null;
     this._tileIds = [];
   }
@@ -27,15 +28,19 @@ class Palette {
       option.setAttribute('tabindex', '0');
       option.dataset.tileId = id;
 
-      // Render preview canvas
-      const preview = this._tileRenderer.getTileCanvas(id, 'square', 60);
+      // Render preview canvas (clipped to shape)
+      const previewSize = 60;
+      const preview = this._tileRenderer.getTileCanvas(id, this._shape, previewSize);
       if (preview) {
         const displayCanvas = document.createElement('canvas');
-        displayCanvas.width = 60;
-        displayCanvas.height = 60;
+        displayCanvas.width = previewSize;
+        displayCanvas.height = previewSize;
         displayCanvas.setAttribute('aria-hidden', 'true');
         const dCtx = displayCanvas.getContext('2d');
-        dCtx.drawImage(preview, 0, 0);
+
+        // Clip to shape preview
+        this._clipPreview(dCtx, previewSize);
+        dCtx.drawImage(preview, 0, 0, previewSize, previewSize);
         option.appendChild(displayCanvas);
       }
 
@@ -83,6 +88,55 @@ class Palette {
     this._selectedId = null;
     const options = this._listEl.querySelectorAll('[role="option"]');
     options.forEach(opt => opt.setAttribute('aria-selected', 'false'));
+  }
+
+  /** Clip preview canvas to shape outline */
+  _clipPreview(ctx, size) {
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = size / 2 - 2;
+
+    switch (this._shape) {
+      case 'hex': {
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = Math.PI / 180 * (60 * i - 30);
+          const vx = cx + r * Math.cos(angle);
+          const vy = cy + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(vx, vy);
+          else ctx.lineTo(vx, vy);
+        }
+        ctx.closePath();
+        ctx.clip();
+        break;
+      }
+      case 'diamond': {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - r);
+        ctx.lineTo(cx + r, cy);
+        ctx.lineTo(cx, cy + r);
+        ctx.lineTo(cx - r, cy);
+        ctx.closePath();
+        ctx.clip();
+        break;
+      }
+      case 'octagon': {
+        const inset = r * 0.414; // 1/(1+sqrt(2))
+        ctx.beginPath();
+        ctx.moveTo(cx - r + inset, cy - r);
+        ctx.lineTo(cx + r - inset, cy - r);
+        ctx.lineTo(cx + r, cy - r + inset);
+        ctx.lineTo(cx + r, cy + r - inset);
+        ctx.lineTo(cx + r - inset, cy + r);
+        ctx.lineTo(cx - r + inset, cy + r);
+        ctx.lineTo(cx - r, cy + r - inset);
+        ctx.lineTo(cx - r, cy - r + inset);
+        ctx.closePath();
+        ctx.clip();
+        break;
+      }
+      // square: no clip needed
+    }
   }
 
   _focusNext(current, dir) {
