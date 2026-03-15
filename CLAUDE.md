@@ -60,7 +60,7 @@ js/
   export.js                   PDF/PNG/JPEG export
   themes.js                   Theme definitions
   data/
-    base-types.json           100 base tile type definitions
+    base-types.json           110 base tile type definitions
     overlays.json             ~225 overlay definitions
     themes.json               9 theme definitions
     templates.json            18-27 starter map templates
@@ -78,7 +78,7 @@ assets/
 - **Grid shapes:** 4 coordinate systems (square, hex, isometric diamond, octagon) in `grid.js`.
 - **Overlay icons:** SVG sprite sheet (`assets/icons/overlays.svg`) rendered to canvas, not individual Canvas drawing functions.
 - **Gesture disambiguation:** Tile placement fires on `pointerup`, cancelled if second pointer detected (pinch).
-- **100 base types**, ~225 overlays (55 universal), 9 themes.
+- **110 base types**, ~225 overlays (55 universal), 9 themes.
 
 See `.claude/rules/magical-map-maker.md` for detailed architecture rules.
 

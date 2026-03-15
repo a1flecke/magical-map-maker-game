@@ -1,125 +1,160 @@
-# Session 7: Realm Brew Asset Integration
+# Session 7: Exotic & Built Tiles (30 tiles) + Performance Tuning
 
 **Recommended Model:** opus
-**Estimated Duration:** 4–5 hours
+**Estimated Duration:** 8–10 hours
 **Prerequisite:** Session 6 complete. Run `/mapmaker-checklist` before starting.
 
 ---
 
 ## Goal
 
-Integrate Realm Brew hand-drawn PNG tiles and overlays for enhanced Dungeon/Cavern themes. Graceful fallback when assets aren't present.
+Apply N64-quality rendering to the final 30 tiles: space, volcanic, remaining constructed, and continental. Space tiles use the space transition mode from Session 4. Then run a comprehensive performance optimization and visual consistency pass across all 110 tiles.
 
 ---
 
 ## Deliverables
 
-### 1. Asset Loader (`js/realm-brew.js`)
-- `RealmBrewLoader` class
-- `detectAssets()` — probe for Realm Brew files via `fetch()` HEAD requests
-  - Check for `assets/realm-brew/tiles/man-hewn-dungeons/` existence
-  - Set `this.available = true/false`
-- `loadTileSet(theme)` — load all tiles for a sub-theme, return Image objects
-- `loadOverlaySet(pack)` — load all overlays for a pack
-- Asset manifest: hardcoded list of filenames per directory (since we can't directory-list on static hosting)
-- Lazy loading: only load tiles when Dungeon theme is selected
-- Loading progress callback for UI
+### 1. Space (14 tiles)
+`deep-space`, `nebula-red`, `nebula-blue`, `nebula-green`, `asteroid-field`, `gas-cloud`, `star-yellow`, `star-blue`, `star-red`, `planet-rocky`, `planet-gas`, `planet-ice`, `black-hole`, `wormhole`
 
-### 2. Tile Set Manifest
-- `js/data/realm-brew-manifest.json` — lists all filenames per directory:
-```json
-{
-  "tiles": {
-    "man-hewn-dungeons": ["RB Man Hewn Dungeons - Digital Tiles_01.png", ...],
-    "subterranean-rivers": ["Subterranean Rivers - Digital Tiles_01.png", ...],
-    "underdark-caverns": ["Realm Brew Underdark Caverns - Digital Tiles_01.png", ...]
-  },
-  "overlays": {
-    "man-hewn-dungeons": ["Archway 1.png", "Archway 2.png", ...],
-    "subterranean-rivers": ["Driftwood 1.png", ...],
-    "underdark-caverns": ["Cliff 1.png", ...],
-    "alchemists-workshop": ["Bedroom - Bed.png", ...],
-    "goblins-hideout": ["Armoury (Armour) 1.png", ...],
-    "red-dragons-lair": ["Dragon Bones (Body).png", ...]
-  }
-}
-```
+These tiles use **space transition mode** from Session 4:
+- Deep-space tiles merge star fields (erase grid seams, continuous star background)
+- Nebulae blend via color gradient (adjacent nebulae merge into larger gas clouds)
+- Planets, stars, black holes maintain hard radial boundaries against space background
 
-### 3. Tile Resize Pipeline
-- Realm Brew tiles are 1200×1039px (hex-shaped, pointy-top)
-- On load, resize to grid cell size using offscreen canvas
-- Cache resized tiles: key = `rb-${theme}-${filename}-${cellSize}`
-- For export: resize to 300 DPI cell size (larger cache, cleared after export)
-- Use `ctx.drawImage(img, 0, 0, targetWidth, targetHeight)` for bilinear resize
+**Shared art vocabulary constraint:** All space tiles use the same rendering techniques as terrestrial tiles (bezier curves, layered gradients, Perlin noise, scattered elements). Stylized/cartoony, not photorealistic. No gravitational lensing or spherical projection.
 
-### 4. Dungeon Theme Enhancement
-- When Realm Brew available + hex shape selected:
-  - Replace procedural dungeon tiles with Realm Brew tiles in palette
-  - Show all 37 Man Hewn Dungeon tiles as palette options
-  - Tile names derived from filename (strip prefix, number, extension)
-- When Realm Brew available + non-hex shape:
-  - Keep procedural tiles (Realm Brew are hex-shaped, don't work in square/tri/oct)
-  - Show note: "Hand-drawn tiles available with hexagon grid"
+Individual tile renders:
+- Deep space: black with Perlin noise-distributed star field (varied sizes/brightness, white/yellow/blue)
+- Nebula (red/blue/green): swirling gas cloud gradients using layered bezier curves, embedded dim stars, color-appropriate palette
+- Asteroid field: irregular gray rocks on dark background, varied sizes, scattered via noise
+- Gas cloud: translucent colored haze with layered opacity gradients
+- Stars (yellow/blue/red): radial gradient with corona glow, lens-flare-like spikes (simple crossed lines)
+- Planets (rocky/gas/ice): circular body with surface texture (noise-based), shadow line across one side (terminator)
+- Black hole: dark center circle, glowing accretion disk ring (orange/white gradient arc)
+- Wormhole: concentric spiraling arcs with color gradient, depth effect via decreasing arc size
+- **Animations**: Star twinkle (`gentle`), nebula swirl — slow hue shift (`gentle`), asteroid tumble (`gentle`), accretion disk rotation (`intense`), wormhole spiral (`intense`), planet surface shift (`gentle`)
 
-### 5. Dungeon Sub-Theme Selector
-- When Dungeon theme selected and Realm Brew available:
-  - Show sub-theme chooser: "Man Hewn Dungeons", "Subterranean Rivers", "Underdark Caverns"
-  - Each sub-theme swaps the tile palette to its tile set
-  - Default to Man Hewn Dungeons
-- Sub-theme selector appears below the theme selector on setup screen (only for Dungeon)
+### 2. Volcanic/Hazard (6 tiles)
+`volcanic`, `lava-flow`, `lava-field`, `scorched-earth`, `ruins-ground`, `no-mans-land`
+- Volcanic ground: dark gray with glowing red-orange crack veins using Perlin noise
+- Lava flow: bright flowing orange-red liquid rock, cooling black crusted edges
+- Lava field: cooled black basalt with intermittent red-glow cracks, heat distortion
+- Scorched earth: blackened ground with ember specks, ash layer, dead stumps
+- Ruins ground: broken stone rubble scattered on dirt, moss reclaiming
+- No man's land: cratered brown mud, debris, subtle barbed wire texture (age-appropriate — subtle, not prominent)
+- **Animations**: Lava glow pulse (`intense`), lava flow movement (`gentle`), ember float (`gentle`), smoke wisps (`gentle`)
 
-### 6. Realm Brew Overlay Packs
-- 6 overlay packs integrated as palette categories:
-  - Man Hewn Dungeons (66): archways, bridges, doors, pillars, etc.
-  - Subterranean Rivers (30): waterfalls, rapids, rocks, etc.
-  - Underdark Caverns (35): cliffs, crevasses, rocks, etc.
-  - Alchemists' Workshop (62): bedroom, lab, library, observatory items
-  - Goblins' Hideout (62): armory, camp, crafting, kitchen, traps
-  - Red Dragon's Lair (37): dragon bones, eggs, gold, lava features
-- Each pack appears as a collapsible section in the overlay palette
-- Overlay names parsed from filenames (e.g., "Bridge (Broken) 1" → "Bridge Broken 1")
+### 3. Remaining Constructed (6 tiles)
+`paved-road`, `fortification`, `trench`, `camp-ground`, `harbor`, `town`
 
-### 7. Fallback Mode
-- When Realm Brew not detected:
-  - Dungeon theme uses procedural tiles (already implemented in session 4)
-  - No sub-theme selector shown
-  - No Realm Brew overlay packs in palette
-  - No error messages — seamless degradation
-- Asset detection runs once on app init, result cached
+Note: `road` and `bridge` were upgraded in Session 4. `harbor` has `waterContent: true`.
 
-### 8. Loading States
-- "Loading tiles..." overlay when switching to Realm Brew sub-theme
-- Progress bar showing tiles loaded / total
-- Cancel button to abort loading and fall back to procedural
+- Paved road: orderly cobblestone blocks with wear patterns, moss in cracks
+- Fortification: thick gray stone blocks, crenellations at top edge, arrow slits, imposing wall texture
+- Trench: dug channel with earth walls, wooden support beams, sandbag edges
+- Camp ground: flat earth with tent stake marks, fire pit scorch, trampled grass
+- Harbor: blue water with wooden dock planks, rope details, `waterContent: true`
+- Town: tiny rooftop shapes in varied colors, streets between buildings, chimney smoke
+- **Animations**: Foot traffic in town (`intense`), boat rocking in harbor (`intense`), flag flutter at camp (`gentle`), sentry pacing in trench (`intense`)
+- Traffic uses theme-specific elements per spec §9.4.6
 
-### 9. Copy Script
-- `scripts/setup-realm-brew.sh` — bash script to copy from Downloads location
-- Renames files to cleaner names during copy
-- Verifies file counts after copy
+### 4. Continental/World (4 tiles)
+`lowland`, `highland`, `mountain-range`, `rainforest`
+- Lowland: light green, gentle flat terrain, pastoral feel, field patterns
+- Highland: darker elevated terrain, rugged texture, heather/bracken
+- Mountain range: line of gray peaks at world-map scale (smaller, more stylized than individual mountain tile)
+- Rainforest: ultra-dense dark green canopy, no ground visible, layered leaf textures
+- **Animations**: Cloud shadow drift (`gentle`), rain curtain on rainforest (`gentle`)
+
+### 5. Material Properties for All 30 Tiles
+- Define `materialProperties` for every tile in this session
+- Set `waterContent: true` for: `harbor`
+- Space tiles get material properties for completeness but use space transition mode, not terrestrial
+- Verify space transitions: nebula blending, star field merging, planet boundaries
+- Verify volcanic transitions: lava→rock, lava→water (steam!), volcanic→arctic
+- Run `/validate-map-data` after completing JSON updates
+
+### 6. Performance Optimization Pass
+All 110 tiles are now rendered. Profile and optimize:
+
+**Profiling targets:**
+- Large grid (16×20 squares) filled with varied tiles from multiple categories
+- Maximum transition complexity (alternating terrain types, checkerboard pattern)
+- Full animation quality level (Level 1)
+- Test on iPad Safari (or closest available)
+
+**Metrics to measure and optimize:**
+- **Frame time**: <16ms at quality level 1 on modern iPad, <12ms target
+- **Animation layer**: <4ms alone with viewport culling + staggering
+- **Atlas memory**: Profile total, must stay under 7MB cap at DPR 3
+- **LRU cache hit rate**: >90% during steady-state (no editing)
+- **Cache warmup**: <500ms for visible tiles after zoom change
+
+**Specific optimizations to implement if needed:**
+- Viewport culling refinement: ensure tiles obscured by sidebars are skipped
+- Transition complexity LOD: simpler transitions at very low zoom levels
+- Animation frame skipping tuning: adjust stagger modulus based on tile count
+- Atlas packing efficiency: review region allocation, minimize wasted space
+- Reduce draw calls: batch tiles by type where possible
+
+**Tune adaptive quality thresholds** based on real profiling data — the Level 1-4 thresholds (12ms, 14ms, 16ms) may need adjustment for the full 100-tile workload.
+
+### 7. Visual Consistency Pass
+Review all 110 tiles holistically:
+- View all tiles side by side at each grid shape (square, hex, diamond, octagon)
+- Ensure consistent art style across categories (all feel like the same game)
+- Verify color saturation/brightness is balanced (no tile overwhelms neighbors)
+- Check transitions between all major category pairs look natural
+- Verify animations feel cohesive (similar speed/subtlety across types)
+- Ensure space tiles feel appropriately different but not jarring when switching themes
+- Ensure dungeon tiles have consistent moody atmosphere
+- Flag any tile that looks "unfinished" compared to others and fix
+
+---
+
+## Files Modified
+- `js/tiles.js` — 28 new tile rendering patterns, potential performance optimizations
+- `js/animation.js` — register new animation types, tune stagger parameters
+- `js/editor.js` — viewport culling refinement, potential batch rendering
+- `js/data/base-types.json` — material properties + waterContent for 28 tiles
+
+## Files NOT Modified
+- `js/grid.js` — no changes
+- `js/camera.js` — no changes
+- `js/palette.js` — no changes
 
 ---
 
 ## Review Criteria
 
 ### Spec Reviewer
-- [ ] Realm Brew tiles appear in Dungeon theme palette (hex shape only)
-- [ ] 3 sub-themes: Man Hewn, Subterranean Rivers, Underdark Caverns
-- [ ] 6 overlay packs accessible
-- [ ] Fallback to procedural tiles works
-- [ ] Assets not in git (gitignored)
+- [ ] All 110 base types have N64-quality procedural rendering
+- [ ] All 110 base types have `materialProperties` defined
+- [ ] All tile categories have appropriate animations with intensity tags
+- [ ] Performance targets met (60fps with adaptive quality)
+- [ ] Space tiles use space transition mode
+- [ ] `waterContent` set correctly on all hybrid water tiles
 
 ### Game Map Maker Reviewer
-- [ ] Realm Brew tiles look great at grid cell size (no blurring)
-- [ ] Tiles tile seamlessly in hex grid (edges align)
-- [ ] Overlay PNGs positioned correctly on tiles
-- [ ] Sub-theme switching is smooth
-- [ ] Palette organization is intuitive (not overwhelming with 60+ overlays)
+- [ ] All 110 tiles are visually distinct and recognizable
+- [ ] Art style is cohesive across ALL categories (fantasy, space, dungeon all feel like same game)
+- [ ] Space tiles are stylized/cartoony, not photorealistic — fits the kid-friendly aesthetic
+- [ ] Dungeon tiles have consistent dark/moody atmosphere
+- [ ] Volcanic tiles feel dangerous (glowing lava, ember effects)
+- [ ] No man's land age-appropriate (no graphic violence, barbed wire is subtle)
+- [ ] Transitions between all major category pairs look natural
+- [ ] No tile looks "unfinished" compared to others
+- [ ] Animations enhance without distracting — appropriate for ages 7-15
 
 ### Web Developer Reviewer
-- [ ] Asset detection via HEAD fetch (not 404 errors in console)
-- [ ] Tile resize uses offscreen canvas (not CSS scaling)
-- [ ] Memory management: resize cache cleared on theme change
-- [ ] Lazy loading: only loads selected sub-theme
-- [ ] No CORS issues (same-origin static files)
-- [ ] Manifest JSON file for static-hosted directory listing
-- [ ] Loading progress doesn't block main thread
+- [ ] Frame time under 16ms at quality level 1 on iPad (profiling evidence)
+- [ ] Atlas memory under 7MB cap (profiling evidence)
+- [ ] Viewport culling working correctly (off-screen tiles not rendered or animated)
+- [ ] Adaptive quality responds correctly to load changes with exponential backoff
+- [ ] No memory leaks during extended editing (place/remove tiles repeatedly)
+- [ ] Cache hit rate >90% during steady-state
+- [ ] Cache warmup <500ms for visible tiles after zoom change
+- [ ] Animation frame budget <4ms maintained with all 100 tile types
+- [ ] `/validate-map-data` passes for all JSON updates
+- [ ] Three-tier RAF working correctly (animate → idle throttle → still/stop)

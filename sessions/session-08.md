@@ -1,116 +1,103 @@
-# Session 8: Undo/Redo + Editor Polish
+# Session 8: Overlay System
 
-**Recommended Model:** sonnet
-**Estimated Duration:** 4 hours
+**Recommended Model:** opus
+**Estimated Duration:** 5 hours
 **Prerequisite:** Session 7 complete. Run `/mapmaker-checklist` before starting.
 
 ---
 
 ## Goal
 
-Full undo/redo system, eraser tool, keyboard shortcuts, tile rotation/flip, and sound effects. The fill tool and drag-to-paint already exist from Session 1 — this session adds undo support for all existing operations plus new editing tools.
+Add overlays that can be placed on top of base tiles via SVG sprite sheet rendering. Right sidebar palette for overlays. Properties panel for inspecting/editing placed content.
 
 ---
 
 ## Deliverables
 
-### 1. History Manager (`js/history.js`)
-- `HistoryManager` class using command pattern
-- Command types:
-  - `PlaceTile { col, row, cellType?, oldBase, newBase }`
-  - `PlaceOverlay { col, row, overlay }`
-  - `RemoveOverlay { col, row, overlayIndex, overlay }`
-  - `ClearCell { col, row, oldBase, oldOverlays }`
-  - `FillTiles { cells: [{col, row, oldBase, newBase}, ...] }` — single undo for fill
-  - `PaintTiles { cells: [{col, row, oldBase, newBase}, ...] }` — single undo for drag-paint stroke
-  - `RotateOverlay { col, row, overlayIndex, oldRotation, newRotation }`
-  - `AutoFill { cells: [...] }` — single undo for random auto-fill (session 10)
-- Max 50 undo steps, unlimited redo
-- Undo/redo button states update (disabled when stack empty)
+### 1. SVG Sprite Sheet (`assets/icons/overlays.svg`)
+- Initial sprite sheet with Fantasy Overworld overlays (20) + first 20 universal overlays
+- Each icon as a `<symbol id="overlay-{id}">` element
+- Consistent viewBox (e.g., `0 0 64 64`) for all symbols
+- Clean, recognizable icons at 30×30px minimum
 
-### 2. Keyboard Shortcuts
-- `Cmd+Z` / `Ctrl+Z` — undo
-- `Cmd+Shift+Z` / `Ctrl+Shift+Z` — redo
-- `Cmd+S` / `Ctrl+S` — save (prevent default browser save)
-- `E` — toggle eraser mode
-- `F` — toggle fill mode (already exists, ensure shortcut works)
-- `G` — toggle grid lines
-- `P` — toggle pan mode
-- `R` — rotate selected overlay 90° clockwise
-- `[` / `]` — zoom out / in
-- `1`–`9` — quick palette selection (first 9 tiles)
-- `?` — show keyboard shortcuts overlay
-- `Delete` / `Backspace` — clear selected cell
+### 2. Overlay Renderer (`js/overlays.js`)
+- Load SVG sprite sheet
+- `OverlayRenderer` class
+- Render SVG symbol to canvas:
+  1. Create `Image()` with inline SVG data URI containing the `<use>` reference
+  2. Cache rendered image at needed size
+  3. `drawImage()` onto map canvas
+- Cache key: `${svgSymbolId}-${size}-${rotation}`
+- Support rotation: 0°, 90°, 180°, 270°
+- Support opacity: 0.1–1.0 via `ctx.globalAlpha`
+- Support size: small (0.3×), medium (0.6×), large (0.9×) relative to cell
 
-### 3. Eraser Tool
-- Toolbar toggle button (eraser icon)
-- When active: cursor changes to eraser indicator
-- Tap cell → removes base tile and all overlays
-- Drag → erase multiple cells
-- Each drag stroke is a single undo command (grouped)
-- `E` key toggles
+### 3. Overlay Data (`js/data/overlays.json`)
+- Fantasy Overworld theme overlays (20): castle, village-cluster, wizard-tower, stone-bridge, ancient-ruins, cave-entrance, standing-stones, fairy-ring, dragon-lair, harbor, lighthouse, windmill, shrine, market-town, enchanted-well, giant-tree, crystal-spire, graveyard, battlefield-marker, royal-road
+- Initial universal overlays (20): village, ruins, tribe-camp, campfire, deer, wolf, bird-flock, bear, treasure, danger-sign, question-mark, star-marker, compass-rose, arrow-north, arrow-south, arrow-east, arrow-west, tree-single, fire, text-label
 
-### 4. Tile Rotation (Pre-Placement)
-- Rotation control in toolbar: 0°, 90°, 180°, 270° cycle button
-- Applied to next placed tile
-- Palette preview rotates to show current orientation
-- `R` key cycles rotation
+### 4. Right Sidebar — Overlay Palette
+- Title: "Overlays"
+- Two tabs: "Theme" and "Universal"
+- Scrollable list of overlay previews (44×44px tap targets)
+- Overlay name below each preview
+- `role="listbox"` with `role="option"` items
+- Tap to select overlay
 
-### 5. Tile Flip
-- Horizontal flip and Vertical flip buttons in toolbar
-- Applies to selected cell or next placement
-- Stored in cell data: `flipH`, `flipV`
+### 5. Search/Filter Bar
+- At top of overlay palette
+- Filters by name (case-insensitive substring)
+- Debounced (200ms delay)
+- Filtered-out items get `display: none` AND `aria-hidden="true"`
+- Clear button to reset filter
 
-### 6. "Clear All" Confirmation
-- Toolbar button → accessible modal dialog
-- Single undo command with all prior state
+### 6. Overlay Placement
+- With overlay selected, tap grid cell (pointerup) to place
+- Up to **5 overlays per cell** (stacked visually with slight offset)
+- Overlays render centered on cell, stacked with positional jitter
+- Can place overlays on empty cells (no base tile required)
 
-### 7. Keyboard Shortcuts Overlay
-- `?` key shows modal with all shortcuts
-- 2-column table grouped by: Navigation, Editing, Tools, General
-- Accessible modal (focus trap, Escape)
+### 7. Overlay Removal & Editing
+- Tap cell → enters CELL_SELECTED state
+- Properties panel shows overlays on that cell
+- Each overlay has remove (✕) button
+- Delete key removes most recently placed overlay
+- "Clear overlays" button
 
-### 8. Sound Effects (Web Audio API)
-- Created lazily on first user gesture (iPad Safari requirement)
-- Sounds:
-  - Tile place: soft "thunk"
-  - Overlay place: light "chime"
-  - Erase: soft "whoosh"
-  - Undo: "click"
-  - Fill complete: "cascade" sound
-- All synthesized via Web Audio (no audio files)
-- Respects sound toggle in settings (session 10)
-- Muted by default (opt-in via settings)
+### 8. Overlay Properties
+- Rotation: 4 directional buttons (0°, 90°, 180°, 270°)
+- Opacity slider: range input 0.1–1.0
+- Size: small/medium/large selector
+- Changes apply to the currently selected overlay
+- Cell data: `{ id, rotation, opacity, size }`
 
-### 9. UI Polish
-- Toolbar tooltips (title + custom CSS, long-press on iPad)
-- Selection highlight: subtle pulsing border (CSS animation)
-- Tool mode indicators in toolbar (highlighted active tool)
-- Smooth zoom transitions (lerp over 200ms via RAF)
+### 9. Properties Panel
+- Bottom panel (~120px, collapsible via CSS class toggle)
+- Shows: cell coordinates, base tile name, overlay list with controls
+- Toggle button to expand/collapse
+- `aria-expanded` on toggle button
 
 ---
 
 ## Review Criteria
 
 ### Spec Reviewer
-- [ ] Undo up to 50 steps for all operation types
-- [ ] Redo works after undo
-- [ ] Eraser clears cells, drag works
-- [ ] Keyboard shortcuts complete
-- [ ] Sound effects via Web Audio
+- [ ] 20 Fantasy overlays + 20 universals
+- [ ] Up to 5 overlays per cell
+- [ ] Rotation, opacity, size controls
+- [ ] SVG sprite sheet approach
 
 ### Game Map Maker Reviewer
-- [ ] Undo/redo correctly restores visual state
-- [ ] Eraser drag is smooth
-- [ ] Sounds are pleasant and not annoying
-- [ ] Tool modes clearly indicated
+- [ ] SVG icons recognizable at 30×30px
+- [ ] Overlays visually distinct from base tiles
+- [ ] Stacked overlays don't obscure each other completely
+- [ ] Castle, village, ruins look appropriate for fantasy
 
 ### Web Developer Reviewer
-- [ ] Command pattern: each command reversible
-- [ ] Grouped operations (erase drag, fill, paint stroke) are single undo entries
-- [ ] Keyboard shortcuts don't conflict with browser defaults
-- [ ] Cmd+S prevents default
-- [ ] AudioContext created lazily in gesture handler
-- [ ] Sound toggle checked before playing
-- [ ] No timer leaks from tooltip timeouts
-- [ ] Undo stack stores minimal data (not full snapshots)
+- [ ] SVG→Canvas rendering pipeline (data URI → Image → drawImage)
+- [ ] Overlay cache keyed by symbolId + size + rotation
+- [ ] Opacity via ctx.globalAlpha with save/restore
+- [ ] Properties panel uses CSS class toggle
+- [ ] Search filter debounced, sets aria-hidden
+- [ ] Remove button is `<button>` with aria-label
+- [ ] No memory leaks from cache growth

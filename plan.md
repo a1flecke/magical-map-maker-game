@@ -5,17 +5,22 @@
 Each session delivers a working, testable increment. Session 1 produces a playable (minimal) map editor. Every subsequent session adds one major capability. Users can give feedback at every stage.
 
 ```
-Session 1:  Skeleton + 1 theme + square grid + paint tiles + fill  → "I can make a simple map"
-Session 2:  All 4 grid shapes + camera controls                    → "I can pick hex/diamond/oct"
-Session 3:  Overlays system + overlay palette                      → "I can add details"
-Session 4:  All 9 themes + full 100-tile catalog                   → "I can pick any world"
-Session 5:  Save/load system + My Maps screen                      → "I can save and resume"
-Session 6:  Export (PDF/PNG/JPEG) + print CSS                      → "I can print my map"
-Session 7:  Realm Brew asset integration                           → "Dungeons look amazing"
-Session 8:  Undo/redo + eraser + editor polish                     → "It feels professional"
-Session 9:  Full overlay catalog (SVG sprites) + universal overlays → "So many options!"
-Session 10: Starter templates + name generator + tutorial           → "Easy to start"
-Session 11: Accessibility + iPad optimization + final polish        → "Ready for kids"
+Session 1:  Skeleton + 1 theme + square grid + paint tiles + fill       → "I can make a simple map"
+Session 2:  All 4 grid shapes + camera controls                         → "I can pick hex/diamond/oct"
+Session 3:  Graphics engine + animation framework + water upgrade        → "Water comes alive"
+Session 4:  Land transitions + 15 Fantasy tile upgrades                  → "The whole map breathes"
+Session 5:  Natural organic tiles (30 tiles)                             → "Forests, coasts, deserts alive"
+Session 6:  Harsh & underground tiles (30 tiles)                         → "Mountains, ice, dungeons glow"
+Session 7:  Exotic & built tiles (30 tiles) + performance tuning         → "Every tile is beautiful"
+Session 8:  Overlays system + overlay palette                            → "I can add details"
+Session 9:  All 9 themes + full 100-tile catalog                        → "I can pick any world"
+Session 10: Save/load system + My Maps screen                           → "I can save and resume"
+Session 11: Export (PDF/PNG/JPEG) + print CSS                           → "I can print my map"
+Session 12: Realm Brew asset integration                                 → "Dungeons look amazing"
+Session 13: Undo/redo + eraser + editor polish                          → "It feels professional"
+Session 14: Full overlay catalog (SVG sprites) + universal overlays      → "So many options!"
+Session 15: Starter templates + name generator + tutorial                → "Easy to start"
+Session 16: Accessibility + iPad optimization + final polish             → "Ready for kids"
 ```
 
 ---
@@ -23,7 +28,7 @@ Session 11: Accessibility + iPad optimization + final polish        → "Ready f
 ## Key Design Decisions (from review feedback)
 
 ### Reviewer-Driven Changes
-1. **100 base types** (up from 35) — resolves section 3 vs section 6 mismatch. Space theme now has 14 tiles, not 4.
+1. **110 base types** (up from 35) — resolves section 3 vs section 6 mismatch. Space theme now has 14 tiles, not 4.
 2. **55 universal overlays** (up from 30) — added numbered markers (1-10), lettered markers (A-F), character tokens (warrior, wizard, archer, king, monster, NPC), compass rose, scale bar, title banner.
 3. **Isometric diamond replaces triangle** — triangles are confusing for kids; diamond grid is more intuitive (Minecraft/RPG style).
 4. **Drag-to-paint + fill tool in Session 1** — painting one tile at a time on 320-cell grids is tedious, especially for ADHD audience.
@@ -85,7 +90,7 @@ Each session's output passes through three reviewers before the next session beg
 ### 1. Spec Reviewer
 - All specified features present
 - Data structures match spec schemas
-- Theme/tile/overlay counts match spec (100 bases, ~225 overlays, 55 universals)
+- Theme/tile/overlay counts match spec (110 bases, ~225 overlays, 55 universals)
 - Accessibility requirements met
 
 ### 2. Senior Game Map Maker Reviewer
@@ -150,7 +155,97 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 3: Overlay System
+### Session 3: Graphics Engine + Animation Framework + Water Upgrade
+**Model:** opus
+**Goal:** Build the new rendering infrastructure — tile atlas cache, neighbor-aware rendering, animation framework with adaptive quality, material properties data model. Upgrade all water tiles (5) to N64-quality with merging and animation.
+
+**Deliverables:**
+1. Perlin noise utility (~100 lines vanilla JS), pre-computed 256×256 noise texture
+2. Tile atlas cache (2-4 large 2048×2048 canvases with LRU eviction at ~200 entries) replacing individual offscreen canvases
+3. `js/animation.js` — AnimationManager: three-tier RAF (animate → idle throttle → still/stop), adaptive quality (5 levels) with exponential backoff hysteresis, animation intensity classification (gentle/intense)
+4. Material properties data model + `waterContent` flag in `base-types.json` for all 20 Fantasy tiles
+5. Neighbor-aware rendering with FNV-1a hash (not charAt(0)), budgeted re-caching (8-10 cells/frame), progressive cache warming
+6. Water merging with edge cases: L-shapes, single-cell contained mode, corner-fill arcs, hex triple-junctions, octagon filler cells
+7. River flow direction (inferred from neighbor topology)
+8. Shoreline rendering with 8 context-specific styles (muddy, sandy, rocky, reinforced, frozen, volcanic, jungle, swamp-to-land)
+9. N64-quality water tile upgrades (ocean, shallow-water, river, lake, swamp) with Perlin noise textures
+10. Water animations with gentle/intense classification
+11. "Map Life" toolbar toggle (Full/Subtle/Still) with `prefers-reduced-motion` handling and keyboard accessibility
+12. Hero frame export at t=2.5s
+13. Pause/resume: visibilitychange + pagehide/pageshow + blur/focus
+14. All 4 grid shapes, all `ctx.save()`/`ctx.restore()` wrapped
+
+**Review focus:** Water merging across all 4 grid shapes + edge cases, tile atlas memory (<7MB), animation budget (<4ms with viewport culling), adaptive quality hysteresis.
+
+---
+
+### Session 4: Land Transitions + 15 Fantasy Tile Upgrades
+**Model:** opus
+**Goal:** Three transition modes (terrestrial, space, dungeon). Upgrade remaining 15 patterned Fantasy tiles to N64-quality.
+
+**Deliverables:**
+1. Three transition modes: terrestrial (material property vectors), space (nebula blend, star merge, hard planet boundaries), dungeon (architectural: wall/open/threshold)
+2. Terrestrial transitions: 5 property axes with bidirectional blending, cell-size-aware scaling (≥48px full, 32-47px gradient-only, <32px hard edges)
+3. Scatter objects: max 4 per edge, 12 per cell, pre-computed position lookup table
+4. N64 upgrades: grassland (6), forest (4), elevation (2), desert (1), constructed (2 — road, bridge)
+5. Theme-specific traffic animations for all 9 themes (fantasy: carts; dungeon: rats; space: drones; etc.)
+6. Animation intensity tags (gentle/intense) for all new effects
+7. Material properties for all 15 upgraded tiles, `transitionMode` field in themes.json
+8. All transitions on all 4 grid shapes
+
+**Review focus:** Transition quality across property extremes, dungeon architectural transitions, space blending, traffic per theme, cell-size scaling.
+
+---
+
+### Session 5: Natural Organic Tiles (30 tiles)
+**Model:** opus
+**Goal:** N64-quality rendering for 30 natural terrain tiles: remaining grassland (6), forest (6), water (7), desert (5), coastal (6).
+
+**Deliverables:**
+1. 30 N64-quality tile renders using established infrastructure (Perlin noise, multi-layer gradients, organic shapes)
+2. Waterfall/rapids as self-contained scenes with rotation-based directionality
+3. Hybrid water tiles (`waterContent: true`): mangrove, hot-spring, delta, oasis, tidal-pool
+4. Material properties for all 30 tiles
+5. Animation intensity tags for all new effects
+
+**Review focus:** Visual distinctiveness, water merging integration, oasis→water connections, coastal shoreline transitions.
+
+---
+
+### Session 6: Harsh & Underground Tiles (30 tiles)
+**Model:** opus
+**Goal:** N64-quality rendering for 30 tiles: elevation (8), arctic (8), dungeon (10), battlefield (4). Dungeon uses architectural transitions.
+
+**Deliverables:**
+1. 30 N64-quality tile renders
+2. Dungeon tiles use architectural transition mode (corridor merging, doorway thresholds)
+3. Dungeon water tiles (`underground-river`, `sewer`) use water merging within channels
+4. Arctic `ice-shelf` has `waterContent: true`
+5. Material properties for all 28 tiles
+6. Animation intensity tags for all new effects
+
+**Review focus:** Dungeon atmospheric mood, architectural transitions, arctic cold feeling, ice/water hybrid behavior.
+
+---
+
+### Session 7: Exotic & Built Tiles (30 tiles) + Performance Tuning
+**Model:** opus
+**Goal:** N64-quality for final 30 tiles: space (14), volcanic (6), constructed (6), continental (4). Space uses space transition mode. Comprehensive performance and visual consistency pass.
+
+**Deliverables:**
+1. 28 N64-quality tile renders (space stylized/cartoony, shared art vocabulary)
+2. Space tiles use space transition mode (nebula blend, star field merge)
+3. No-man's-land age-appropriate (subtle barbed wire, not graphic)
+4. Material properties for all 28 tiles, `waterContent` for harbor
+5. Performance optimization: profiling on iPad, adaptive quality threshold tuning, viewport culling refinement
+6. Visual consistency pass across all 100 tiles
+7. Run `/validate-map-data` for all updated JSON
+
+**Review focus:** All 100 tiles visually distinct and cohesive, frame time <16ms on iPad, atlas memory <7MB, space art direction kid-friendly.
+
+---
+
+### Session 8: Overlay System
 **Model:** opus
 **Goal:** Overlays placed on top of base tiles. Right sidebar palette.
 
@@ -169,24 +264,23 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 4: All 9 Themes + Full 100-Tile Catalog
+### Session 9: All 9 Themes + Full 100-Tile Catalog
 **Model:** opus
-**Goal:** All themes available with curated tile sets. All 100 base types.
+**Goal:** All themes available with curated tile sets. All 110 base types wired to themes with N64-quality graphics and correct transition modes.
 
 **Deliverables:**
-1. Complete `base-types.json` with all 100 base types
-2. Complete `themes.json` with all 9 themes
-3. `js/themes.js` — ThemeManager class (load, switch, apply colors, filter tiles/overlays)
-4. Procedural tile rendering for all 100 base types
-5. Theme selector: `role="radiogroup"` with 9 theme cards
-6. Theme CSS custom properties per theme
-7. Run `/validate-map-data` after completing JSON files
+1. Complete `themes.json` with all 9 themes (including `transitionMode` per theme)
+2. `js/themes.js` — ThemeManager class (load, switch, apply colors, filter tiles/overlays, select transition mode)
+3. Verify all 110 base types render correctly with neighbor-aware transitions per theme's transition mode
+4. Theme selector: `role="radiogroup"` with 9 theme cards
+5. Theme CSS custom properties per theme
+6. Run `/validate-map-data` after completing JSON files
 
-**Review focus:** Visual distinctiveness of 100 tiles, theme color cohesion, ThemeManager API.
+**Review focus:** Theme color cohesion, transitions work per theme mode (terrestrial/space/dungeon), ThemeManager API.
 
 ---
 
-### Session 5: Save/Load System
+### Session 10: Save/Load System
 **Model:** sonnet
 **Goal:** Save maps to LocalStorage, load from My Maps gallery.
 
@@ -205,9 +299,9 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 6: Export System
+### Session 11: Export System
 **Model:** opus
-**Goal:** Export as PDF, PNG, JPEG. Print-ready output.
+**Goal:** Export as PDF, PNG, JPEG. Print-ready output with hero frame rendering.
 
 **Deliverables:**
 1. `js/export.js` — ExportManager
@@ -220,12 +314,13 @@ Each session's output passes through three reviewers before the next session beg
 8. Export dialog (accessible modal with format picker, quality slider, progress bar)
 9. `css/print.css` with `@media print` rules
 10. Legend generator (used tile types with color swatches)
+11. Hero frame rendering at t=2.5s — clear export cache after blob generation to prevent memory spike
 
-**Review focus:** iPad canvas limits, DPI fallback, blob cleanup, legend.
+**Review focus:** iPad canvas limits, DPI fallback, blob cleanup, legend, hero frame quality, export cache memory.
 
 ---
 
-### Session 7: Realm Brew Asset Integration
+### Session 12: Realm Brew Asset Integration
 **Model:** opus
 **Goal:** Realm Brew hand-drawn tiles enhance Dungeon theme.
 
@@ -243,7 +338,7 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 8: Undo/Redo + Editor Polish
+### Session 13: Undo/Redo + Editor Polish
 **Model:** sonnet
 **Goal:** Full undo/redo, eraser tool, keyboard shortcuts, editor refinements.
 
@@ -263,7 +358,7 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 9: Complete Overlay Catalog (SVG Sprites)
+### Session 14: Complete Overlay Catalog (SVG Sprites)
 **Model:** opus
 **Goal:** All ~225 overlays as SVG sprites. Full universal overlay set.
 
@@ -283,7 +378,7 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 10: Starter Templates + Name Generator + Tutorial
+### Session 15: Starter Templates + Name Generator + Tutorial
 **Model:** sonnet
 **Goal:** Pre-built maps, fantasy name generator, welcome tutorial for first-time users.
 
@@ -306,7 +401,7 @@ Each session's output passes through three reviewers before the next session beg
 
 ---
 
-### Session 11: Accessibility + iPad Optimization + Final Polish
+### Session 16: Accessibility + iPad Optimization + Final Polish
 **Model:** opus
 **Goal:** Full a11y compliance, iPad-optimized experience, release-ready quality.
 
@@ -318,15 +413,15 @@ Each session's output passes through three reviewers before the next session beg
 5. WCAG AA contrast audit on all 9 themes (document ratios in `themes.css`)
 6. iPad Safari: elastic scroll prevention, safe area insets, `touch-action: manipulation`
 7. Responsive layout: landscape + portrait (sidebars → bottom drawers in portrait)
-8. `devicePixelRatio` change handling (display switching)
+8. `devicePixelRatio` change handling (progressive cache warming, not lag spike)
 9. Loading states, skeleton screens
 10. Error handling: corrupt save recovery, export failure graceful degradation
 11. Toast notifications: `role="status"` for info, `role="alert"` for errors only
 12. Service Worker for offline support (cache HTML, CSS, JS, SVG sprites, jsPDF)
-13. Final performance profiling (60fps on large grid, export < 5s)
-14. Final QA checklist (all themes, shapes, sizes, save/load, export, a11y)
+13. Final performance profiling (60fps on large grid with animations, export < 5s, atlas memory <7MB)
+14. Final QA checklist (all themes, shapes, sizes, save/load, export, a11y, animation quality levels, transition modes)
 
-**Review focus:** VoiceOver, contrast ratios, iPad edge cases, offline, performance.
+**Review focus:** VoiceOver, contrast ratios, iPad edge cases, offline, performance with animation system, DPR change handling.
 
 ---
 

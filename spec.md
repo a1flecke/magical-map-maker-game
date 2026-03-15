@@ -152,7 +152,7 @@ Piece pixel sizes are calculated at runtime from the chosen paper dimensions (8.
 
 ## 6. Base Types — Complete Catalog
 
-Each base type renders as a filled tile. Total: **100 base types** organized into 12 terrain categories. Not all bases are available in all themes — each theme selects a curated subset.
+Each base type renders as a filled tile. Total: **110 base types** organized into 13 terrain categories. Not all bases are available in all themes — each theme selects a curated subset.
 
 ### 6.1 Grassland & Plains (12)
 | ID | Name | Visual | Available Themes |
@@ -486,28 +486,236 @@ Realm Brew assets are from a Kickstarter bundle. They should NOT be included in 
 ### 9.1 Canvas-Based Editor
 - Primary canvas for the map grid + placed tiles
 - Overlay canvas for selection highlights, grid lines, cursor
-- Offscreen canvas for tile caching (resized base tiles, pre-composited tiles+overlays)
+- Tile atlas canvases for tile caching (see §9.5)
 
-### 9.2 Procedural Tile Rendering
-For non-Realm-Brew tiles, each base type is drawn procedurally on Canvas:
-- Solid fill with the base color
-- Texture patterns (noise, gradients, repeating shapes) drawn via Canvas 2D
-- Edge blending with adjacent tiles (optional, medium/large sizes)
-- All rendering parameterized by tile shape (square/hex/tri/oct clip paths)
+### 9.2 Procedural Tile Rendering — N64-Quality Graphics
+For non-Realm-Brew tiles, each base type is drawn procedurally on Canvas with multi-layer techniques:
+- **Multi-layer textures:** Layered gradients, Perlin-style noise patterns, and dithering for organic texture — not flat fills
+- **Perlin noise:** Lightweight vanilla JS implementation (~100 lines). Pre-compute a 256×256 noise texture at startup and sample via UV coordinates during tile rendering. No npm dependency.
+- **Lighting/depth:** Highlights on top edges, shadows on bottom edges for dimensional feel
+- **Organic shapes:** Irregular, natural-looking forms using bezier curves and noise-offset paths — no perfect circles/rectangles
+- **Rich palettes:** 5-7 colors per tile with smooth transitions (up from 3)
+- **Detail density:** Multiple visual elements per tile (e.g., forest = varied tree sizes, undergrowth, fallen logs)
+- **Shared art vocabulary:** All tiles — including space and dungeon — use the same rendering vocabulary (bezier curves, layered gradients, noise patterns, scattered elements). Space tiles are stylized/cartoony, not photorealistic. No unique rendering techniques (gravitational lensing, spherical projection) without analogues in other themes.
+- All rendering parameterized by tile shape (square/hex/diamond/oct clip paths)
+- **Canvas state safety:** All render methods wrapped in `ctx.save()` / `ctx.restore()` pairs to prevent state leaks (globalAlpha, transforms, etc.)
 
-### 9.3 Tile Caching
+### 9.3 Neighbor-Aware Rendering
+Tiles are **not rendered in isolation**. Each tile queries its neighbors to determine edge treatment.
+
+#### 9.3.1 Transition Modes
+Not all tile categories use the same transition logic. Each theme defines a `transitionMode`:
+
+| Mode | Themes | Transition Logic |
+|------|--------|-----------------|
+| **Terrestrial** | Fantasy, Battlefields, Prairie, Mountains, Continents, Rivers, Jungle | Material property-based geographic transitions |
+| **Space** | Space | Nebulae blend via color gradient; deep-space tiles merge star fields; planets/stars/black-holes maintain hard circular boundaries against space background |
+| **Dungeon** | Dungeon | Architectural transitions: wall (no passage), doorway (passage with frame), open (merged space like water merging). Corridor→cavern gets a threshold, not "density gradient with stumps." |
+
+#### 9.3.2 Water Merging
+- Adjacent same-type water tiles merge into seamless continuous bodies (internal grid borders erased, unified surface)
+- Adjacent different-type water tiles (e.g., river→lake) render gradient transition zones
+- Swamp maintains distinct murky border treatment against clean water types
+- **Hybrid water tiles**: Tiles that contain water but belong to other categories (`oasis`, `harbor`, `moat`, `hot-spring`, `delta`, `dam`, `tidal-pool`, `underground-river`, `sewer`) are flagged with `"waterContent": true` in `base-types.json`. These participate in water merging on their water-containing portion.
+
+##### Water Merging Edge Cases
+- **L-shaped bodies**: Corner cells merge on two non-opposite edges. Wave patterns adjust direction at bends to maintain visual continuity.
+- **Single-cell water**: Renders in "contained" mode — pond-like with shore gradient on all edges, no merging.
+- **Corner-meeting water** (square/octagon grids): When diagonally opposite cells are water but the two other corner-sharing cells are land, draw a corner-fill arc connecting the two water edges to prevent a visual gap.
+- **Hex triple-junctions**: Where three hex edges meet at a vertex and all three cells are water, draw a center-fill triangle to prevent seam artifacts at the junction point.
+- **Octagon filler cells**: Both octagon and square-filler cells participate in merging. A water tile on a square filler merges with adjacent octagon water tiles. The filler's small size means its transition zone is proportionally smaller.
+
+##### River Flow Direction
+Rivers have directional current. Flow direction is determined by neighbor topology:
+- If adjacent to ocean/lake, flow toward it (downstream)
+- If adjacent to another river, inherit or continue flow direction
+- If no water neighbor, default to south-east (configurable per cell via rotation property)
+- Flow direction affects current line rendering and animation drift direction
+
+##### Waterfall & Rapids
+Rendered as self-contained scenes within one cell (mini-waterfall with cliff at top, pool at bottom; rapids with rocks and turbulent flow). Cell rotation determines the fall/flow direction. They do not require multi-cell awareness.
+
+#### 9.3.3 Shoreline Rendering
+- Where any water tile meets a land tile, a natural shoreline is drawn
+- Shoreline style varies by the land neighbor's material properties:
+
+| Land Neighbor Type | Shoreline Style |
+|--------------------|----------------|
+| High moisture (grassland, forest) | Muddy bank, reeds, soft earth |
+| Low moisture (desert) | Sandy shore, cracked earth |
+| High elevation (mountain, cliff) | Rocky shore, cliff edge, boulders |
+| Constructed (road, town) | Reinforced bank, stone edge |
+| Arctic/cold (tundra, ice) | Frozen shore, ice shelf edge, frost crystals |
+| Volcanic (lava, scorched) | Steam, obsidian beach, cooling rock |
+| Jungle/mangrove | Tangled roots meeting water, murky edge |
+| Swamp-to-dry-land | Dried mud, dead reeds, gradual moisture fade |
+
+- Shoreline is part of the water tile's render (drawn on the water side)
+- Foam line along shoreline edge (subtle white highlights)
+
+#### 9.3.4 Land-to-Land Transitions — Material Properties System
+Each base tile defines 5 material properties used to auto-generate contextual edge transitions:
+
+```json
+{
+  "elevation": 0-10,
+  "moisture": 0-10,
+  "density": 0-10,
+  "temperature": 0-10,
+  "organic": true|false
+}
 ```
-TileCache (offscreen canvases)
-├── Base tile renders (keyed by: baseType + shape + size)
+
+**Only used for terrestrial transition mode.** Space and dungeon themes use their own transition logic (see §9.3.1).
+
+**Transition rules are emergent based on property difference vectors:**
+- **Large elevation difference** (mountain→grassland): rocky cliff face, scattered boulders
+- **Large moisture difference** (water→desert): dramatic shoreline with cracked earth
+- **Small moisture difference** (lake→grassland): gentle muddy bank, reeds
+- **Temperature gradient** (arctic→temperate): snow melt line, patchy snow-to-grass
+- **Density gradient** (dense-forest→clearing): trees thin out, stumps, undergrowth
+- **Organic→constructed**: hard edge with border treatment (cobblestone edge, fence line)
+- **Bidirectional blending**: Both tiles contribute to the transition zone with weighted probability
+
+**Transition zone scaling by cell size:**
+- Cell ≥ 48px: full transitions with scatter objects
+- Cell 32-47px: gradient-only transitions, no scatter objects
+- Cell < 32px: hard edges only (too small for meaningful transitions)
+
+**Scatter object limits:** Max 4 scatter objects per edge, 12 per cell. Positions pre-computed via seeded noise lookup table.
+
+This eliminates per-pair transition definitions. Adding a new tile type requires only setting 5 property values.
+
+#### 9.3.5 Neighbor Cache Strategy
+- **Tile atlas architecture**: Instead of individual offscreen canvases per tile, pack rendered tiles into 2-4 large atlas canvases (2048×2048 each). Maintain a lookup table mapping cache keys to atlas coordinates (source rectangle). Blit to main canvas via 9-argument `drawImage(atlas, sx, sy, sw, sh, dx, dy, dw, dh)`. This keeps canvas context count in single digits (critical for iPad Safari which has undocumented limits on active canvas contexts).
+- Cache key: `${tileId}-${shape}-${cellSize}-${neighborHash}`
+- **Neighbor hash**: Use FNV-1a hash of full tile ID (2 hex chars) to avoid collisions. `charAt(0)` is insufficient — `grassland`, `glacier`, `gas-cloud` would all collide.
+  ```
+  neighborHash = neighbors.map(n => {
+    if (!n.base) return '00';          // empty
+    if (n.base === thisBase) return 'SS'; // same type
+    return fnv1a(n.base).toString(16).slice(-2); // 2-char hash
+  }).join('');
+  ```
+- **LRU eviction**: Hard cap of ~200 atlas entries (~7MB at DPR 3). Evict least-recently-used when full.
+- **Cascading dirty**: When a cell's tile changes, mark all its neighbors dirty too
+- **Budgeted re-caching**: Re-cache max 8-10 dirty cells per frame (~5ms). Remaining dirty cells render from stale cache until their turn. Prevents 3×3 brush from causing a 25-cell spike.
+- **Progressive cache warming**: On zoom/DPR change, clear cache and re-render visible tiles center-outward over multiple frames. Show low-quality fallback (flat fill + grid) for tiles not yet cached.
+
+### 9.4 Tile Animation System
+All tile types have contextual ambient effects that bring the map to life:
+
+#### 9.4.1 Animation Categories
+| Category | Examples | Effect Type |
+|----------|----------|-------------|
+| **Water** | Ocean, lake, river, swamp | Waves, ripples, fish leaping, foam, bubbles |
+| **Lava/Volcanic** | Lava flow, volcanic ground | Pulsing glow, flowing molten movement |
+| **Forest/Vegetation** | Dense forest, jungle, bamboo | Gentle leaf sway, rustling canopy |
+| **Grassland** | Tall grass, wheat, wildflowers | Wind ripple, swaying stalks |
+| **Desert** | Sand desert, dunes | Heat shimmer, blowing sand particles |
+| **Arctic/Snow** | Snow field, glacier, tundra | Occasional sparkle, drifting snow |
+| **Elevation** | Hills, mountains, cliffs | Animals traversing, snowfall on peaks |
+| **Constructed** | Roads, bridges, towns | Theme-appropriate traffic (see §9.4.6) |
+| **Space** | Nebulae, stars, planets | Star twinkle, nebula swirl, accretion disk rotation |
+| **Dungeon** | Corridors, caverns, crypts | Torch flicker, dripping water, dust motes |
+
+#### 9.4.2 Animation Intensity Classification
+Each animation effect is classified as **gentle** or **intense**:
+- **Gentle** (allowed in Subtle mode): wave sway, grass ripple, leaf sway, snow drift, star twinkle, torch flicker, cloud shadow
+- **Intense** (disabled in Subtle mode): fish leaping, dragonfly paths, dust devil, wormhole spiral, black hole accretion disk rotation, lava glow pulse, animal traversal, traffic
+
+This protects sensory-sensitive users (ADHD/autism) from sudden or erratic motion.
+
+#### 9.4.3 Two-Layer Animation Architecture
+1. **Static base layer**: Full procedural tile texture rendered once to tile atlas cache (expensive, done once per zoom/resize)
+2. **Animation overlay layer**: Lightweight per-frame draw of moving elements only (wave offsets, particles, shimmer). Only draw for tiles that have animations defined — skip empty and static-only tiles.
+
+#### 9.4.4 Adaptive Quality Scaling
+Frame time is measured each frame via `performance.now()`. A rolling average (last 20 frames) determines quality level:
+
+| Level | Trigger | Behavior |
+|-------|---------|----------|
+| 1 — Full | avg < 12ms | All animations, all particles, all effects |
+| 2 — Reduced | avg 12-14ms | Fewer particles, skip ambient effects on non-visible tiles |
+| 3 — Low FPS | avg 14-16ms | Animation layer at 30fps, interaction stays 60fps |
+| 4 — Minimal | avg > 16ms sustained | Simplest wave offset only, no particles |
+| 5 — Static | manual or `prefers-reduced-motion` | No animation, dirty-flag rendering only |
+
+**Hysteresis with exponential backoff:** First step-up requires 60 frames of good performance. If it immediately drops back, the next step-up requires 120 frames, then 240. Reset backoff after staying at higher quality for 5+ seconds. Prevents visible quality oscillation.
+
+**Viewport culling (mandatory):** Only animate tiles actually visible on screen. At typical zoom, ~40-80 tiles are visible, not 320. This is the primary mechanism for keeping animation under budget.
+
+**Animation staggering:** Tile at `(col, row)` only updates when `(frameCount + col + row) % 3 === 0`. Each tile animates at ~20fps but load is distributed across frames.
+
+#### 9.4.5 Animation Controls — "Map Life" Toggle
+Single toolbar `<button>` cycling three user-facing states:
+- **Full** — all animations at device-capable quality (adaptive system protects performance silently)
+- **Subtle** — gentle animations only (wave sway, grass ripple), no intense effects (see §9.4.2)
+- **Still** — static tiles, no animation (also the default when `prefers-reduced-motion` is active)
+
+`aria-label` updates to include current state (e.g., "Map Life: Full. Press to change to Subtle."). Keyboard-accessible via Enter/Space.
+
+**`prefers-reduced-motion` behavior:** When active, toggle defaults to "Still" with a small note explaining why. User CAN override to "Subtle" or "Full" (respecting user agency), but the toggle resets to "Still" on each new editor session.
+
+Persists preference in `localStorage` key `magical-map-maker-animation-pref`.
+
+#### 9.4.6 Theme-Specific Traffic Animations
+Constructed tiles render ambient moving elements appropriate to the map's theme:
+
+| Theme | Traffic Elements |
+|-------|-----------------|
+| Fantasy Overworld | Horse carts, merchant wagons, walking figures |
+| Historical Battlefields | Supply wagons, marching troops, messengers on horseback |
+| Dungeon | Rats scurrying, torchlit adventurers, patrolling guards |
+| Space | Floating maintenance drones, small shuttle craft |
+| Jungle | Porters with packs, machete-wielding explorers |
+| Rivers & Waterways | Small boats, fishing craft (harbor/dock tiles) |
+| Prairie & Grasslands | Covered wagons, horseback riders, cattle |
+| Mountains | Pack mules, climbers, mountain goats on paths |
+| Continents & World | Caravans, trade ships (at world-map scale) |
+
+#### 9.4.7 Animation & RAF Strategy
+**Three-tier RAF loop** (not always-on 60fps):
+1. **Animating**: RAF runs continuously. Animation layer renders per frame (with staggering). Active when Map Life is Full or Subtle.
+2. **Idle throttle**: After 10 seconds of no interaction AND no camera movement, throttle animation to 15fps. Resume full speed on next pointer event.
+3. **Still mode**: RAF runs but only renders on dirty flag (current behavior). Stops entirely after 5 seconds of idle (restart on input).
+
+**Pause/resume handlers:**
+- `visibilitychange` — primary
+- `pagehide`/`pageshow` — backup (iPad Safari sometimes skips visibilitychange when switching apps via home bar)
+- `blur`/`focus` — belt-and-suspenders for all edge cases
+
+#### 9.4.8 Hero Frame Export
+PDF/PNG/JPEG captures a curated static state. `animationTime` is locked to a fixed value of `t = 2.5s`, chosen so that:
+- Waves are at a natural mid-crest position (not at extremes)
+- Ripple rings are at pleasing radii
+- Particles/animals are naturally posed
+- No mid-transition artifacts
+
+Each animation effect's `render(t)` function must produce a visually balanced result at `t = 2.5`.
+
+### 9.5 Tile Caching — Atlas Architecture
+```
+Tile Atlas System
+├── 2-4 atlas canvases (2048×2048 each)
+│   ├── Tile renders packed into atlas regions
+│   ├── Lookup table: cacheKey → { atlasIndex, sx, sy, sw, sh }
+│   └── LRU eviction at ~200 entries (~7MB cap at DPR 3)
 ├── Overlay renders (keyed by: overlayId + size)
-└── Composite cache (keyed by: cellId → base + overlays stack)
+├── Composite cache (keyed by: cellId → base + overlays stack)
+└── Animation state (lightweight per-frame data, not cached)
 ```
 
-### 9.4 Performance Targets
-- 60fps pan/zoom on iPad Safari
+**Why atlas, not individual canvases:** iPad Safari has undocumented limits on active canvas contexts. Hundreds of offscreen canvases will cause silent garbage collection or creation failure. Atlas approach keeps context count in single digits.
+
+### 9.6 Performance Targets
+- 60fps pan/zoom on iPad Safari (with adaptive quality fallback)
 - Tile palette scroll: no jank
-- Place/remove tiles: <16ms per operation
-- Export: <5s for large maps
+- Place/remove tiles: <16ms per operation (budgeted re-caching spreads load across frames)
+- Export: <5s for large maps (hero frame, no animation)
+- Animation frame budget: <4ms for animation overlay layer (with viewport culling + staggering)
+- Tile atlas memory: <7MB total at DPR 3
+- Cache warmup after zoom: <500ms for visible tiles (progressive, center-outward)
 
 ---
 

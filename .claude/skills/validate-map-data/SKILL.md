@@ -25,7 +25,9 @@ Run a comprehensive validation of all JSON data files in `js/data/`.
 - No duplicate `id` values
 - All `id` values are kebab-case (lowercase, hyphens only)
 - `themes` array values must match theme IDs in themes.json
-- Spec requires 100 base types total — warn if count differs significantly
+- Spec requires 110 base types total — warn if count differs significantly
+- If `materialProperties` field is present, validate it has all 5 required sub-fields: `elevation` (0-10), `moisture` (0-10), `density` (0-10), `temperature` (0-10), `organic` (boolean)
+- Optional `waterContent` field must be boolean if present
 
 ### overlays.json
 - Valid JSON array

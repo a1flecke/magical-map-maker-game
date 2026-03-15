@@ -63,7 +63,7 @@
   "themes": ["string array of theme IDs where this base type is available"]
 }
 ```
-**100 base types total.** Each must have a visually distinct procedural rendering.
+**110 base types total.** Each must have a visually distinct procedural rendering.
 
 ### overlays.json
 ```json
