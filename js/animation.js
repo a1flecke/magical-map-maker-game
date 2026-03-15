@@ -813,6 +813,227 @@ class AnimationManager {
           flowPhase: t * 0.6 + phase * 0.4
         };
 
+      // Session 7: Space tiles
+      case 'deep-space':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'space',
+          starTwinkle: true,
+          twinklePhase: t * 3 + phase
+        };
+
+      case 'nebula-red':
+      case 'nebula-blue':
+      case 'nebula-green':
+        return {
+          type: 'space',
+          starTwinkle: this.showGentleEffects,
+          twinklePhase: t * 3 + phase,
+          nebulaSwirl: this.showGentleEffects,
+          swirlHueShift: Math.sin(t * 0.2 + phase * 0.3) * 0.1
+        };
+
+      case 'asteroid-field':
+        return {
+          type: 'space',
+          starTwinkle: this.showGentleEffects,
+          twinklePhase: t * 3 + phase,
+          asteroidTumble: this.showGentleEffects,
+          tumbleAngle: t * 0.3 + phase
+        };
+
+      case 'gas-cloud':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'space',
+          starTwinkle: false,
+          nebulaSwirl: true,
+          swirlHueShift: Math.sin(t * 0.15 + phase * 0.2) * 0.08
+        };
+
+      case 'star-yellow':
+      case 'star-blue':
+      case 'star-red':
+        return {
+          type: 'space',
+          starTwinkle: this.showGentleEffects,
+          twinklePhase: t * 2 + phase,
+          coronaPulse: this.showGentleEffects ? Math.sin(t * 1.5 + phase) * 0.1 + 0.9 : 1
+        };
+
+      case 'planet-rocky':
+      case 'planet-gas':
+      case 'planet-ice':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'space',
+          starTwinkle: true,
+          twinklePhase: t * 3 + phase,
+          surfaceShift: Math.sin(t * 0.1 + phase) * 0.5
+        };
+
+      case 'black-hole':
+        return {
+          type: 'space',
+          starTwinkle: this.showGentleEffects,
+          twinklePhase: t * 3 + phase,
+          accretionRotation: this.showIntenseEffects ? t * 0.5 + phase : 0,
+          diskGlow: this.showGentleEffects ? Math.sin(t * 1.0 + phase) * 0.15 + 0.85 : 1
+        };
+
+      case 'wormhole':
+        return {
+          type: 'space',
+          starTwinkle: this.showGentleEffects,
+          twinklePhase: t * 3 + phase,
+          spiralRotation: this.showIntenseEffects ? t * 0.8 + phase : 0,
+          pulseScale: this.showGentleEffects ? Math.sin(t * 1.5 + phase) * 0.05 + 1 : 1
+        };
+
+      // Session 7: Volcanic/Hazard tiles
+      case 'volcanic':
+        return {
+          type: 'volcanic',
+          glowPulse: this.showGentleEffects ? Math.sin(t * 1.5 + phase) * 0.15 + 0.85 : 1,
+          smokeWisp: this.showGentleEffects,
+          smokePhase: t * 2 + phase,
+          emberFloat: this.showIntenseEffects
+        };
+
+      case 'lava-flow':
+        return {
+          type: 'volcanic',
+          glowPulse: this.showGentleEffects ? Math.sin(t * 2 + phase) * 0.2 + 0.8 : 1,
+          flowMovement: this.showGentleEffects ? (t * 10 + phase * 3) % 30 : 0,
+          emberFloat: this.showIntenseEffects
+        };
+
+      case 'lava-field':
+        return {
+          type: 'volcanic',
+          glowPulse: this.showGentleEffects ? Math.sin(t * 1.0 + phase) * 0.1 + 0.9 : 1,
+          smokeWisp: this.showGentleEffects,
+          smokePhase: t * 1.5 + phase,
+          emberFloat: false
+        };
+
+      case 'scorched-earth':
+        return {
+          type: 'volcanic',
+          glowPulse: 1,
+          smokeWisp: this.showGentleEffects,
+          smokePhase: t * 1 + phase,
+          emberFloat: this.showGentleEffects
+        };
+
+      case 'ruins-ground':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'dust',
+          dustMoteX: (t * 5 + phase * 3) % 40,
+          dustMoteY: Math.sin(t * 1.5 + phase) * 2,
+          dustAlpha: Math.abs(Math.sin(t * 1 + phase)) * 0.15
+        };
+
+      case 'no-mans-land':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'dust',
+          dustMoteX: (t * 4 + phase * 3) % 35,
+          dustMoteY: Math.sin(t * 1 + phase) * 2,
+          dustAlpha: Math.abs(Math.sin(t * 0.8 + phase)) * 0.12
+        };
+
+      // Session 7: Constructed tiles
+      case 'paved-road':
+        if (!this.showIntenseEffects) return null;
+        return {
+          type: 'constructed',
+          trafficDust: Math.sin(t * 0.2 + phase) > 0.85
+        };
+
+      case 'fortification':
+        if (!this.showIntenseEffects) return null;
+        return {
+          type: 'constructed',
+          sentryPace: true,
+          sentryPhase: t * 0.5 + phase,
+          flagFlutter: this.showGentleEffects ? Math.sin(t * 3 + phase) * 2 : 0
+        };
+
+      case 'trench':
+        if (!this.showIntenseEffects) return null;
+        return {
+          type: 'constructed',
+          sentryPace: true,
+          sentryPhase: t * 0.3 + phase
+        };
+
+      case 'camp-ground':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'constructed',
+          flagFlutter: Math.sin(t * 3 + phase) * 2,
+          smokeRise: this.showGentleEffects,
+          smokePhase: t * 2 + phase
+        };
+
+      case 'harbor':
+        return {
+          type: 'constructed',
+          boatRock: this.showIntenseEffects ? Math.sin(t * 1.5 + phase) * 2 : 0,
+          waveOffset: this.showGentleEffects ? Math.sin(t * 1.2 + phase) * 1.5 : 0
+        };
+
+      case 'town':
+        return {
+          type: 'constructed',
+          trafficDust: this.showIntenseEffects ? Math.sin(t * 0.15 + phase) > 0.88 : false,
+          smokeRise: this.showGentleEffects,
+          smokePhase: t * 1.5 + phase
+        };
+
+      // Session 7: Continental/World tiles
+      case 'lowland':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 0.8 + phase) * 1.2,
+          windPhase: t * 0.4 + phase * 0.3,
+          gustAlpha: 0
+        };
+
+      case 'highland':
+        return {
+          type: 'elevation',
+          windSway: this.showGentleEffects ? Math.sin(t * 0.9 + phase) * 1.3 : 0,
+          windPhase: t * 0.4 + phase * 0.3,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.15 + phase * 0.2) * 0.3 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.12 + phase * 0.4) * 0.08 + 0.04) : 0,
+          livestockShadow: false,
+          hawkShadow: false
+        };
+
+      case 'mountain-range':
+        return {
+          type: 'elevation',
+          windSway: 0,
+          windPhase: 0,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.12 + phase * 0.18) * 0.35 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.1 + phase * 0.3) * 0.1 + 0.05) : 0,
+          livestockShadow: false,
+          hawkShadow: this.showIntenseEffects ? Math.sin(t * 0.2 + phase * 1.4) > 0.9 : false
+        };
+
+      case 'rainforest':
+        return {
+          type: 'forest',
+          rustleSway: Math.sin(t * 0.6 + phase) * 1.5,
+          dappleLightShift: Math.sin(t * 0.3 + phase * 0.3) * 2,
+          leafFall: this.showIntenseEffects && Math.sin(t * 0.25 + phase) > 0.93,
+          rainCurtain: this.showGentleEffects,
+          rainPhase: t * 8 + phase
+        };
+
       default:
         return null;
     }

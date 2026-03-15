@@ -19,7 +19,13 @@
       "foothill", "high-peak", "snow-peak", "cliff", "canyon", "plateau", "ridge", "scree",
       "tundra", "frozen-water", "ice-plain", "glacier", "ice-cave", "snow-field", "permafrost", "ice-shelf",
       "stone-floor", "cobblestone", "corridor", "cavern", "underground-river", "pit", "dark-room", "crypt", "throne-room", "sewer",
-      "mud", "moat", "rocky-ground", "dam"
+      "mud", "moat", "rocky-ground", "dam",
+      "deep-space", "nebula-red", "nebula-blue", "nebula-green",
+      "asteroid-field", "gas-cloud", "star-yellow", "star-blue", "star-red",
+      "planet-rocky", "planet-gas", "planet-ice", "black-hole", "wormhole",
+      "volcanic", "lava-flow", "lava-field", "scorched-earth", "ruins-ground", "no-mans-land",
+      "paved-road", "fortification", "trench", "camp-ground", "harbor", "town",
+      "lowland", "highland", "mountain-range", "rainforest"
     ],
     "overlays": []
   }

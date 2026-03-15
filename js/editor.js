@@ -373,7 +373,8 @@ class Editor {
       const isWater = isWaterTile(cell.base);
       const waterFx = isWater ? this._animation.getWaterEffects(cell.base, col, row) : null;
       const tileType = this._tileRenderer.getType(cell.base);
-      const landFx = !isWater && tileType ? this._animation.getLandEffects(cell.base, tileType.pattern, col, row) : null;
+      // Water tiles without water effects (e.g. harbor) fall back to land effects
+      const landFx = (!isWater || !waterFx) && tileType ? this._animation.getLandEffects(cell.base, tileType.pattern, col, row) : null;
 
       if (!waterFx && !landFx) return;
 
@@ -784,34 +785,63 @@ class Editor {
         ctx.fill();
       }
 
-      // Farm animal shadow (farmland only)
+      // Farm animals — small colored shapes (farmland only)
       if (fx.animalShadow) {
         const t = this._animation.animationTime;
         const kind = Math.floor((t * 0.2 + (x + y) * 0.01) % 3);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
         const ax = x + w * (0.3 + Math.sin(t * 0.5) * 0.15);
         const ay = y + h * (0.55 + Math.cos(t * 0.4) * 0.08);
-        ctx.beginPath();
+
+        // 1px dark outline for visibility on varied backgrounds
+        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+
         if (kind === 0) {
-          // Chicken — small oval with head dot
-          ctx.ellipse(ax, ay, 1.8, 1.2, 0, 0, Math.PI * 2);
-          ctx.fill();
+          // Chicken — white/brown body with red comb
+          ctx.fillStyle = (t * 0.3 + x) % 2 > 1 ? '#F5F5F0' : '#8D6E63';
           ctx.beginPath();
-          ctx.arc(ax + 1.5, ay - 0.8, 0.6, 0, Math.PI * 2);
+          ctx.ellipse(ax, ay, 1.8, 1.3, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          // Red comb
+          ctx.fillStyle = '#D32F2F';
+          ctx.beginPath();
+          ctx.arc(ax + 1.5, ay - 1, 0.6, 0, Math.PI * 2);
+          ctx.fill();
         } else if (kind === 1) {
-          // Cow — larger rectangular shadow
+          // Cow — black/white patches
+          ctx.fillStyle = '#F5F5F5';
+          ctx.beginPath();
           ctx.ellipse(ax, ay, 4, 2.2, 0, 0, Math.PI * 2);
           ctx.fill();
+          ctx.stroke();
+          // Black patches
+          ctx.fillStyle = '#212121';
           ctx.beginPath();
-          ctx.arc(ax + 3.5, ay - 0.5, 1.2, 0, Math.PI * 2);
-        } else {
-          // Pig — round compact shadow
-          ctx.ellipse(ax, ay, 2.8, 2, 0, 0, Math.PI * 2);
+          ctx.ellipse(ax - 1.5, ay - 0.5, 1.5, 1, 0.3, 0, Math.PI * 2);
           ctx.fill();
           ctx.beginPath();
-          ctx.arc(ax + 2, ay - 0.3, 0.9, 0, Math.PI * 2);
+          ctx.ellipse(ax + 1, ay + 0.5, 1.2, 0.8, -0.2, 0, Math.PI * 2);
+          ctx.fill();
+          // Head
+          ctx.fillStyle = '#F5F5F5';
+          ctx.beginPath();
+          ctx.arc(ax + 3.5, ay - 0.3, 1.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          // Pig — pink oval
+          ctx.fillStyle = '#F8BBD0';
+          ctx.beginPath();
+          ctx.ellipse(ax, ay, 2.8, 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          // Snout
+          ctx.fillStyle = '#F48FB1';
+          ctx.beginPath();
+          ctx.arc(ax + 2, ay, 0.9, 0, Math.PI * 2);
+          ctx.fill();
         }
-        ctx.fill();
       }
     } else if (fx.type === 'forest') {
       // Tree canopy rustle
@@ -846,16 +876,90 @@ class Editor {
         ctx.ellipse(leafX, leafY, 1.5, 0.8, t * 3, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // Rain curtain (rainforest)
+      if (fx.rainCurtain) {
+        const rp = fx.rainPhase;
+        ctx.strokeStyle = 'rgba(150, 200, 255, 0.08)';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < 4; i++) {
+          const rx = x + w * (0.1 + i * 0.25) + Math.sin(rp + i) * 1;
+          const ry = y + ((rp * 3 + i * 7) % h);
+          ctx.beginPath();
+          ctx.moveTo(rx, ry);
+          ctx.lineTo(rx - 0.5, ry + 3);
+          ctx.stroke();
+        }
+      }
     } else if (fx.type === 'constructed') {
-      // Road/bridge dust
+      const t = this._animation.animationTime;
+
+      // Road/bridge/town dust
       if (fx.trafficDust) {
-        const t = this._animation.animationTime;
         ctx.fillStyle = 'rgba(160, 140, 120, 0.1)';
         const dustX = x + w * (0.3 + Math.sin(t * 2) * 0.2);
         const dustY = y + h * 0.6;
         ctx.beginPath();
         ctx.ellipse(dustX, dustY, 3, 2, 0, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Flag flutter (camp, fortification)
+      if (fx.flagFlutter) {
+        ctx.strokeStyle = 'rgba(180, 30, 30, 0.3)';
+        ctx.lineWidth = 1;
+        const flagX = x + w * 0.7;
+        const flagY = y + h * 0.15;
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY);
+        ctx.quadraticCurveTo(flagX + 3 + fx.flagFlutter, flagY + 2, flagX + 6, flagY + 1);
+        ctx.stroke();
+      }
+
+      // Smoke rising (camp, town)
+      if (fx.smokeRise) {
+        const sp = fx.smokePhase;
+        const smokeProgress = (sp % 4) / 4;
+        ctx.fillStyle = `rgba(180, 180, 180, ${Math.max(0, 0.15 - smokeProgress * 0.15)})`;
+        const smokeX = x + w * 0.5 + Math.sin(sp) * 2;
+        const smokeY = y + h * (0.3 - smokeProgress * 0.2);
+        ctx.beginPath();
+        ctx.arc(smokeX, smokeY, 1 + smokeProgress * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Sentry pacing (fortification, trench)
+      if (fx.sentryPace) {
+        const sp = fx.sentryPhase;
+        const sx = x + w * (0.3 + Math.sin(sp) * 0.15);
+        const sy = y + h * 0.5;
+        ctx.fillStyle = 'rgba(60, 60, 60, 0.12)';
+        ctx.beginPath();
+        ctx.ellipse(sx, sy, 1.5, 2.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Boat rocking (harbor)
+      if (fx.boatRock) {
+        const bx = x + w * 0.65;
+        const by = y + h * 0.5 + Math.sin(t * 1.5) * 1;
+        ctx.fillStyle = 'rgba(120, 80, 40, 0.2)';
+        ctx.save();
+        ctx.translate(bx, by);
+        ctx.rotate(Math.sin(t * 1.5) * 0.1);
+        ctx.fillRect(-3, -1, 6, 2);
+        ctx.restore();
+      }
+
+      // Water wave (harbor)
+      if (fx.waveOffset) {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 0.8;
+        const wy = y + h * 0.7 + fx.waveOffset;
+        ctx.beginPath();
+        ctx.moveTo(x, wy);
+        ctx.quadraticCurveTo(x + w * 0.5, wy - 1, x + w, wy);
+        ctx.stroke();
       }
     } else if (fx.type === 'dust') {
       // Floating dust motes
@@ -905,25 +1009,53 @@ class Editor {
         }
       }
 
-      // Livestock shadow (goats/sheep on hills)
+      // Livestock — small colored shapes (goats/sheep on hills)
       if (fx.livestockShadow) {
         const t = this._animation.animationTime;
-        const kind = Math.floor((t * 0.3 + (x + y) * 0.01) % 2); // alternate goat/sheep
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
+        const kind = Math.floor((t * 0.3 + (x + y) * 0.01) % 2);
         const lx = x + w * (0.25 + Math.sin(t * 0.8) * 0.2);
         const ly = y + h * (0.6 + Math.cos(t * 0.6) * 0.1);
-        ctx.beginPath();
+
+        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+
         if (kind === 0) {
-          // Goat-like shadow — small body with tiny head bump
+          // Goat — gray/brown body with small horns
+          ctx.fillStyle = '#8D6E63';
+          ctx.beginPath();
           ctx.ellipse(lx, ly, 3, 1.8, 0, 0, Math.PI * 2);
           ctx.fill();
+          ctx.stroke();
+          // Head
+          ctx.fillStyle = '#795548';
           ctx.beginPath();
-          ctx.arc(lx + 2.5, ly - 1, 1, 0, Math.PI * 2);
+          ctx.arc(lx + 2.5, ly - 0.8, 1, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          // Tiny horns
+          ctx.strokeStyle = '#A1887F';
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(lx + 2.5, ly - 1.8);
+          ctx.lineTo(lx + 2, ly - 2.5);
+          ctx.moveTo(lx + 2.5, ly - 1.8);
+          ctx.lineTo(lx + 3, ly - 2.5);
+          ctx.stroke();
         } else {
-          // Sheep-like shadow — rounder, fluffier
+          // Sheep — white fluffy oval with dark face
+          ctx.fillStyle = '#F5F5F0';
+          ctx.beginPath();
           ctx.ellipse(lx, ly, 3.5, 2.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+          // Dark face
+          ctx.fillStyle = '#3E2723';
+          ctx.beginPath();
+          ctx.arc(lx + 3, ly - 0.3, 1, 0, Math.PI * 2);
+          ctx.fill();
         }
-        ctx.fill();
       }
 
       // Hawk circling shadow (mountains)
@@ -1102,6 +1234,141 @@ class Editor {
         ctx.quadraticCurveTo(ratX - 4, ratY - 1, ratX - 5, ratY + 0.5);
         ctx.stroke();
       }
+    } else if (fx.type === 'space') {
+      const t = this._animation.animationTime;
+
+      // Star twinkle — subtle brightness variation on background stars
+      if (fx.starTwinkle) {
+        const tp = fx.twinklePhase;
+        const twinkleAlpha = Math.abs(Math.sin(tp)) * 0.15;
+        if (twinkleAlpha > 0.02) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${twinkleAlpha})`;
+          // A few twinkling points
+          for (let i = 0; i < 3; i++) {
+            const sx = x + w * (0.2 + i * 0.3);
+            const sy = y + h * (0.3 + Math.sin(tp + i * 2) * 0.2);
+            ctx.beginPath();
+            ctx.arc(sx, sy, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // Nebula swirl — gentle hue shift overlay
+      if (fx.nebulaSwirl && Math.abs(fx.swirlHueShift) > 0.01) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(fx.swirlHueShift) * 0.5})`;
+        ctx.beginPath();
+        ctx.ellipse(x + w * 0.5, y + h * 0.5, w * 0.3, h * 0.25, t * 0.1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Accretion disk rotation (black hole)
+      if (fx.accretionRotation) {
+        ctx.strokeStyle = `rgba(255, 180, 50, ${(fx.diskGlow || 1) * 0.15})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(x + w * 0.5, y + h * 0.5, w * 0.32, h * 0.12,
+          fx.accretionRotation, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Wormhole spiral rotation
+      if (fx.spiralRotation) {
+        const cx2 = x + w * 0.5;
+        const cy2 = y + h * 0.5;
+        ctx.strokeStyle = 'rgba(180, 130, 255, 0.1)';
+        ctx.lineWidth = 0.8;
+        for (let ring = 0; ring < 3; ring++) {
+          const r = w * (0.08 + ring * 0.06);
+          ctx.beginPath();
+          ctx.arc(cx2, cy2, r, fx.spiralRotation + ring, fx.spiralRotation + ring + Math.PI * 1.2);
+          ctx.stroke();
+        }
+      }
+
+      // Corona pulse (stars)
+      if (fx.coronaPulse && fx.coronaPulse !== 1) {
+        const pulse = (fx.coronaPulse - 0.9) * 3;
+        ctx.fillStyle = `rgba(255, 255, 200, ${Math.abs(pulse) * 0.08})`;
+        ctx.beginPath();
+        ctx.arc(x + w * 0.5, y + h * 0.5, w * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Asteroid tumble — gentle rotation of a small rock shape
+      if (fx.asteroidTumble) {
+        ctx.fillStyle = 'rgba(150, 150, 150, 0.1)';
+        ctx.save();
+        ctx.translate(x + w * 0.6, y + h * 0.4);
+        ctx.rotate(fx.tumbleAngle);
+        ctx.fillRect(-2, -1.5, 4, 3);
+        ctx.restore();
+      }
+
+      // Planet surface shift — subtle texture drift
+      if (fx.surfaceShift) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(fx.surfaceShift) * 0.03})`;
+        ctx.beginPath();
+        ctx.arc(x + w * 0.45 + fx.surfaceShift, y + h * 0.5, w * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Wormhole pulse scale
+      if (fx.pulseScale && fx.pulseScale !== 1) {
+        const scaleAlpha = Math.abs(fx.pulseScale - 1) * 1.5;
+        ctx.strokeStyle = `rgba(180, 130, 255, ${scaleAlpha * 0.15})`;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(x + w * 0.5, y + h * 0.5, w * 0.2 * fx.pulseScale, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+    } else if (fx.type === 'volcanic') {
+      const t = this._animation.animationTime;
+
+      // Lava glow pulse — ambient red-orange glow variation
+      if (fx.glowPulse !== 1) {
+        const glow = (fx.glowPulse - 0.85) * 3;
+        ctx.fillStyle = `rgba(255, 100, 20, ${Math.abs(glow) * 0.08})`;
+        ctx.fillRect(x, y, w, h);
+      }
+
+      // Lava flow movement
+      if (fx.flowMovement) {
+        ctx.strokeStyle = 'rgba(255, 200, 50, 0.08)';
+        ctx.lineWidth = 1;
+        const flowY = y + h * 0.5 + Math.sin(t * 0.8) * 2;
+        const offset = fx.flowMovement % w;
+        ctx.beginPath();
+        ctx.moveTo(x, flowY);
+        ctx.quadraticCurveTo(x + w * 0.5 + offset * 0.1, flowY - 2, x + w, flowY);
+        ctx.stroke();
+      }
+
+      // Smoke wisps
+      if (fx.smokeWisp) {
+        const sp = fx.smokePhase;
+        const smokeProgress = (sp % 5) / 5;
+        ctx.fillStyle = `rgba(100, 100, 100, ${Math.max(0, 0.1 - smokeProgress * 0.1)})`;
+        const smokeX = x + w * (0.4 + Math.sin(sp * 0.5) * 0.15);
+        const smokeY = y + h * (0.3 - smokeProgress * 0.25);
+        ctx.beginPath();
+        ctx.arc(smokeX, smokeY, 1.5 + smokeProgress * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Floating embers
+      if (fx.emberFloat) {
+        ctx.fillStyle = 'rgba(255, 150, 30, 0.2)';
+        for (let i = 0; i < 2; i++) {
+          const ex = x + w * (0.3 + i * 0.4) + Math.sin(t * 2 + i) * 3;
+          const ey = y + h * (0.6 - ((t * 8 + i * 5) % (h * 0.5)) / (h * 0.5) * 0.5);
+          ctx.beginPath();
+          ctx.arc(ex, ey, 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
     } else if (fx.type === 'battlefield') {
       // Mud bubbles
       if (fx.mudBubble) {

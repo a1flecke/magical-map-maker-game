@@ -740,6 +740,96 @@ class TileRenderer {
       case 'dam':
         this._drawDamN64(ctx, size, colors, neighbors);
         break;
+
+      // Session 7: Space tiles
+      case 'deep-space':
+        this._drawDeepSpaceN64(ctx, size, colors, neighbors);
+        break;
+      case 'nebula-red':
+      case 'nebula-blue':
+      case 'nebula-green':
+        this._drawNebulaN64(ctx, size, colors, neighbors, type.pattern);
+        break;
+      case 'asteroid-field':
+        this._drawAsteroidFieldN64(ctx, size, colors, neighbors);
+        break;
+      case 'gas-cloud':
+        this._drawGasCloudN64(ctx, size, colors, neighbors);
+        break;
+      case 'star-yellow':
+      case 'star-blue':
+      case 'star-red':
+        this._drawStarN64(ctx, size, colors, neighbors, type.pattern);
+        break;
+      case 'planet-rocky':
+        this._drawPlanetRockyN64(ctx, size, colors, neighbors);
+        break;
+      case 'planet-gas':
+        this._drawPlanetGasN64(ctx, size, colors, neighbors);
+        break;
+      case 'planet-ice':
+        this._drawPlanetIceN64(ctx, size, colors, neighbors);
+        break;
+      case 'black-hole':
+        this._drawBlackHoleN64(ctx, size, colors, neighbors);
+        break;
+      case 'wormhole':
+        this._drawWormholeN64(ctx, size, colors, neighbors);
+        break;
+
+      // Session 7: Volcanic/Hazard tiles
+      case 'volcanic':
+        this._drawVolcanicN64(ctx, size, colors, neighbors);
+        break;
+      case 'lava-flow':
+        this._drawLavaFlowN64(ctx, size, colors, neighbors);
+        break;
+      case 'lava-field':
+        this._drawLavaFieldN64(ctx, size, colors, neighbors);
+        break;
+      case 'scorched-earth':
+        this._drawScorchedEarthN64(ctx, size, colors, neighbors);
+        break;
+      case 'ruins-ground':
+        this._drawRuinsGroundN64(ctx, size, colors, neighbors);
+        break;
+      case 'no-mans-land':
+        this._drawNoMansLandN64(ctx, size, colors, neighbors);
+        break;
+
+      // Session 7: Constructed tiles
+      case 'paved-road':
+        this._drawPavedRoadN64(ctx, size, colors, neighbors);
+        break;
+      case 'fortification':
+        this._drawFortificationN64(ctx, size, colors, neighbors);
+        break;
+      case 'trench':
+        this._drawTrenchN64(ctx, size, colors, neighbors);
+        break;
+      case 'camp-ground':
+        this._drawCampGroundN64(ctx, size, colors, neighbors);
+        break;
+      case 'harbor':
+        this._drawHarborN64(ctx, size, colors, neighbors);
+        break;
+      case 'town':
+        this._drawTownN64(ctx, size, colors, neighbors);
+        break;
+
+      // Session 7: Continental/World tiles
+      case 'lowland':
+        this._drawLowlandN64(ctx, size, colors, neighbors);
+        break;
+      case 'highland':
+        this._drawHighlandN64(ctx, size, colors, neighbors);
+        break;
+      case 'mountain-range':
+        this._drawMountainRangeN64(ctx, size, colors, neighbors);
+        break;
+      case 'rainforest':
+        this._drawRainforestN64(ctx, size, colors, neighbors);
+        break;
     }
 
     // Render transitions on edges with different tile types
@@ -6195,6 +6285,1345 @@ class TileRenderer {
 
     ctx.globalAlpha = 1;
     this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+
+  /* ==== Session 7: Space Tiles (14 tiles) ==== */
+
+  /** Shared: draw a star field background */
+  _drawStarField(ctx, s, rand, density) {
+    const count = Math.floor(s * density);
+    for (let i = 0; i < count; i++) {
+      const sx = rand() * s;
+      const sy = rand() * s;
+      const brightness = rand();
+      const size = brightness > 0.9 ? 1.5 : (brightness > 0.6 ? 1 : 0.5);
+      ctx.fillStyle = brightness > 0.8 ? '#FFFFFF' :
+        (brightness > 0.5 ? '#E0E0FF' : '#B0B0CC');
+      ctx.globalAlpha = 0.4 + brightness * 0.6;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  _drawDeepSpaceN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(200);
+
+    // Dark space background with subtle noise
+    ctx.fillStyle = colors.primary;
+    ctx.fillRect(0, 0, s, s);
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s + 90.0, y / s + 90.0);
+        ctx.fillStyle = n > 0.55 ? colors.secondary : colors.accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dense star field
+    this._drawStarField(ctx, s, rand, 0.6);
+
+    ctx.restore();
+  }
+
+  _drawNebulaN64(ctx, s, colors, neighbors, pattern) {
+    ctx.save();
+    const seed = pattern === 'nebula-red' ? 201 : (pattern === 'nebula-blue' ? 202 : 203);
+    const rand = this._seededRand(seed);
+
+    // Dark base
+    ctx.fillStyle = colors.primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Sparse background stars
+    this._drawStarField(ctx, s, rand, 0.2);
+
+    // Layered gas cloud using bezier curves
+    for (let layer = 0; layer < 4; layer++) {
+      const cx = s * 0.2 + rand() * s * 0.6;
+      const cy = s * 0.2 + rand() * s * 0.6;
+      const radius = s * 0.25 + rand() * s * 0.2;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      grad.addColorStop(0, colors.accent);
+      grad.addColorStop(0.5, colors.secondary);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.2 + rand() * 0.15;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Swirling filaments with bezier curves
+    ctx.strokeStyle = colors.accent;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.25;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(rand() * s, rand() * s);
+      ctx.bezierCurveTo(
+        rand() * s, rand() * s,
+        rand() * s, rand() * s,
+        rand() * s, rand() * s
+      );
+      ctx.stroke();
+    }
+
+    // Embedded dim stars in gas
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = colors.accent;
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawAsteroidFieldN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(204);
+
+    // Space background
+    ctx.fillStyle = colors.primary;
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.3);
+
+    // Asteroids — irregular gray rocks
+    const count = Math.max(6, Math.floor(s * 0.2));
+    for (let i = 0; i < count; i++) {
+      const ax = rand() * s;
+      const ay = rand() * s;
+      const size = 2 + rand() * 5;
+      const shade = rand();
+      ctx.fillStyle = shade > 0.5 ? colors.secondary : colors.accent;
+      ctx.globalAlpha = 0.7 + rand() * 0.3;
+
+      // Irregular shape via polygon
+      ctx.beginPath();
+      const verts = 5 + Math.floor(rand() * 3);
+      for (let v = 0; v < verts; v++) {
+        const angle = (v / verts) * Math.PI * 2;
+        const r = size * (0.6 + rand() * 0.4);
+        const px = ax + Math.cos(angle) * r;
+        const py = ay + Math.sin(angle) * r;
+        v === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Highlight
+      ctx.fillStyle = '#BDBDBD';
+      ctx.globalAlpha = 0.15;
+      ctx.beginPath();
+      ctx.arc(ax - size * 0.2, ay - size * 0.2, size * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawGasCloudN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(205);
+
+    ctx.fillStyle = colors.primary;
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.15);
+
+    // Translucent layered gas puffs
+    for (let layer = 0; layer < 5; layer++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      const rx = s * 0.15 + rand() * s * 0.2;
+      const ry = s * 0.12 + rand() * s * 0.15;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+      grad.addColorStop(0, colors.accent);
+      grad.addColorStop(0.6, colors.secondary);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.12 + rand() * 0.1;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawStarN64(ctx, s, colors, neighbors, pattern) {
+    ctx.save();
+    const seed = pattern === 'star-blue' ? 207 : (pattern === 'star-red' ? 208 : 206);
+    const rand = this._seededRand(seed);
+
+    // Space background
+    ctx.fillStyle = '#0A0A1A';
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.2);
+
+    const cx = s / 2;
+    const cy = s / 2;
+    const starR = s * 0.22;
+
+    // Corona glow
+    const corona = ctx.createRadialGradient(cx, cy, starR * 0.3, cx, cy, starR * 2);
+    corona.addColorStop(0, colors.accent);
+    corona.addColorStop(0.3, colors.secondary);
+    corona.addColorStop(1, 'transparent');
+    ctx.fillStyle = corona;
+    ctx.globalAlpha = 0.4;
+    ctx.fillRect(0, 0, s, s);
+
+    // Star body
+    const body = ctx.createRadialGradient(cx, cy, 0, cx, cy, starR);
+    body.addColorStop(0, '#FFFFFF');
+    body.addColorStop(0.4, colors.accent);
+    body.addColorStop(1, colors.secondary);
+    ctx.fillStyle = body;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, starR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Lens flare spikes (simple crossed lines)
+    ctx.strokeStyle = colors.accent;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 4; i++) {
+      const angle = (i / 4) * Math.PI;
+      const len = starR * 1.8;
+      ctx.beginPath();
+      ctx.moveTo(cx - Math.cos(angle) * len, cy - Math.sin(angle) * len);
+      ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawPlanetRockyN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(207);
+
+    ctx.fillStyle = '#0A0A1A';
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.2);
+
+    const cx = s / 2;
+    const cy = s / 2;
+    const r = s * 0.3;
+
+    // Planet body
+    const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, 0, cx, cy, r);
+    grad.addColorStop(0, colors.accent);
+    grad.addColorStop(0.5, colors.secondary);
+    grad.addColorStop(1, '#5D4037');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Surface texture via noise
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.globalAlpha = 0.3;
+    for (let y = cy - r; y < cy + r; y += 2) {
+      for (let x = cx - r; x < cx + r; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 91.0, y / s * 3 + 91.0);
+        if (n > 0.55) {
+          ctx.fillStyle = '#795548';
+          ctx.fillRect(x, y, 2, 2);
+        }
+      }
+    }
+    ctx.restore();
+
+    // Terminator shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI * 0.5, Math.PI * 0.5);
+    ctx.lineTo(cx + r * 0.3, cy + r);
+    ctx.quadraticCurveTo(cx + r * 0.3, cy, cx + r * 0.3, cy - r);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  _drawPlanetGasN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(208);
+
+    ctx.fillStyle = '#0A0A1A';
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.2);
+
+    const cx = s / 2;
+    const cy = s / 2;
+    const r = s * 0.32;
+
+    // Gas planet body with banding
+    const grad = ctx.createLinearGradient(cx, cy - r, cx, cy + r);
+    grad.addColorStop(0, colors.secondary);
+    grad.addColorStop(0.3, colors.accent);
+    grad.addColorStop(0.5, colors.secondary);
+    grad.addColorStop(0.7, '#D4A03A');
+    grad.addColorStop(1, colors.accent);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Band detail lines
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 6; i++) {
+      const by = cy - r + r * 2 * (i / 5);
+      ctx.beginPath();
+      ctx.moveTo(cx - r, by + Math.sin(i * 2) * 2);
+      ctx.quadraticCurveTo(cx, by + Math.sin(i * 3) * 3, cx + r, by + Math.sin(i * 2 + 1) * 2);
+      ctx.stroke();
+    }
+
+    // Great storm spot
+    ctx.fillStyle = colors.accent;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.ellipse(cx + r * 0.2, cy + r * 0.1, r * 0.15, r * 0.1, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Terminator
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI * 0.5, Math.PI * 0.5);
+    ctx.quadraticCurveTo(cx + r * 0.4, cy, cx, cy - r);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  _drawPlanetIceN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(209);
+
+    ctx.fillStyle = '#0A0A1A';
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.2);
+
+    const cx = s / 2;
+    const cy = s / 2;
+    const r = s * 0.28;
+
+    // Ice body
+    const grad = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.2, 0, cx, cy, r);
+    grad.addColorStop(0, colors.accent);
+    grad.addColorStop(0.5, colors.secondary);
+    grad.addColorStop(1, '#80DEEA');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ice crack lines
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.moveTo(cx + (rand() - 0.5) * r, cy + (rand() - 0.5) * r);
+      ctx.lineTo(cx + (rand() - 0.5) * r * 1.5, cy + (rand() - 0.5) * r * 1.5);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Terminator
+    ctx.fillStyle = 'rgba(0,0,20,0.3)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI * 0.5, Math.PI * 0.5);
+    ctx.quadraticCurveTo(cx + r * 0.3, cy, cx, cy - r);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  _drawBlackHoleN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(210);
+
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, s, s);
+
+    // Distant stars (warped near center)
+    this._drawStarField(ctx, s, rand, 0.15);
+
+    const cx = s / 2;
+    const cy = s / 2;
+
+    // Accretion disk — glowing ring
+    for (let ring = 3; ring >= 0; ring--) {
+      const outerR = s * (0.3 + ring * 0.05);
+      const innerR = s * (0.25 + ring * 0.04);
+      const diskGrad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
+      diskGrad.addColorStop(0, 'transparent');
+      diskGrad.addColorStop(0.3, ring < 2 ? '#FF6F00' : '#FFAB00');
+      diskGrad.addColorStop(0.6, '#FF8F00');
+      diskGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = diskGrad;
+      ctx.globalAlpha = 0.3 - ring * 0.05;
+      ctx.fillRect(0, 0, s, s);
+    }
+
+    // Bright accretion arc (elliptical for perspective)
+    ctx.strokeStyle = '#FFD54F';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, s * 0.32, s * 0.12, 0.3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = '#FF8F00';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, s * 0.28, s * 0.1, 0.3, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Black center
+    const hole = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.15);
+    hole.addColorStop(0, '#000000');
+    hole.addColorStop(0.8, '#000000');
+    hole.addColorStop(1, 'rgba(0,0,0,0.5)');
+    ctx.fillStyle = hole;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, s * 0.15, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawWormholeN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const rand = this._seededRand(211);
+
+    ctx.fillStyle = '#0A0A1A';
+    ctx.fillRect(0, 0, s, s);
+    this._drawStarField(ctx, s, rand, 0.15);
+
+    const cx = s / 2;
+    const cy = s / 2;
+
+    // Concentric spiraling arcs with color gradient
+    for (let ring = 6; ring >= 0; ring--) {
+      const r = s * 0.05 + ring * s * 0.05;
+      const t = ring / 7;
+      const color = this._lerpColor(colors.accent, colors.secondary, t);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.3 + (1 - t) * 0.4;
+
+      // Spiral arc
+      ctx.beginPath();
+      const startAngle = ring * 0.5;
+      ctx.arc(cx, cy, r, startAngle, startAngle + Math.PI * 1.5);
+      ctx.stroke();
+    }
+
+    // Bright center
+    const center = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.08);
+    center.addColorStop(0, '#FFFFFF');
+    center.addColorStop(0.5, colors.accent);
+    center.addColorStop(1, 'transparent');
+    ctx.fillStyle = center;
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath();
+    ctx.arc(cx, cy, s * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Outer glow
+    const glow = ctx.createRadialGradient(cx, cy, s * 0.2, cx, cy, s * 0.45);
+    glow.addColorStop(0, colors.secondary);
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow;
+    ctx.globalAlpha = 0.15;
+    ctx.fillRect(0, 0, s, s);
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 7: Volcanic/Hazard Tiles (6 tiles) ==== */
+
+  _drawVolcanicN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(220);
+
+    // Dark gray base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin rock texture
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 92.0, y / s * 3 + 92.0);
+        ctx.fillStyle = n > 0.55 ? secondary : '#263238';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Glowing red-orange crack veins
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      let x = rand() * s;
+      let y = rand() * s;
+      ctx.moveTo(x, y);
+      for (let seg = 0; seg < 4; seg++) {
+        x += (rand() - 0.5) * s * 0.3;
+        y += (rand() - 0.5) * s * 0.3;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Glow around cracks
+    ctx.strokeStyle = '#FF8A65';
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      let x = rand() * s;
+      let y = rand() * s;
+      ctx.moveTo(x, y);
+      for (let seg = 0; seg < 3; seg++) {
+        x += (rand() - 0.5) * s * 0.25;
+        y += (rand() - 0.5) * s * 0.25;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawLavaFlowN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(221);
+
+    // Bright lava base
+    const lavaGrad = ctx.createLinearGradient(0, 0, s, s);
+    lavaGrad.addColorStop(0, primary);
+    lavaGrad.addColorStop(0.3, secondary);
+    lavaGrad.addColorStop(0.6, primary);
+    lavaGrad.addColorStop(1, secondary);
+    ctx.fillStyle = lavaGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin flow texture
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 93.0, y / s * 2 + 93.0);
+        ctx.fillStyle = n > 0.6 ? accent : (n < 0.3 ? '#E65100' : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Cooling black crusted edges
+    ctx.fillStyle = '#1A1A1A';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 5, 1 + rand() * 3,
+        rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Hot white highlights
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 1 + rand() * 2, 0.5 + rand(), rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+  _drawLavaFieldN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(222);
+
+    // Cooled black basalt
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Rock texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 94.0, y / s * 3 + 94.0);
+        ctx.fillStyle = n > 0.5 ? secondary : '#1A1A1A';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Intermittent red-glow cracks
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      let x = rand() * s;
+      let y = rand() * s;
+      ctx.moveTo(x, y);
+      for (let seg = 0; seg < 3; seg++) {
+        x += (rand() - 0.5) * s * 0.2;
+        y += (rand() - 0.5) * s * 0.2;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Red glow spots
+    for (let i = 0; i < 3; i++) {
+      const gx = rand() * s;
+      const gy = rand() * s;
+      const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, 4);
+      glow.addColorStop(0, accent);
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.globalAlpha = 0.2;
+      ctx.fillRect(gx - 4, gy - 4, 8, 8);
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawScorchedEarthN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(223);
+
+    // Blackened ground
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Ash texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2.5 + 95.0, y / s * 2.5 + 95.0);
+        ctx.fillStyle = n > 0.5 ? secondary : '#1A1A1A';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Ember specks
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 8; i++) {
+      ctx.fillStyle = rand() > 0.5 ? accent : '#FF8F00';
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.5 + rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Dead stumps
+    ctx.fillStyle = '#3E2723';
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 3; i++) {
+      const sx2 = rand() * s;
+      const sy = rand() * s;
+      ctx.fillRect(sx2 - 1.5, sy, 3, 5);
+      // Stump top
+      ctx.beginPath();
+      ctx.ellipse(sx2, sy, 2.5, 1.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawRuinsGroundN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(224);
+
+    // Dirt base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Earth texture
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 96.0, y / s * 2 + 96.0);
+        ctx.fillStyle = n > 0.55 ? secondary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Broken stone rubble
+    const rubbleCount = Math.max(6, Math.floor(s * 0.2));
+    for (let i = 0; i < rubbleCount; i++) {
+      const rx = rand() * s;
+      const ry = rand() * s;
+      const rw = 2 + rand() * 4;
+      const rh = 2 + rand() * 3;
+      ctx.fillStyle = rand() > 0.5 ? '#9E9E9E' : '#757575';
+      ctx.globalAlpha = 0.5;
+      ctx.save();
+      ctx.translate(rx, ry);
+      ctx.rotate(rand() * Math.PI);
+      ctx.fillRect(-rw / 2, -rh / 2, rw, rh);
+      ctx.restore();
+    }
+
+    // Moss reclaiming
+    ctx.fillStyle = '#4CAF50';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 2 + rand() * 3, 1 + rand() * 2, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawNoMansLandN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(225);
+
+    // Brown mud base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin mud texture
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2.5 + 97.0, y / s * 2.5 + 97.0);
+        ctx.fillStyle = n > 0.55 ? secondary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Craters
+    for (let i = 0; i < 3; i++) {
+      const crx = rand() * s;
+      const cry = rand() * s;
+      const crr = 3 + rand() * 5;
+      // Crater rim
+      ctx.strokeStyle = secondary;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      ctx.ellipse(crx, cry, crr, crr * 0.7, rand() * 0.3, 0, Math.PI * 2);
+      ctx.stroke();
+      // Crater interior (darker)
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(crx, cry, crr * 0.7, crr * 0.5, rand() * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Subtle debris
+    ctx.fillStyle = '#616161';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 5; i++) {
+      ctx.fillRect(rand() * s, rand() * s, 1 + rand() * 2, 1 + rand() * 2);
+    }
+
+    // Subtle barbed wire (age-appropriate — very subtle)
+    ctx.strokeStyle = '#9E9E9E';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.15;
+    const wy = s * 0.3 + rand() * s * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(0, wy);
+    for (let x = 0; x < s; x += 4) {
+      ctx.lineTo(x + 2, wy + (rand() - 0.5) * 2);
+    }
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 7: Constructed Tiles (6 tiles) ==== */
+
+  _drawPavedRoadN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(230);
+
+    // Base stone
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Cobblestone block pattern
+    const blockW = s / 6;
+    const blockH = s / 5;
+    ctx.strokeStyle = '#616161';
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.4;
+    for (let row = 0; row < 6; row++) {
+      const offset = (row % 2) * blockW * 0.5;
+      for (let col = -1; col < 7; col++) {
+        const bx = col * blockW + offset;
+        const by = row * blockH;
+        ctx.strokeRect(bx, by, blockW, blockH);
+
+        // Slight color variation per block
+        const shade = rand();
+        ctx.fillStyle = shade > 0.6 ? secondary : (shade < 0.3 ? '#90A4AE' : primary);
+        ctx.globalAlpha = 0.15;
+        ctx.fillRect(bx + 0.5, by + 0.5, blockW - 1, blockH - 1);
+        ctx.globalAlpha = 0.4;
+      }
+    }
+
+    // Wear patterns
+    ctx.fillStyle = '#546E7A';
+    ctx.globalAlpha = 0.15;
+    ctx.beginPath();
+    ctx.ellipse(s * 0.5, s * 0.5, s * 0.3, s * 0.15, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Moss in cracks
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 4; i++) {
+      ctx.fillRect(rand() * s, rand() * s, 1 + rand() * 2, 0.5 + rand());
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawFortificationN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(231);
+
+    // Thick stone wall base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Stone block texture
+    const blockW = s / 4;
+    const blockH = s / 5;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.35;
+    for (let row = 0; row < 6; row++) {
+      const offset = (row % 2) * blockW * 0.5;
+      for (let col = -1; col < 5; col++) {
+        ctx.strokeRect(col * blockW + offset, row * blockH, blockW, blockH);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Perlin texture for stone depth
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 98.0, y / s * 2 + 98.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Crenellations at top
+    ctx.fillStyle = '#B0BEC5';
+    ctx.globalAlpha = 0.5;
+    const merlonW = s / 5;
+    for (let i = 0; i < 3; i++) {
+      ctx.fillRect(i * merlonW * 2, 0, merlonW, s * 0.12);
+    }
+
+    // Arrow slits
+    ctx.fillStyle = '#1A1A1A';
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 2; i++) {
+      const ax = s * 0.25 + i * s * 0.5;
+      ctx.fillRect(ax - 1, s * 0.35, 2, s * 0.15);
+      ctx.fillRect(ax - 3, s * 0.41, 6, 2);
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawTrenchN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(232);
+
+    // Earth walls on sides
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Trench channel in center (darker)
+    const channelW = s * 0.5;
+    const cx = (s - channelW) / 2;
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.6;
+    ctx.fillRect(cx, 0, channelW, s);
+
+    // Earth texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2.5 + 99.0, y / s * 2.5 + 99.0);
+        ctx.fillStyle = n > 0.5 ? secondary : primary;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Wooden support beams
+    ctx.fillStyle = '#8D6E63';
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 3; i++) {
+      const by = s * 0.15 + i * s * 0.3;
+      ctx.fillRect(cx + 1, by, channelW - 2, 2);
+    }
+
+    // Sandbag edges
+    ctx.fillStyle = '#A1887F';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 4; i++) {
+      const sy = i * s * 0.25;
+      ctx.beginPath();
+      ctx.ellipse(cx + 1, sy + s * 0.1, 4, 2.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(cx + channelW - 1, sy + s * 0.1, 4, 2.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCampGroundN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(233);
+
+    // Flat earth base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Earth texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 100.0, y / s * 2 + 100.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Trampled grass patches
+    ctx.fillStyle = '#689F38';
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 4, 2 + rand() * 3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Fire pit scorch in center
+    ctx.fillStyle = '#37474F';
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.arc(s * 0.5, s * 0.55, s * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+    // Ring of stones
+    ctx.strokeStyle = '#9E9E9E';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.arc(s * 0.5, s * 0.55, s * 0.1, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Tent stake marks
+    ctx.fillStyle = '#5D4037';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 4; i++) {
+      ctx.fillRect(rand() * s, rand() * s, 1, 2);
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawHarborN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(234);
+
+    // Blue water base
+    const waterGrad = ctx.createLinearGradient(0, 0, 0, s);
+    waterGrad.addColorStop(0, primary);
+    waterGrad.addColorStop(0.5, secondary);
+    waterGrad.addColorStop(1, primary);
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Water texture
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 3; i++) {
+      const wy = s * 0.2 + i * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(0, wy);
+      ctx.quadraticCurveTo(s * 0.5, wy - 1.5, s, wy);
+      ctx.stroke();
+    }
+
+    // Wooden dock planks
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.8;
+    const dockW = s * 0.35;
+    ctx.fillRect(0, s * 0.35, dockW, s * 0.3);
+
+    // Plank lines
+    ctx.strokeStyle = '#5D4037';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 5; i++) {
+      const py = s * 0.35 + i * s * 0.06;
+      ctx.beginPath();
+      ctx.moveTo(0, py);
+      ctx.lineTo(dockW, py);
+      ctx.stroke();
+    }
+
+    // Rope details
+    ctx.strokeStyle = '#A1887F';
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(dockW, s * 0.4);
+    ctx.quadraticCurveTo(dockW + 4, s * 0.5, dockW, s * 0.55);
+    ctx.stroke();
+
+    // Dock posts
+    ctx.fillStyle = '#6D4C41';
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    ctx.arc(dockW, s * 0.4, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(dockW, s * 0.6, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+  _drawTownN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(235);
+
+    // Ground/street base
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, s, s);
+
+    // Streets
+    ctx.fillStyle = '#9E9E9E';
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(s * 0.45, 0, s * 0.1, s);
+    ctx.fillRect(0, s * 0.45, s, s * 0.1);
+
+    // Tiny rooftop shapes
+    const roofColors = ['#B71C1C', '#1565C0', '#4E342E', '#2E7D32', '#F57F17', '#6A1B9A'];
+    ctx.globalAlpha = 0.7;
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        // Skip street intersections
+        if (col === 1 && row === 1) continue;
+
+        const bx = col * s * 0.35 + s * 0.02;
+        const by = row * s * 0.35 + s * 0.02;
+        const bw = s * 0.28;
+        const bh = s * 0.28;
+
+        // 2–3 tiny buildings per block
+        for (let b = 0; b < 2 + Math.floor(rand() * 2); b++) {
+          const rx = bx + rand() * bw * 0.5;
+          const ry = by + rand() * bh * 0.5;
+          const rw = 3 + rand() * 5;
+          const rh = 3 + rand() * 5;
+          ctx.fillStyle = roofColors[Math.floor(rand() * roofColors.length)];
+          ctx.fillRect(rx, ry, rw, rh);
+
+          // Roof highlight
+          ctx.fillStyle = secondary;
+          ctx.globalAlpha = 0.2;
+          ctx.fillRect(rx, ry, rw, 1);
+          ctx.globalAlpha = 0.7;
+        }
+      }
+    }
+
+    // Chimney smoke wisps (just tiny dots)
+    ctx.fillStyle = '#BDBDBD';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s * 0.5, 1 + rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 7: Continental/World Tiles (4 tiles) ==== */
+
+  _drawLowlandN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(240);
+
+    // Light green base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Pastoral field patterns
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 1.5 + 101.0, y / s * 1.5 + 101.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.35 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Field boundary lines (gentle pastoral feel)
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(0, s * 0.2 + i * s * 0.3);
+      ctx.quadraticCurveTo(s * 0.5, s * 0.2 + i * s * 0.3 + (rand() - 0.5) * s * 0.1, s, s * 0.2 + i * s * 0.3);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawHighlandN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(241);
+
+    // Darker elevated base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Rugged texture
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 102.0, y / s * 3 + 102.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Heather/bracken patches
+    ctx.fillStyle = '#7B1FA2';
+    ctx.globalAlpha = 0.12;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 4, 2 + rand() * 3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Elevation ridges
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 2; i++) {
+      ctx.beginPath();
+      const startY = s * 0.3 + rand() * s * 0.4;
+      ctx.moveTo(0, startY);
+      ctx.bezierCurveTo(s * 0.3, startY - s * 0.1, s * 0.6, startY + s * 0.1, s, startY);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawMountainRangeN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(242);
+
+    // Base terrain (full opacity first, then detail overlay)
+    ctx.fillStyle = '#8D6E63';
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin base
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 103.0, y / s * 2 + 103.0);
+        ctx.fillStyle = n > 0.5 ? primary : '#6D4C41';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Line of stylized mountain peaks (world-map scale)
+    const peakCount = 4 + Math.floor(rand() * 2);
+    for (let i = 0; i < peakCount; i++) {
+      const px = s * 0.1 + (i / (peakCount - 1)) * s * 0.8;
+      const peakH = s * 0.3 + rand() * s * 0.2;
+      const baseW = s * 0.2 + rand() * s * 0.1;
+      const baseY = s * 0.65;
+
+      // Mountain body
+      ctx.fillStyle = primary;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(px - baseW / 2, baseY);
+      ctx.lineTo(px, baseY - peakH);
+      ctx.lineTo(px + baseW / 2, baseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Shadow side
+      ctx.fillStyle = '#546E7A';
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(px, baseY - peakH);
+      ctx.lineTo(px + baseW / 2, baseY);
+      ctx.lineTo(px + baseW * 0.1, baseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Snow cap
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(px - baseW * 0.12, baseY - peakH + peakH * 0.25);
+      ctx.lineTo(px, baseY - peakH);
+      ctx.lineTo(px + baseW * 0.12, baseY - peakH + peakH * 0.25);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawRainforestN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(243);
+
+    // Ultra-dense dark green base (no ground visible)
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Layered leaf texture
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 104.0, y / s * 3 + 104.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dense canopy circles (overlapping)
+    for (let i = 0; i < 12; i++) {
+      const cx2 = rand() * s;
+      const cy2 = rand() * s;
+      const r = 3 + rand() * 5;
+      const shade = rand();
+      ctx.fillStyle = shade > 0.6 ? secondary : (shade < 0.3 ? accent : primary);
+      ctx.globalAlpha = 0.3 + rand() * 0.2;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Highlight dapples
+    ctx.fillStyle = '#4CAF50';
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 1 + rand() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
     ctx.restore();
   }
 
