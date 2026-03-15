@@ -95,6 +95,15 @@
   justify-content: center;
 }
 
+/* Map Life button */
+#btn-map-life {
+  min-width: var(--min-touch);
+  min-height: var(--min-touch);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
 /* Zoom controls group */
 .zoom-group {
   display: flex;

@@ -258,6 +258,7 @@ class InputHandler {
       case '1': this._onKeyAction('brush-1'); break;
       case '2': this._onKeyAction('brush-2'); break;
       case '3': this._onKeyAction('brush-3'); break;
+      case 'm': case 'M': this._onKeyAction('map-life'); break;
       case '+': case '=': this._onKeyAction('zoom-in'); break;
       case '-': case '_': this._onKeyAction('zoom-out'); break;
       case '0': this._onKeyAction('zoom-fit'); break;
