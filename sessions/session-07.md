@@ -111,6 +111,18 @@ Review all 110 tiles holistically:
 - Ensure dungeon tiles have consistent moody atmosphere
 - Flag any tile that looks "unfinished" compared to others and fix
 
+### 8. Land Animal Animation Upgrade
+Replace shadow-based land animal animations with small colored animal shapes:
+- **Farmland**: chickens (white/brown body, red comb), cows (black/white patches), pigs (pink oval)
+- **Hills**: goats (gray/brown, small horns), sheep (white fluffy oval, dark face)
+- Animals should be tiny (3–6px) but recognizable colored shapes, not dark shadows
+- Keep shadow approach for flying animals (hawks on mountains, seagulls on coast) — shadows make sense for airborne creatures
+- Animals should wander slowly across the tile, despawning at edges
+- Only visible at FULL animation level (intense effects)
+- Investigate: what colors/shapes read well at small sizes on varied tile backgrounds? May need a 1px dark outline or light halo for visibility
+- Investigate: should animals pause/graze occasionally, or keep constant slow movement?
+- Investigate: performance impact of colored shapes vs simple shadow fills — profile on iPad
+
 ---
 
 ## Files Modified
@@ -146,6 +158,8 @@ Review all 110 tiles holistically:
 - [ ] Transitions between all major category pairs look natural
 - [ ] No tile looks "unfinished" compared to others
 - [ ] Animations enhance without distracting — appropriate for ages 7-15
+- [ ] Land animals (farmland, hills) are small colored shapes, not shadows — recognizable at tile size
+- [ ] Flying animal shadows (hawks, seagulls) remain as shadows — appropriate for airborne creatures
 
 ### Web Developer Reviewer
 - [ ] Frame time under 16ms at quality level 1 on iPad (profiling evidence)

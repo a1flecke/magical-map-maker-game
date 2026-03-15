@@ -550,6 +550,38 @@ class AnimationManager {
           seagullShadow: this.showIntenseEffects ? Math.sin(t * 0.25 + phase) > 0.92 : false
         };
 
+      case 'farmland':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 0.7 + phase) * 1.5,
+          windPhase: t * 0.4 + phase * 0.3,
+          gustAlpha: 0,
+          animalShadow: this.showIntenseEffects ? Math.sin(t * 0.15 + phase * 1.7) > 0.92 : false,
+          animalType: 'farm' // chicken, cow, pig
+        };
+
+      case 'hills':
+        return {
+          type: 'elevation',
+          windSway: this.showGentleEffects ? Math.sin(t * 1.0 + phase) * 1.5 : 0,
+          windPhase: t * 0.5 + phase * 0.4,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.2 + phase * 0.3) * 0.3 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.15 + phase * 0.5) * 0.08 + 0.04) : 0,
+          livestockShadow: this.showIntenseEffects ? Math.sin(t * 0.12 + phase * 2.1) > 0.9 : false,
+          livestockType: 'hill' // goats, sheep
+        };
+
+      case 'mountain':
+        return {
+          type: 'elevation',
+          windSway: 0,
+          windPhase: 0,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.15 + phase * 0.2) * 0.35 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.12 + phase * 0.4) * 0.1 + 0.05) : 0,
+          livestockShadow: false,
+          hawkShadow: this.showIntenseEffects ? Math.sin(t * 0.18 + phase * 1.3) > 0.88 : false
+        };
+
       default:
         return null;
     }

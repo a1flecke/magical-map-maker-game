@@ -18,11 +18,14 @@
 - `row = Math.floor(pixelY / cellSize)`
 - Pixel origin: `(col * cellSize, row * cellSize)`
 
-### Hex Grid (pointy-top, offset columns)
-- Hex width: `cellSize`
-- **Hex height: round `cellSize * (2 / Math.sqrt(3))` to nearest whole pixel** to prevent sub-pixel gap artifacts. Derive effective cellSize from the rounded height.
+### Hex Grid (flat-top, offset columns)
+- **Regular hexagon** with circumradius = `cellSize / 2`. All vertices equidistant from center.
+- Hex width (point-to-point): `cellSize`
+- **Hex height (flat-to-flat): round `cellSize * Math.sqrt(3) / 2` to nearest whole pixel**
+- Column spacing: `cellSize * 0.75` (3/4 of width)
+- Row spacing: `hexHeight`
 - Odd columns offset down by `hexHeight / 2`
-- Use cube coordinates for neighbor calculations, convert to offset for storage
+- Vertex angles: `0°, 60°, 120°, 180°, 240°, 300°` (flat-top)
 - **Critical:** Pixel-to-hex conversion must use the nearest-hex algorithm (not simple division), accounting for the hexagonal boundary shape
 
 ### Isometric Diamond Grid
@@ -33,12 +36,13 @@
 - Hit testing: check if point falls within the diamond's rhombus boundary
 
 ### Octagon Grid
-- Octagons arranged in grid with small square fillers at intersections
-- Each octagon cell has 4 adjacent small-square cells
+- Regular octagons share flat edges (spacing = octSize, no gap between bounding boxes)
+- Filler cells are 45°-rotated diamonds (squares rotated 45°) at octagon corners
+- Octagon inset (corner cut leg) = `side / Math.SQRT2` for regular octagon
 - Two cell types in data: `{ cellType: 'oct', col, row }` and `{ cellType: 'sq', col, row }`
 - Save format includes `cellType` field for octagon grids
-- Hit testing must check both octagon and square regions
-- Both cell types are interactive — users can place tiles on square fillers too
+- Diamond hit testing: `|dx| + |dy| <= inset`
+- Both cell types are interactive — users can place tiles on diamond fillers too
 
 ## Input Handling
 

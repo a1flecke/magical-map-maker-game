@@ -783,6 +783,36 @@ class Editor {
         ctx.ellipse(gustX, y + h * 0.4, w * 0.3, h * 0.15, 0.2, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // Farm animal shadow (farmland only)
+      if (fx.animalShadow) {
+        const t = this._animation.animationTime;
+        const kind = Math.floor((t * 0.2 + (x + y) * 0.01) % 3);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+        const ax = x + w * (0.3 + Math.sin(t * 0.5) * 0.15);
+        const ay = y + h * (0.55 + Math.cos(t * 0.4) * 0.08);
+        ctx.beginPath();
+        if (kind === 0) {
+          // Chicken — small oval with head dot
+          ctx.ellipse(ax, ay, 1.8, 1.2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(ax + 1.5, ay - 0.8, 0.6, 0, Math.PI * 2);
+        } else if (kind === 1) {
+          // Cow — larger rectangular shadow
+          ctx.ellipse(ax, ay, 4, 2.2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(ax + 3.5, ay - 0.5, 1.2, 0, Math.PI * 2);
+        } else {
+          // Pig — round compact shadow
+          ctx.ellipse(ax, ay, 2.8, 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(ax + 2, ay - 0.3, 0.9, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
     } else if (fx.type === 'forest') {
       // Tree canopy rustle
       const sway = fx.rustleSway;
@@ -849,6 +879,70 @@ class Editor {
         ctx.moveTo(x, y + h * 0.5 + fx.shimmerOffset);
         ctx.quadraticCurveTo(x + w * 0.5, y + h * 0.5 - fx.shimmerOffset, x + w, y + h * 0.5 + fx.shimmerOffset);
         ctx.stroke();
+      }
+    } else if (fx.type === 'elevation') {
+      // Hills and mountains — cloud shadows, wind sway, livestock/hawk
+      // Cloud shadow drift
+      if (fx.cloudShadowAlpha > 0.01) {
+        const shadowCx = x + w * (0.5 + fx.cloudShadowX);
+        ctx.fillStyle = `rgba(0, 0, 0, ${fx.cloudShadowAlpha})`;
+        ctx.beginPath();
+        ctx.ellipse(shadowCx, y + h * 0.45, w * 0.35, h * 0.2, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Wind sway on grass (hills only)
+      if (Math.abs(fx.windSway) > 0.1) {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 2; i++) {
+          const ly = y + h * (0.55 + i * 0.2);
+          const offset = Math.sin(fx.windPhase + i * 0.8) * fx.windSway;
+          ctx.beginPath();
+          ctx.moveTo(x + w * 0.15, ly);
+          ctx.quadraticCurveTo(x + w * 0.5 + offset, ly - 1.5, x + w * 0.85, ly);
+          ctx.stroke();
+        }
+      }
+
+      // Livestock shadow (goats/sheep on hills)
+      if (fx.livestockShadow) {
+        const t = this._animation.animationTime;
+        const kind = Math.floor((t * 0.3 + (x + y) * 0.01) % 2); // alternate goat/sheep
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
+        const lx = x + w * (0.25 + Math.sin(t * 0.8) * 0.2);
+        const ly = y + h * (0.6 + Math.cos(t * 0.6) * 0.1);
+        ctx.beginPath();
+        if (kind === 0) {
+          // Goat-like shadow — small body with tiny head bump
+          ctx.ellipse(lx, ly, 3, 1.8, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(lx + 2.5, ly - 1, 1, 0, Math.PI * 2);
+        } else {
+          // Sheep-like shadow — rounder, fluffier
+          ctx.ellipse(lx, ly, 3.5, 2.5, 0, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
+
+      // Hawk circling shadow (mountains)
+      if (fx.hawkShadow) {
+        const t = this._animation.animationTime;
+        const angle = t * 1.2;
+        const hx = x + w * 0.5 + Math.cos(angle) * w * 0.25;
+        const hy = y + h * 0.4 + Math.sin(angle) * h * 0.2;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.beginPath();
+        // Bird silhouette — V-shaped wings
+        ctx.moveTo(hx - 4, hy + 0.5);
+        ctx.lineTo(hx - 1, hy - 1);
+        ctx.lineTo(hx, hy);
+        ctx.lineTo(hx + 1, hy - 1);
+        ctx.lineTo(hx + 4, hy + 0.5);
+        ctx.lineTo(hx, hy + 1);
+        ctx.closePath();
+        ctx.fill();
       }
     } else if (fx.type === 'coastal') {
       // Wave lap at beach/bluff
