@@ -313,20 +313,28 @@ class Editor {
         ctx.save();
         ctx.clip(path);
 
+        // Draw tile image with 1px bleed on each side to prevent sub-pixel gaps
+        // between adjacent cells. The clip path keeps the visual boundary sharp.
+        const bleed = 1;
+
         if (shape === 'octagon' && cellType === 'sq') {
           const origin = grid.cellOrigin(col, row, 'sq');
           const sqSize = grid.sqSize;
-          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh, origin.x, origin.y, sqSize, sqSize);
+          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh,
+            origin.x - bleed, origin.y - bleed, sqSize + bleed * 2, sqSize + bleed * 2);
         } else if (shape === 'hex') {
           const origin = grid.cellOrigin(col, row);
-          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh, origin.x, origin.y, grid.hexW, grid.hexH);
+          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh,
+            origin.x - bleed, origin.y - bleed, grid.hexW + bleed * 2, grid.hexH + bleed * 2);
         } else if (shape === 'diamond') {
           const origin = grid.cellOrigin(col, row);
-          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh, origin.x, origin.y, grid.dW, grid.dH);
+          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh,
+            origin.x - bleed, origin.y - bleed, grid.dW + bleed * 2, grid.dH + bleed * 2);
         } else {
           // Octagon main cell
           const origin = grid.cellOrigin(col, row, cellType);
-          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh, origin.x, origin.y, cellSize, cellSize);
+          ctx.drawImage(img.atlas, img.sx, img.sy, img.sw, img.sh,
+            origin.x - bleed, origin.y - bleed, cellSize + bleed * 2, cellSize + bleed * 2);
         }
 
         ctx.restore();
@@ -577,6 +585,170 @@ class Editor {
         }
         break;
       }
+
+      case 'wide-river':
+      case 'stream': {
+        // Flow lines
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 0.7;
+        const flowY = (fx.flowOffset % h);
+        for (let i = 0; i < 3; i++) {
+          const ly = y + (flowY + i * h / 3) % h;
+          const lx = x + w * (0.3 + i * 0.15);
+          ctx.beginPath();
+          ctx.moveTo(lx, ly);
+          ctx.lineTo(lx + (i - 1) * 2, ly + 6 * (fx.currentStrength || 0.4));
+          ctx.stroke();
+        }
+        // Sparkle for stream
+        if (fx.sparkle && fx.sparklePhase !== undefined) {
+          const sp = fx.sparklePhase;
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.25 + Math.sin(sp) * 0.15})`;
+          ctx.beginPath();
+          ctx.arc(x + w * (0.4 + Math.sin(sp * 0.7) * 0.15), y + h * (0.4 + Math.cos(sp * 0.5) * 0.15), 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
+
+      case 'pond': {
+        // Expanding ripple
+        if (fx.rippleAlpha > 0.03) {
+          ctx.strokeStyle = `rgba(255, 255, 255, ${fx.rippleAlpha})`;
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.arc(x + w * 0.5, y + h * 0.5, fx.rippleRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        if (fx.sparkle) {
+          const sp = fx.sparklePhase;
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.2 + Math.sin(sp) * 0.15})`;
+          ctx.beginPath();
+          ctx.arc(x + w * (0.4 + Math.sin(sp * 0.6) * 0.15), y + h * (0.4 + Math.cos(sp * 0.4) * 0.1), 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
+
+      case 'rapids': {
+        // Turbulent flow
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1;
+        const rFlow = (fx.flowOffset % h);
+        for (let i = 0; i < 4; i++) {
+          const ly = y + (rFlow + i * h / 4) % h;
+          ctx.beginPath();
+          ctx.moveTo(x + w * 0.2, ly);
+          ctx.bezierCurveTo(x + w * 0.35, ly + fx.foamShift, x + w * 0.65, ly - fx.foamShift, x + w * 0.8, ly);
+          ctx.stroke();
+        }
+        // Splash particles
+        if (fx.splashAlpha > 0.05) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${fx.splashAlpha})`;
+          ctx.beginPath();
+          ctx.arc(x + w * 0.4, y + h * 0.3, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x + w * 0.6, y + h * 0.6, 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
+
+      case 'waterfall': {
+        // Vertical fall streaks
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 0.8;
+        const fallOff = fx.fallOffset % h;
+        for (let i = 0; i < 3; i++) {
+          const lx = x + w * (0.35 + i * 0.15);
+          const ly = y + (fallOff + i * h / 3) % h;
+          ctx.beginPath();
+          ctx.moveTo(lx, ly);
+          ctx.lineTo(lx + (Math.random() - 0.5) * 2, ly + 8);
+          ctx.stroke();
+        }
+        // Mist
+        if (fx.mistAlpha > 0.02) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${fx.mistAlpha})`;
+          ctx.beginPath();
+          ctx.ellipse(x + w * 0.5, y + h * 0.8, w * 0.3, h * 0.08, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
+
+      case 'hot-spring': {
+        // Steam rising
+        if (fx.steamY >= 0 && fx.steamAlpha > 0.03) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${fx.steamAlpha})`;
+          const sy = y + h * 0.3 - fx.steamY * (h / 30);
+          ctx.beginPath();
+          ctx.ellipse(x + w * 0.45, sy, 3, 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(x + w * 0.6, sy + 3, 2, 1.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Ripple
+        if (fx.rippleAlpha > 0.03) {
+          ctx.strokeStyle = `rgba(255, 255, 255, ${fx.rippleAlpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.arc(x + w * 0.5, y + h * 0.5, fx.rippleRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        break;
+      }
+
+      case 'mangrove': {
+        // Water ripple beneath roots
+        if (fx.rippleAlpha > 0.03) {
+          ctx.strokeStyle = `rgba(255, 255, 255, ${fx.rippleAlpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.arc(x + w * 0.5, y + h * 0.7, fx.rippleRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        // Water drip
+        if (fx.dripY >= 0 && fx.dripAlpha > 0.03) {
+          ctx.fillStyle = `rgba(100, 180, 220, ${fx.dripAlpha})`;
+          const dy = y + h * 0.4 + fx.dripY * (h / 20);
+          ctx.beginPath();
+          ctx.arc(x + w * 0.4, dy, 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
+
+      default: {
+        // Generic water animation: ripple + sparkle fallback for delta, reef,
+        // tidal-pool, ocean-inlet, continental-shelf, oasis
+        if (fx.rippleRadius !== undefined && fx.rippleAlpha > 0.03) {
+          ctx.strokeStyle = `rgba(255, 255, 255, ${fx.rippleAlpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.arc(x + w * 0.5, y + h * 0.5, fx.rippleRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        if (fx.waveOffset !== undefined) {
+          const wy = y + h * 0.4 + fx.waveOffset;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x, wy);
+          ctx.quadraticCurveTo(x + w * 0.5, wy - 2, x + w, wy);
+          ctx.stroke();
+        }
+        if (fx.sparkle && fx.sparklePhase !== undefined) {
+          const sp = fx.sparklePhase;
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.2 + Math.sin(sp) * 0.15})`;
+          ctx.beginPath();
+          ctx.arc(x + w * (0.35 + Math.sin(sp * 0.6) * 0.2), y + h * (0.4 + Math.cos(sp * 0.4) * 0.15), 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      }
     }
 
     ctx.restore();
@@ -653,6 +825,54 @@ class Editor {
         const dustY = y + h * 0.6;
         ctx.beginPath();
         ctx.ellipse(dustX, dustY, 3, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (fx.type === 'dust') {
+      // Floating dust motes
+      if (fx.dustMoteX >= 0 && fx.dustAlpha > 0.02) {
+        ctx.fillStyle = `rgba(180, 160, 130, ${fx.dustAlpha})`;
+        const moteX = x + (fx.dustMoteX % w);
+        const moteY = y + h * 0.4 + fx.dustMoteY;
+        ctx.beginPath();
+        ctx.arc(moteX, moteY, 1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + ((fx.dustMoteX + 20) % w), moteY + 5, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (fx.type === 'heat') {
+      // Heat shimmer — subtle wavy distortion line
+      if (fx.shimmerAlpha > 0.02) {
+        ctx.strokeStyle = `rgba(255, 200, 100, ${fx.shimmerAlpha})`;
+        ctx.lineWidth = w * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(x, y + h * 0.5 + fx.shimmerOffset);
+        ctx.quadraticCurveTo(x + w * 0.5, y + h * 0.5 - fx.shimmerOffset, x + w, y + h * 0.5 + fx.shimmerOffset);
+        ctx.stroke();
+      }
+    } else if (fx.type === 'coastal') {
+      // Wave lap at beach/bluff
+      if (Math.abs(fx.waveLap) > 0.1) {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1.2;
+        const wy = y + h * 0.72 + fx.waveLap;
+        ctx.beginPath();
+        ctx.moveTo(x, wy);
+        ctx.quadraticCurveTo(x + w * 0.5, wy - 1.5, x + w, wy);
+        ctx.stroke();
+      }
+      // Seagull shadow
+      if (fx.seagullShadow) {
+        const t = this._animation.animationTime;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+        const gx = x + w * (0.2 + Math.sin(t * 1.5) * 0.3);
+        const gy = y + h * (0.3 + Math.cos(t * 1.2) * 0.15);
+        ctx.beginPath();
+        ctx.moveTo(gx - 3, gy);
+        ctx.lineTo(gx, gy - 1);
+        ctx.lineTo(gx + 3, gy);
+        ctx.lineTo(gx, gy + 0.5);
+        ctx.closePath();
         ctx.fill();
       }
     }

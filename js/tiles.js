@@ -560,6 +560,96 @@ class TileRenderer {
       case 'bridge':
         this._drawBridgeN64(ctx, size, colors, neighbors);
         break;
+      case 'short-grass':
+        this._drawShortGrassN64(ctx, size, colors, neighbors);
+        break;
+      case 'steppe':
+        this._drawSteppeN64(ctx, size, colors, neighbors);
+        break;
+      case 'brush':
+        this._drawBrushN64(ctx, size, colors, neighbors);
+        break;
+      case 'dust-patch':
+        this._drawDustPatchN64(ctx, size, colors, neighbors);
+        break;
+      case 'red-clay':
+        this._drawRedClayN64(ctx, size, colors, neighbors);
+        break;
+      case 'salt-flat':
+        this._drawSaltFlatN64(ctx, size, colors, neighbors);
+        break;
+      case 'jungle-canopy':
+        this._drawJungleCanopyN64(ctx, size, colors, neighbors);
+        break;
+      case 'jungle-floor':
+        this._drawJungleFloorN64(ctx, size, colors, neighbors);
+        break;
+      case 'bamboo-grove':
+        this._drawBambooGroveN64(ctx, size, colors, neighbors);
+        break;
+      case 'mangrove':
+        this._drawMangroveN64(ctx, size, colors, neighbors);
+        break;
+      case 'fern-gully':
+        this._drawFernGullyN64(ctx, size, colors, neighbors);
+        break;
+      case 'vine-wall':
+        this._drawVineWallN64(ctx, size, colors, neighbors);
+        break;
+      case 'wide-river':
+        this._drawWideRiverN64(ctx, size, colors, neighbors);
+        break;
+      case 'stream':
+        this._drawStreamN64(ctx, size, colors, neighbors);
+        break;
+      case 'pond':
+        this._drawPondN64(ctx, size, colors, neighbors);
+        break;
+      case 'rapids':
+        this._drawRapidsN64(ctx, size, colors, neighbors);
+        break;
+      case 'waterfall':
+        this._drawWaterfallN64(ctx, size, colors, neighbors);
+        break;
+      case 'hot-spring':
+        this._drawHotSpringN64(ctx, size, colors, neighbors);
+        break;
+      case 'delta':
+        this._drawDeltaN64(ctx, size, colors, neighbors);
+        break;
+      case 'desert-rock':
+        this._drawDesertRockN64(ctx, size, colors, neighbors);
+        break;
+      case 'oasis':
+        this._drawOasisN64(ctx, size, colors, neighbors);
+        break;
+      case 'sand-dunes':
+        this._drawSandDunesN64(ctx, size, colors, neighbors);
+        break;
+      case 'badlands':
+        this._drawBadlandsN64(ctx, size, colors, neighbors);
+        break;
+      case 'dry-creek':
+        this._drawDryCreekN64(ctx, size, colors, neighbors);
+        break;
+      case 'beach':
+        this._drawBeachN64(ctx, size, colors, neighbors);
+        break;
+      case 'reef':
+        this._drawReefN64(ctx, size, colors, neighbors);
+        break;
+      case 'tidal-pool':
+        this._drawTidalPoolN64(ctx, size, colors, neighbors);
+        break;
+      case 'ocean-inlet':
+        this._drawOceanInletN64(ctx, size, colors, neighbors);
+        break;
+      case 'coastal-bluffs':
+        this._drawCoastalBluffsN64(ctx, size, colors, neighbors);
+        break;
+      case 'continental-shelf':
+        this._drawContinentalShelfN64(ctx, size, colors, neighbors);
+        break;
     }
 
     // Render transitions on edges with different tile types
@@ -2129,6 +2219,1960 @@ class TileRenderer {
       ctx.arc(nx, ny, 0.6, 0, Math.PI * 2);
       ctx.fill();
     }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 5: Grassland/Plains (6 tiles) ==== */
+
+  _drawShortGrassN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Perlin ground with visible soil
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 21.0, y / s + 21.0);
+        ctx.fillStyle = n > 0.6 ? secondary : (n < 0.3 ? '#A0896C' : primary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Soil patches visible between short blades
+    const rand = this._seededRand(61);
+    ctx.fillStyle = '#A0896C';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 8; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 2 + rand() * 3, 1 + rand() * 2, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Short cropped blades
+    const bladeCount = Math.min(40, Math.max(18, Math.floor(s * 0.7)));
+    ctx.lineWidth = 0.7;
+    for (let i = 0; i < bladeCount; i++) {
+      const x = rand() * s;
+      const baseY = rand() * s;
+      const h = 2 + rand() * 3;
+      const bend = (rand() - 0.5) * 2;
+      ctx.strokeStyle = rand() > 0.5 ? secondary : accent;
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(x, baseY);
+      ctx.lineTo(x + bend, baseY - h);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawSteppeN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dry earth base with Perlin variation
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 22.0, y / s + 22.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.35 ? accent : primary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Exposed earth patches
+    const rand = this._seededRand(62);
+    ctx.fillStyle = '#A89060';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 5, 2 + rand() * 3, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Sparse brown-green tufts
+    for (let i = 0; i < 12; i++) {
+      const x = rand() * s;
+      const baseY = rand() * s;
+      const tufts = 2 + Math.floor(rand() * 3);
+      for (let t = 0; t < tufts; t++) {
+        const h = 3 + rand() * 5;
+        const bend = (rand() - 0.5) * 3;
+        ctx.strokeStyle = rand() > 0.4 ? accent : secondary;
+        ctx.lineWidth = 0.8;
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(x + t * 1.5, baseY);
+        ctx.quadraticCurveTo(x + t * 1.5 + bend * 0.5, baseY - h * 0.6, x + t * 1.5 + bend, baseY - h);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawBrushN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Ground texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 23.0, y / s + 23.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Scattered dark bush clumps
+    const rand = this._seededRand(13);
+    for (let i = 0; i < 6; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      const bushR = 4 + rand() * 6;
+
+      // Dark bush body
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, bushR, bushR * 0.7, rand() * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Highlight spots
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(cx - bushR * 0.2, cy - bushR * 0.2, bushR * 0.4, bushR * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Thorny branches radiating out
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 0.6;
+      ctx.globalAlpha = 0.5;
+      for (let t = 0; t < 4; t++) {
+        const angle = rand() * Math.PI * 2;
+        const len = bushR * 0.8 + rand() * 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawDustPatchN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Perlin wind-swept surface
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 24.0, y / s + 24.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.35 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Wind-swept streaks
+    const rand = this._seededRand(14);
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 10; i++) {
+      const y = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(s * 0.3 + rand() * s * 0.4, y + (rand() - 0.5) * 3);
+      ctx.stroke();
+    }
+
+    // Boot prints
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 3; i++) {
+      const bx = s * 0.2 + rand() * s * 0.6;
+      const by = s * 0.2 + rand() * s * 0.6;
+      const angle = rand() * Math.PI * 2;
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.rotate(angle);
+      // Boot shape
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 2.5, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(0, -5.5, 2, 2.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawRedClayN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Reddish base with Perlin variation
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 25.0, y / s * 2 + 25.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.35 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dried crack pattern
+    const rand = this._seededRand(15);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.4;
+    // Generate crack network from random points
+    const crackPts = [];
+    for (let i = 0; i < 6; i++) {
+      crackPts.push({ x: rand() * s, y: rand() * s });
+    }
+    for (let i = 0; i < crackPts.length; i++) {
+      for (let j = i + 1; j < crackPts.length; j++) {
+        const dx = crackPts[j].x - crackPts[i].x;
+        const dy = crackPts[j].y - crackPts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < s * 0.5) {
+          const midX = (crackPts[i].x + crackPts[j].x) / 2 + (rand() - 0.5) * 6;
+          const midY = (crackPts[i].y + crackPts[j].y) / 2 + (rand() - 0.5) * 6;
+          ctx.beginPath();
+          ctx.moveTo(crackPts[i].x, crackPts[i].y);
+          ctx.quadraticCurveTo(midX, midY, crackPts[j].x, crackPts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Subtle sheen highlight
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.1;
+    const grad = ctx.createRadialGradient(s * 0.35, s * 0.35, 0, s * 0.35, s * 0.35, s * 0.4);
+    grad.addColorStop(0, secondary);
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, s, s);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawSaltFlatN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // White crystalline base
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 26.0, y / s * 3 + 26.0);
+        ctx.fillStyle = n > 0.5 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Geometric crack patterns (polygonal)
+    const rand = this._seededRand(16);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.35;
+    const pts = [];
+    for (let i = 0; i < 8; i++) {
+      pts.push({ x: rand() * s, y: rand() * s });
+    }
+    // Connect nearest neighbors to form polygonal cracks
+    for (let i = 0; i < pts.length; i++) {
+      let nearest = -1;
+      let nearDist = Infinity;
+      for (let j = 0; j < pts.length; j++) {
+        if (i === j) continue;
+        const dx = pts[j].x - pts[i].x;
+        const dy = pts[j].y - pts[i].y;
+        const d = dx * dx + dy * dy;
+        if (d < nearDist) { nearDist = d; nearest = j; }
+      }
+      if (nearest >= 0) {
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[nearest].x, pts[nearest].y);
+        ctx.stroke();
+      }
+    }
+
+    // Reflective highlights (sparkle dots)
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 10; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.5 + rand() * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 5: Forest/Vegetation (6 tiles) ==== */
+
+  _drawJungleCanopyN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dense green base
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 27.0, y / s + 27.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Layered tropical leaves
+    const rand = this._seededRand(21);
+    for (let layer = 0; layer < 3; layer++) {
+      const count = 5 + layer * 2;
+      for (let i = 0; i < count; i++) {
+        const cx = rand() * s;
+        const cy = rand() * s;
+        const leafLen = 5 + rand() * 8;
+        const angle = rand() * Math.PI * 2;
+        const leafColor = layer === 0 ? accent : (layer === 1 ? primary : secondary);
+
+        ctx.fillStyle = leafColor;
+        ctx.globalAlpha = 0.4 + layer * 0.15;
+        ctx.beginPath();
+        ctx.ellipse(
+          cx + Math.cos(angle) * leafLen * 0.4,
+          cy + Math.sin(angle) * leafLen * 0.4,
+          leafLen * 0.5, leafLen * 0.15, angle, 0, Math.PI * 2
+        );
+        ctx.fill();
+
+        // Leaf vein
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 0.4;
+        ctx.globalAlpha = 0.2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * leafLen * 0.8, cy + Math.sin(angle) * leafLen * 0.8);
+        ctx.stroke();
+      }
+    }
+
+    // Light filtering through gaps
+    ctx.fillStyle = '#FFF9C4';
+    ctx.globalAlpha = 0.12;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 2 + rand() * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawJungleFloorN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dark earthy base
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 28.0, y / s + 28.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? '#4E342E' : primary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Tangled root network
+    const rand = this._seededRand(22);
+    ctx.strokeStyle = '#5D4037';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 5; i++) {
+      const x1 = rand() * s;
+      const y1 = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo(
+        x1 + (rand() - 0.5) * s * 0.4, y1 + (rand() - 0.5) * s * 0.3,
+        x1 + (rand() - 0.5) * s * 0.5, y1 + (rand() - 0.5) * s * 0.4,
+        x1 + (rand() - 0.5) * s * 0.6, y1 + (rand() - 0.5) * s * 0.5
+      );
+      ctx.stroke();
+    }
+
+    // Leaf litter
+    ctx.globalAlpha = 0.35;
+    for (let i = 0; i < 12; i++) {
+      const lx = rand() * s;
+      const ly = rand() * s;
+      const angle = rand() * Math.PI * 2;
+      ctx.fillStyle = rand() > 0.5 ? '#8D6E63' : accent;
+      ctx.beginPath();
+      ctx.ellipse(lx, ly, 2 + rand() * 2, 1, angle, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Dappled light spots
+    ctx.fillStyle = '#FFF9C4';
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 4, 2 + rand() * 3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawBambooGroveN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Light ground
+    ctx.fillStyle = this._lerpColor(primary, '#E8E0C8', 0.3);
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin ground variation
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 29.0, y / s + 29.0);
+        ctx.fillStyle = n > 0.5 ? accent : primary;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Vertical bamboo stalks
+    const rand = this._seededRand(23);
+    const stalkCount = 5 + Math.floor(s * 0.08);
+    for (let i = 0; i < stalkCount; i++) {
+      const x = rand() * s;
+      const stalkW = 2 + rand() * 2;
+      const stalkColor = rand() > 0.5 ? secondary : primary;
+
+      // Stalk body
+      ctx.fillStyle = stalkColor;
+      ctx.globalAlpha = 0.7;
+      ctx.fillRect(x - stalkW / 2, 0, stalkW, s);
+
+      // Node rings
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.4;
+      const nodeCount = 3 + Math.floor(rand() * 3);
+      for (let n = 0; n < nodeCount; n++) {
+        const ny = s * 0.1 + n * (s * 0.25) + rand() * s * 0.1;
+        ctx.beginPath();
+        ctx.moveTo(x - stalkW / 2 - 1, ny);
+        ctx.lineTo(x + stalkW / 2 + 1, ny);
+        ctx.stroke();
+        // Small branch stub at node
+        if (rand() > 0.5) {
+          ctx.beginPath();
+          ctx.moveTo(x + stalkW / 2, ny);
+          ctx.lineTo(x + stalkW / 2 + 3 + rand() * 3, ny - 2 - rand() * 3);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Light filtering between stalks
+    ctx.fillStyle = '#FFFDE7';
+    ctx.globalAlpha = 0.08;
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect(rand() * s, 0, 2 + rand() * 4, s);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawMangroveN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Murky water base (waterContent tile)
+    ctx.fillStyle = '#5D7A5D';
+    ctx.fillRect(0, 0, s, s);
+
+    // Water portions
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 30.0, y / s + 30.0);
+        ctx.fillStyle = n > 0.5 ? '#4A7C5C' : '#3A6A4A';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Murky water patches
+    const rand = this._seededRand(24);
+    ctx.fillStyle = '#3A6A4A';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, s * 0.1 + rand() * s * 0.08, s * 0.06 + rand() * s * 0.05, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Tangled root system
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 4; i++) {
+      const rootX = rand() * s;
+      const rootY = rand() * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(rootX, rootY);
+      // Arching root
+      const cx1 = rootX + (rand() - 0.5) * s * 0.3;
+      const cy1 = rootY + s * 0.2;
+      const ex = rootX + (rand() - 0.5) * s * 0.4;
+      const ey = s * 0.6 + rand() * s * 0.3;
+      ctx.quadraticCurveTo(cx1, cy1, ex, ey);
+      ctx.stroke();
+
+      // Sub-roots
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex + (rand() - 0.5) * 8, ey + 4 + rand() * 4);
+      ctx.stroke();
+      ctx.lineWidth = 2;
+    }
+
+    // Small leaves on roots
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 8; i++) {
+      const lx = rand() * s;
+      const ly = rand() * s * 0.5;
+      ctx.beginPath();
+      ctx.ellipse(lx, ly, 2, 4, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawFernGullyN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Moist green base
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 31.0, y / s + 31.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Moisture sheen
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.fillRect(0, 0, s, s);
+
+    // Radiating fern fronds
+    const rand = this._seededRand(25);
+    for (let f = 0; f < 5; f++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      const frondCount = 4 + Math.floor(rand() * 3);
+
+      for (let i = 0; i < frondCount; i++) {
+        const angle = (i / frondCount) * Math.PI * 2 + rand() * 0.3;
+        const len = 6 + rand() * 8;
+        ctx.strokeStyle = rand() > 0.5 ? secondary : primary;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.6;
+
+        // Main frond stem
+        const endX = cx + Math.cos(angle) * len;
+        const endY = cy + Math.sin(angle) * len;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        // Leaflets along frond
+        ctx.lineWidth = 0.5;
+        const leaflets = 3 + Math.floor(rand() * 3);
+        for (let l = 0; l < leaflets; l++) {
+          const t = 0.3 + l * (0.6 / leaflets);
+          const px = cx + (endX - cx) * t;
+          const py = cy + (endY - cy) * t;
+          const perpAngle = angle + Math.PI / 2;
+          const leafLen = 2 + rand() * 2;
+          // Left leaflet
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(px + Math.cos(perpAngle) * leafLen, py + Math.sin(perpAngle) * leafLen);
+          ctx.stroke();
+          // Right leaflet
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(px - Math.cos(perpAngle) * leafLen, py - Math.sin(perpAngle) * leafLen);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawVineWallN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dark wall base
+    ctx.fillStyle = '#4A4A3A';
+    ctx.fillRect(0, 0, s, s);
+
+    // Stone texture
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 32.0, y / s * 2 + 32.0);
+        ctx.fillStyle = n > 0.5 ? '#5A5A4A' : '#3A3A2A';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Criss-crossing vines
+    const rand = this._seededRand(26);
+    for (let v = 0; v < 6; v++) {
+      const x1 = rand() * s;
+      const y1 = v % 2 === 0 ? 0 : rand() * s;
+      const x2 = rand() * s;
+      const y2 = v % 2 === 0 ? s : rand() * s;
+
+      ctx.strokeStyle = rand() > 0.5 ? primary : accent;
+      ctx.lineWidth = 1.5 + rand() * 1;
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo(
+        x1 + (rand() - 0.5) * s * 0.4, y1 + (y2 - y1) * 0.3,
+        x2 + (rand() - 0.5) * s * 0.3, y1 + (y2 - y1) * 0.7,
+        x2, y2
+      );
+      ctx.stroke();
+
+      // Small leaves along vine
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.5;
+      for (let l = 0; l < 4; l++) {
+        const t = 0.2 + l * 0.2;
+        const lx = x1 + (x2 - x1) * t + (rand() - 0.5) * 8;
+        const ly = y1 + (y2 - y1) * t + (rand() - 0.5) * 4;
+        ctx.beginPath();
+        ctx.ellipse(lx, ly, 2, 3, rand() * Math.PI, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Small scattered flowers
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 4; i++) {
+      const fx = rand() * s;
+      const fy = rand() * s;
+      ctx.fillStyle = rand() > 0.5 ? '#E91E63' : '#FFC107';
+      ctx.beginPath();
+      ctx.arc(fx, fy, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 5: Water (7 tiles) ==== */
+
+  _drawWideRiverN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    const flowDir = this._computeFlowDirection(neighbors);
+
+    // Narrow bank edges
+    const bankW = s * 0.08;
+    ctx.fillStyle = '#8D6E63';
+    ctx.fillRect(0, 0, s, s);
+
+    // Wide water channel
+    ctx.fillStyle = primary;
+    if (flowDir === 'horizontal') {
+      ctx.fillRect(0, bankW, s, s - bankW * 2);
+    } else {
+      ctx.fillRect(bankW, 0, s - bankW * 2, s);
+    }
+
+    // Depth gradient
+    const depthGrad = flowDir === 'horizontal'
+      ? ctx.createLinearGradient(0, bankW, 0, s - bankW)
+      : ctx.createLinearGradient(bankW, 0, s - bankW, 0);
+    depthGrad.addColorStop(0, accent);
+    depthGrad.addColorStop(0.3, primary);
+    depthGrad.addColorStop(0.5, secondary);
+    depthGrad.addColorStop(0.7, primary);
+    depthGrad.addColorStop(1, accent);
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = depthGrad;
+    if (flowDir === 'horizontal') {
+      ctx.fillRect(0, bankW, s, s - bankW * 2);
+    } else {
+      ctx.fillRect(bankW, 0, s - bankW * 2, s);
+    }
+    ctx.globalAlpha = 1;
+
+    // Current lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 0.7;
+    const rand = this._seededRand(31);
+    for (let i = 0; i < 7; i++) {
+      if (flowDir === 'horizontal') {
+        const y = bankW + rand() * (s - bankW * 2);
+        const x1 = rand() * s * 0.3;
+        const x2 = x1 + s * 0.2 + rand() * s * 0.3;
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y + (rand() - 0.5) * 3);
+        ctx.stroke();
+      } else {
+        const x = bankW + rand() * (s - bankW * 2);
+        const y1 = rand() * s * 0.3;
+        const y2 = y1 + s * 0.2 + rand() * s * 0.3;
+        ctx.beginPath();
+        ctx.moveTo(x, y1);
+        ctx.lineTo(x + (rand() - 0.5) * 3, y2);
+        ctx.stroke();
+      }
+    }
+
+    // Bank detail lines
+    ctx.strokeStyle = '#6D4C41';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.3;
+    if (flowDir === 'horizontal') {
+      ctx.beginPath(); ctx.moveTo(0, bankW); ctx.lineTo(s, bankW); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, s - bankW); ctx.lineTo(s, s - bankW); ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.moveTo(bankW, 0); ctx.lineTo(bankW, s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(s - bankW, 0); ctx.lineTo(s - bankW, s); ctx.stroke();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawStreamN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    const flowDir = this._computeFlowDirection(neighbors);
+
+    // Terrain base (mostly land with narrow water)
+    ctx.fillStyle = '#8DB360';
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin grass texture
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 33.0, y / s + 33.0);
+        ctx.fillStyle = n > 0.5 ? '#A4C474' : '#6B8C42';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Narrow winding stream
+    const rand = this._seededRand(32);
+    ctx.fillStyle = primary;
+    ctx.beginPath();
+    if (flowDir === 'horizontal') {
+      const n1 = (rand() - 0.5) * s * 0.15;
+      const n2 = (rand() - 0.5) * s * 0.15;
+      ctx.moveTo(0, s * 0.45 + n1);
+      ctx.bezierCurveTo(s * 0.25, s * 0.42 + n1, s * 0.5, s * 0.55 + n2, s * 0.75, s * 0.48 + n2);
+      ctx.lineTo(s, s * 0.48 + n2);
+      ctx.lineTo(s, s * 0.55 + n2);
+      ctx.bezierCurveTo(s * 0.75, s * 0.58 + n2, s * 0.5, s * 0.48 + n1, s * 0.25, s * 0.55 + n1);
+      ctx.lineTo(0, s * 0.55 + n1);
+    } else {
+      const n1 = (rand() - 0.5) * s * 0.15;
+      const n2 = (rand() - 0.5) * s * 0.15;
+      ctx.moveTo(s * 0.45 + n1, 0);
+      ctx.bezierCurveTo(s * 0.42 + n1, s * 0.25, s * 0.55 + n2, s * 0.5, s * 0.48 + n2, s * 0.75);
+      ctx.lineTo(s * 0.48 + n2, s);
+      ctx.lineTo(s * 0.55 + n2, s);
+      ctx.bezierCurveTo(s * 0.58 + n2, s * 0.75, s * 0.48 + n1, s * 0.5, s * 0.55 + n1, s * 0.25);
+      ctx.lineTo(s * 0.55 + n1, 0);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // Sparkle on water
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.arc(s * 0.3 + rand() * s * 0.4, s * 0.4 + rand() * s * 0.2, 0.5 + rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawPondN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Grassy shore surround
+    ctx.fillStyle = '#7CB342';
+    ctx.fillRect(0, 0, s, s);
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 34.0, y / s + 34.0);
+        ctx.fillStyle = n > 0.5 ? '#8BC34A' : '#558B2F';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Central water body
+    const rand = this._seededRand(33);
+    const grad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.38);
+    grad.addColorStop(0, secondary);
+    grad.addColorStop(0.6, primary);
+    grad.addColorStop(1, accent);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(s / 2, s / 2, s * 0.36, s * 0.32, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Shore ring
+    ctx.strokeStyle = '#8D6E63';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.ellipse(s / 2, s / 2, s * 0.36, s * 0.32, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Reeds at edges
+    ctx.strokeStyle = '#33691E';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 6; i++) {
+      const angle = rand() * Math.PI * 2;
+      const rx = s / 2 + Math.cos(angle) * s * 0.34;
+      const ry = s / 2 + Math.sin(angle) * s * 0.30;
+      const h = 4 + rand() * 5;
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(rx + (rand() - 0.5) * 2, ry - h);
+      ctx.stroke();
+    }
+
+    // Lily pads
+    ctx.fillStyle = '#2E7D32';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 3; i++) {
+      const lx = s * 0.35 + rand() * s * 0.3;
+      const ly = s * 0.35 + rand() * s * 0.3;
+      ctx.beginPath();
+      ctx.arc(lx, ly, 2 + rand() * 1.5, 0.3, Math.PI * 2 - 0.3);
+      ctx.lineTo(lx, ly);
+      ctx.fill();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawRapidsN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Blue water base
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, s, s);
+
+    // Turbulent Perlin
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 35.0, y / s * 3 + 35.0);
+        ctx.fillStyle = n > 0.6 ? secondary : (n < 0.3 ? '#0D47A1' : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // White-blue turbulent streaks
+    const rand = this._seededRand(34);
+    ctx.strokeStyle = '#E3F2FD';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 8; i++) {
+      const y = rand() * s;
+      const x1 = rand() * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.bezierCurveTo(
+        x1 + s * 0.15, y + (rand() - 0.5) * 6,
+        x1 + s * 0.3, y + (rand() - 0.5) * 8,
+        x1 + s * 0.4 + rand() * s * 0.2, y + (rand() - 0.5) * 4
+      );
+      ctx.stroke();
+    }
+
+    // Spray particles
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 15; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.5 + rand() * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Exposed rock outcroppings
+    ctx.fillStyle = '#78909C';
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 3; i++) {
+      const rx = s * 0.2 + rand() * s * 0.6;
+      const ry = s * 0.2 + rand() * s * 0.6;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, 3 + rand() * 3, 2 + rand() * 2, rand(), 0, Math.PI * 2);
+      ctx.fill();
+      // Rock highlight
+      ctx.fillStyle = '#90A4AE';
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(rx - 1, ry - 1, 1.5, 1, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#78909C';
+      ctx.globalAlpha = 0.6;
+    }
+
+    // White foam around rocks
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 2 + rand() * 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawWaterfallN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Cliff at top third
+    const cliffH = s * 0.3;
+    ctx.fillStyle = '#78909C';
+    ctx.fillRect(0, 0, s, cliffH);
+
+    // Rock texture on cliff
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < cliffH; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 36.0, y / s * 3 + 36.0);
+        ctx.fillStyle = n > 0.5 ? '#90A4AE' : '#546E7A';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Cascade water falling down
+    const rand = this._seededRand(35);
+    const fallW = s * 0.5;
+    const fallX = (s - fallW) / 2;
+
+    // Water coming over cliff edge
+    ctx.fillStyle = primary;
+    ctx.fillRect(fallX, 0, fallW, s);
+
+    // Depth gradient on falls
+    const fallGrad = ctx.createLinearGradient(fallX, 0, fallX + fallW, 0);
+    fallGrad.addColorStop(0, accent);
+    fallGrad.addColorStop(0.3, primary);
+    fallGrad.addColorStop(0.5, secondary);
+    fallGrad.addColorStop(0.7, primary);
+    fallGrad.addColorStop(1, accent);
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = fallGrad;
+    ctx.fillRect(fallX, cliffH, fallW, s - cliffH);
+    ctx.globalAlpha = 1;
+
+    // Vertical fall lines (white streaks)
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 8; i++) {
+      const lx = fallX + rand() * fallW;
+      ctx.beginPath();
+      ctx.moveTo(lx, cliffH);
+      ctx.lineTo(lx + (rand() - 0.5) * 3, s * 0.75 + rand() * s * 0.1);
+      ctx.stroke();
+    }
+
+    // Pool at base
+    const poolGrad = ctx.createRadialGradient(s / 2, s * 0.85, 0, s / 2, s * 0.85, s * 0.3);
+    poolGrad.addColorStop(0, secondary);
+    poolGrad.addColorStop(0.6, primary);
+    poolGrad.addColorStop(1, accent);
+    ctx.fillStyle = poolGrad;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.ellipse(s / 2, s * 0.85, s * 0.4, s * 0.14, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mist cloud at base
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      ctx.ellipse(
+        s * 0.3 + rand() * s * 0.4,
+        s * 0.7 + rand() * s * 0.15,
+        4 + rand() * 6, 3 + rand() * 4, 0, 0, Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Cliff edge line
+    ctx.strokeStyle = '#546E7A';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(0, cliffH);
+    ctx.lineTo(fallX, cliffH);
+    ctx.moveTo(fallX + fallW, cliffH);
+    ctx.lineTo(s, cliffH);
+    ctx.stroke();
+
+    // Rock sides of cliff
+    ctx.fillStyle = '#78909C';
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(0, 0, fallX, cliffH + s * 0.1);
+    ctx.fillRect(fallX + fallW, 0, s - fallX - fallW, cliffH + s * 0.1);
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawHotSpringN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Mineral-colored edges
+    ctx.fillStyle = '#C9A83C';
+    ctx.fillRect(0, 0, s, s);
+
+    // Ochre/sulfur rim Perlin
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 37.0, y / s + 37.0);
+        ctx.fillStyle = n > 0.5 ? '#E8C96A' : '#8D6E20';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Central hot water pool
+    const grad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.42);
+    grad.addColorStop(0, secondary);
+    grad.addColorStop(0.5, primary);
+    grad.addColorStop(0.8, accent);
+    grad.addColorStop(1, '#C9A83C');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(s / 2, s / 2, s * 0.4, s * 0.38, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mineral ring
+    ctx.strokeStyle = '#E8C96A';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.ellipse(s / 2, s / 2, s * 0.4, s * 0.38, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Steam wisps (static representation)
+    const rand = this._seededRand(36);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 4; i++) {
+      const sx = s * 0.3 + rand() * s * 0.4;
+      const sy = s * 0.3 + rand() * s * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.bezierCurveTo(sx - 3, sy - 6, sx + 3, sy - 12, sx - 2, sy - 16);
+      ctx.stroke();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawDeltaN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Sandy sediment base
+    ctx.fillStyle = secondary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin sediment variation
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 38.0, y / s + 38.0);
+        ctx.fillStyle = n > 0.55 ? '#D8C494' : '#A89060';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Branching water channels
+    const rand = this._seededRand(37);
+    ctx.strokeStyle = primary;
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.7;
+
+    // Main channel from top
+    ctx.beginPath();
+    ctx.moveTo(s * 0.5, 0);
+    ctx.bezierCurveTo(s * 0.48, s * 0.25, s * 0.5, s * 0.4, s * 0.5, s * 0.45);
+    ctx.stroke();
+
+    // Branching channels
+    const branches = [
+      { sx: 0.5, sy: 0.45, ex: 0.2, ey: 1.0 },
+      { sx: 0.5, sy: 0.45, ex: 0.5, ey: 1.0 },
+      { sx: 0.5, sy: 0.45, ex: 0.8, ey: 1.0 }
+    ];
+    ctx.lineWidth = 2;
+    for (const b of branches) {
+      ctx.beginPath();
+      ctx.moveTo(s * b.sx, s * b.sy);
+      ctx.bezierCurveTo(
+        s * b.sx + (rand() - 0.5) * s * 0.1, s * (b.sy + 0.2),
+        s * b.ex + (rand() - 0.5) * s * 0.1, s * (b.ey - 0.2),
+        s * b.ex, s * b.ey
+      );
+      ctx.stroke();
+    }
+
+    // Sub-branches
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 4; i++) {
+      const bx = s * 0.3 + rand() * s * 0.4;
+      const by = s * 0.5 + rand() * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.lineTo(bx + (rand() - 0.5) * s * 0.2, by + s * 0.1 + rand() * s * 0.15);
+      ctx.stroke();
+    }
+
+    // Sediment patterns
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, s * 0.5 + rand() * s * 0.4, 4 + rand() * 5, 2 + rand() * 3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 5: Desert/Arid (5 tiles) ==== */
+
+  _drawDesertRockN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Sandy base
+    ctx.fillStyle = '#D8C494';
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin sand variation
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 39.0, y / s + 39.0);
+        ctx.fillStyle = n > 0.5 ? secondary : '#C8B07C';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Scattered boulders
+    const rand = this._seededRand(41);
+    for (let i = 0; i < 4; i++) {
+      const bx = s * 0.15 + rand() * s * 0.7;
+      const by = s * 0.15 + rand() * s * 0.7;
+      const bw = 4 + rand() * 7;
+      const bh = 3 + rand() * 5;
+
+      // Boulder shadow
+      ctx.fillStyle = '#5D4037';
+      ctx.globalAlpha = 0.2;
+      ctx.beginPath();
+      ctx.ellipse(bx + 2, by + 2, bw, bh * 0.7, rand() * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Boulder body
+      ctx.fillStyle = primary;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.ellipse(bx, by, bw, bh, rand() * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rock highlight
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(bx - bw * 0.2, by - bh * 0.2, bw * 0.5, bh * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Small pebbles
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 8; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 1 + rand() * 1.5, 0.8 + rand(), rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawOasisN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Sandy surround
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, s, s);
+
+    // Sand texture
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 40.0, y / s + 40.0);
+        ctx.fillStyle = n > 0.5 ? '#F0D78A' : '#C9A83C';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Green ring (grass/palms)
+    const greenGrad = ctx.createRadialGradient(s / 2, s / 2, s * 0.2, s / 2, s / 2, s * 0.45);
+    greenGrad.addColorStop(0, secondary);
+    greenGrad.addColorStop(0.7, '#4CAF50');
+    greenGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = greenGrad;
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(0, 0, s, s);
+    ctx.globalAlpha = 1;
+
+    // Blue water pool center
+    const waterGrad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.28);
+    waterGrad.addColorStop(0, '#64B5F6');
+    waterGrad.addColorStop(0.6, primary);
+    waterGrad.addColorStop(1, '#0D47A1');
+    ctx.fillStyle = waterGrad;
+    ctx.beginPath();
+    ctx.ellipse(s / 2, s / 2, s * 0.26, s * 0.24, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Palm tree silhouettes around edge
+    const rand = this._seededRand(42);
+    ctx.strokeStyle = '#33691E';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 4; i++) {
+      const angle = i * Math.PI / 2 + rand() * 0.5;
+      const tx = s / 2 + Math.cos(angle) * s * 0.35;
+      const ty = s / 2 + Math.sin(angle) * s * 0.33;
+
+      // Trunk
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx + (rand() - 0.5) * 3, ty - 8 - rand() * 4);
+      ctx.stroke();
+
+      // Palm fronds
+      const topX = tx + (rand() - 0.5) * 3;
+      const topY = ty - 8 - rand() * 4;
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.5;
+      for (let f = 0; f < 4; f++) {
+        const fAngle = f * Math.PI / 2 + rand();
+        ctx.beginPath();
+        ctx.ellipse(topX + Math.cos(fAngle) * 3, topY + Math.sin(fAngle) * 2, 3, 1.5, fAngle, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 0.6;
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawSandDunesN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Golden base
+    ctx.globalAlpha = 0.35;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 41.0, y / s * 1.5 + 41.0);
+        const lightN = PerlinNoise.sampleNoise((x + 2) / s * 2 + 41.0, (y + 2) / s * 1.5 + 41.0);
+        const shadow = n - lightN;
+        ctx.fillStyle = shadow > 0.05 ? secondary : (shadow < -0.05 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Undulating dune contours
+    const rand = this._seededRand(43);
+    for (let d = 0; d < 3; d++) {
+      const duneY = s * 0.2 + d * s * 0.25 + rand() * s * 0.1;
+      const duneH = s * 0.08 + rand() * s * 0.06;
+
+      // Dune crest (lit)
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(0, duneY + duneH);
+      ctx.bezierCurveTo(s * 0.2, duneY, s * 0.5, duneY - duneH * 0.5, s * 0.8, duneY);
+      ctx.bezierCurveTo(s * 0.9, duneY + duneH * 0.3, s, duneY + duneH * 0.5, s, duneY + duneH);
+      ctx.closePath();
+      ctx.fill();
+
+      // Shadow side
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.2;
+      ctx.beginPath();
+      ctx.moveTo(s * 0.5, duneY - duneH * 0.5);
+      ctx.bezierCurveTo(s * 0.6, duneY + duneH * 0.8, s * 0.8, duneY + duneH, s, duneY + duneH);
+      ctx.lineTo(s, duneY + duneH * 2);
+      ctx.lineTo(s * 0.5, duneY + duneH * 2);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Fine ripple texture
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = 0.4;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 12; i++) {
+      const ry = s * 0.05 + i * s * 0.08;
+      ctx.beginPath();
+      ctx.moveTo(0, ry);
+      for (let x = 0; x < s; x += s * 0.08) {
+        ctx.lineTo(x, ry + Math.sin(x / s * Math.PI * 3 + i) * 1.5);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawBadlandsN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Layered red-orange base
+    const layerGrad = ctx.createLinearGradient(0, 0, 0, s);
+    layerGrad.addColorStop(0, secondary);
+    layerGrad.addColorStop(0.3, primary);
+    layerGrad.addColorStop(0.5, accent);
+    layerGrad.addColorStop(0.7, primary);
+    layerGrad.addColorStop(1, secondary);
+    ctx.fillStyle = layerGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin erosion texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 42.0, y / s * 3 + 42.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Horizontal strata lines
+    const rand = this._seededRand(44);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 6; i++) {
+      const y = s * 0.1 + i * s * 0.15 + (rand() - 0.5) * s * 0.05;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (let x = 0; x < s; x += s * 0.15) {
+        ctx.lineTo(x, y + (rand() - 0.5) * 3);
+      }
+      ctx.lineTo(s, y);
+      ctx.stroke();
+    }
+
+    // Erosion channels (vertical gullies)
+    ctx.strokeStyle = '#5D3020';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 3; i++) {
+      const x = s * 0.2 + rand() * s * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.bezierCurveTo(x + (rand() - 0.5) * 8, s * 0.3, x + (rand() - 0.5) * 10, s * 0.7, x + (rand() - 0.5) * 6, s);
+      ctx.stroke();
+    }
+
+    // Mesa flat top shape
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.15, s * 0.15);
+    ctx.lineTo(s * 0.85, s * 0.15);
+    ctx.lineTo(s * 0.9, s * 0.2);
+    ctx.lineTo(s * 0.1, s * 0.2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawDryCreekN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Arid base
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 43.0, y / s + 43.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Sandy channel
+    const rand = this._seededRand(45);
+    ctx.fillStyle = this._lerpColor(primary, '#D8C494', 0.3);
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    const n1 = (rand() - 0.5) * s * 0.1;
+    ctx.moveTo(s * (0.3 + n1 / s), 0);
+    ctx.bezierCurveTo(s * 0.28, s * 0.3, s * 0.35, s * 0.6, s * 0.32, s);
+    ctx.lineTo(s * 0.68, s);
+    ctx.bezierCurveTo(s * 0.72, s * 0.6, s * 0.65, s * 0.3, s * (0.7 + n1 / s), 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Cracked mud in channel
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.35;
+    const crackPts = [];
+    for (let i = 0; i < 8; i++) {
+      crackPts.push({ x: s * 0.32 + rand() * s * 0.36, y: rand() * s });
+    }
+    for (let i = 0; i < crackPts.length; i++) {
+      for (let j = i + 1; j < crackPts.length; j++) {
+        const dx = crackPts[j].x - crackPts[i].x;
+        const dy = crackPts[j].y - crackPts[i].y;
+        if (dx * dx + dy * dy < s * s * 0.15) {
+          ctx.beginPath();
+          ctx.moveTo(crackPts[i].x, crackPts[i].y);
+          ctx.lineTo(crackPts[j].x, crackPts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Old water line marks
+    ctx.strokeStyle = this._lerpColor(primary, '#FFFFFF', 0.3);
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.3, 0);
+    ctx.bezierCurveTo(s * 0.29, s * 0.3, s * 0.34, s * 0.6, s * 0.31, s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(s * 0.7, 0);
+    ctx.bezierCurveTo(s * 0.71, s * 0.3, s * 0.66, s * 0.6, s * 0.69, s);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Session 5: Coastal/Ocean (6 tiles) ==== */
+
+  _drawBeachN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Sandy gradient meeting blue water
+    const beachGrad = ctx.createLinearGradient(0, 0, 0, s);
+    beachGrad.addColorStop(0, secondary);
+    beachGrad.addColorStop(0.5, primary);
+    beachGrad.addColorStop(0.7, accent);
+    beachGrad.addColorStop(0.75, '#B3D4E8');
+    beachGrad.addColorStop(1, '#64B5F6');
+    ctx.fillStyle = beachGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Sand texture via Perlin
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s * 0.7; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 44.0, y / s * 3 + 44.0);
+        ctx.fillStyle = n > 0.55 ? secondary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Wavy waterline
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.72);
+    for (let x = 0; x < s; x += s * 0.1) {
+      ctx.lineTo(x, s * 0.72 + Math.sin(x / s * Math.PI * 3) * 2);
+    }
+    ctx.stroke();
+
+    // Shell details
+    const rand = this._seededRand(51);
+    ctx.fillStyle = '#F5F0E8';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 4; i++) {
+      const sx = rand() * s;
+      const sy = s * 0.3 + rand() * s * 0.35;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 1 + rand() * 1.5, 0, Math.PI);
+      ctx.fill();
+    }
+
+    // Driftwood
+    ctx.strokeStyle = '#8D6E63';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.3;
+    const dwx = s * 0.2 + rand() * s * 0.6;
+    const dwy = s * 0.45 + rand() * s * 0.15;
+    ctx.beginPath();
+    ctx.moveTo(dwx, dwy);
+    ctx.lineTo(dwx + 8 + rand() * 8, dwy + (rand() - 0.5) * 3);
+    ctx.stroke();
+
+    // Water ripples in lower portion
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 0.7;
+    for (let i = 0; i < 3; i++) {
+      const wy = s * 0.78 + i * s * 0.07;
+      ctx.beginPath();
+      ctx.moveTo(0, wy);
+      ctx.quadraticCurveTo(s * 0.25, wy - 1.5, s * 0.5, wy);
+      ctx.quadraticCurveTo(s * 0.75, wy + 1.5, s, wy);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawReefN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Blue water base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Depth variation
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 45.0, y / s + 45.0);
+        ctx.fillStyle = n > 0.5 ? '#0097A7' : '#006064';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Coral formations
+    const rand = this._seededRand(52);
+    const coralColors = ['#FF7043', '#AB47BC', '#FF8A65', '#CE93D8', '#FFA726', '#EC407A'];
+    for (let i = 0; i < 7; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      const coralType = Math.floor(rand() * 3);
+      ctx.fillStyle = coralColors[Math.floor(rand() * coralColors.length)];
+      ctx.globalAlpha = 0.5;
+
+      if (coralType === 0) {
+        // Branch coral
+        for (let b = 0; b < 3; b++) {
+          const angle = rand() * Math.PI * 2;
+          const len = 3 + rand() * 5;
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = ctx.fillStyle;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+          ctx.stroke();
+        }
+      } else if (coralType === 1) {
+        // Brain coral (round)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2 + rand() * 4, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Fan coral (semicircle)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3 + rand() * 3, 0, Math.PI);
+        ctx.fill();
+      }
+    }
+
+    // Light dapple from above
+    ctx.fillStyle = '#B2EBF2';
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 5, 2 + rand() * 3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawTidalPoolN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Sandy rock base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Rock texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 46.0, y / s * 2 + 46.0);
+        ctx.fillStyle = n > 0.55 ? '#B89E82' : '#7A6A52';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Small water pools
+    const rand = this._seededRand(53);
+    for (let i = 0; i < 4; i++) {
+      const px = s * 0.15 + rand() * s * 0.7;
+      const py = s * 0.15 + rand() * s * 0.7;
+      const pr = 3 + rand() * 5;
+
+      // Pool water
+      const poolGrad = ctx.createRadialGradient(px, py, 0, px, py, pr);
+      poolGrad.addColorStop(0, secondary);
+      poolGrad.addColorStop(0.7, accent);
+      poolGrad.addColorStop(1, primary);
+      ctx.fillStyle = poolGrad;
+      ctx.beginPath();
+      ctx.ellipse(px, py, pr, pr * 0.8, rand() * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pool edge
+      ctx.strokeStyle = '#6D5A46';
+      ctx.lineWidth = 0.8;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(px, py, pr, pr * 0.8, rand() * 0.3, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    // Anemone dots
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 6; i++) {
+      ctx.fillStyle = rand() > 0.5 ? '#E91E63' : '#7B1FA2';
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.8 + rand() * 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawOceanInletN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Rocky coast base
+    ctx.fillStyle = secondary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Rock texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 47.0, y / s * 2 + 47.0);
+        ctx.fillStyle = n > 0.5 ? '#90A4AE' : '#546E7A';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Water channel cutting through
+    const rand = this._seededRand(54);
+    ctx.fillStyle = primary;
+    ctx.beginPath();
+    const chW = s * 0.35;
+    const cx = s * 0.5;
+    ctx.moveTo(cx - chW / 2, 0);
+    ctx.bezierCurveTo(cx - chW / 2 - s * 0.05, s * 0.3, cx - chW / 2 + s * 0.05, s * 0.6, cx - chW * 0.6, s);
+    ctx.lineTo(cx + chW * 0.6, s);
+    ctx.bezierCurveTo(cx + chW / 2 - s * 0.05, s * 0.6, cx + chW / 2 + s * 0.05, s * 0.3, cx + chW / 2, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Depth gradient in channel
+    const depthGrad = ctx.createLinearGradient(cx - chW / 2, 0, cx + chW / 2, 0);
+    depthGrad.addColorStop(0, accent);
+    depthGrad.addColorStop(0.5, primary);
+    depthGrad.addColorStop(1, accent);
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = depthGrad;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Wave lines in channel
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 4; i++) {
+      const wy = s * 0.15 + i * s * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(cx - chW * 0.3, wy);
+      ctx.quadraticCurveTo(cx, wy - 2, cx + chW * 0.3, wy);
+      ctx.stroke();
+    }
+
+    // Rocky cliff edges
+    ctx.strokeStyle = '#455A64';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.moveTo(cx - chW / 2, 0);
+    ctx.bezierCurveTo(cx - chW / 2 - s * 0.05, s * 0.3, cx - chW / 2 + s * 0.05, s * 0.6, cx - chW * 0.6, s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + chW / 2, 0);
+    ctx.bezierCurveTo(cx + chW / 2 - s * 0.05, s * 0.3, cx + chW / 2 + s * 0.05, s * 0.6, cx + chW * 0.6, s);
+    ctx.stroke();
+
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCoastalBluffsN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Upper: green-brown land
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s * 0.55);
+
+    // Perlin ground texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s * 0.55; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 48.0, y / s + 48.0);
+        ctx.fillStyle = n > 0.5 ? accent : '#8BC34A';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dramatic cliff face
+    const cliffGrad = ctx.createLinearGradient(0, s * 0.5, 0, s * 0.7);
+    cliffGrad.addColorStop(0, '#8D6E63');
+    cliffGrad.addColorStop(0.3, secondary);
+    cliffGrad.addColorStop(0.7, '#78909C');
+    cliffGrad.addColorStop(1, '#546E7A');
+    ctx.fillStyle = cliffGrad;
+    ctx.fillRect(0, s * 0.5, s, s * 0.2);
+
+    // Cliff face texture
+    const rand = this._seededRand(55);
+    ctx.fillStyle = '#6D4C41';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      ctx.rect(rand() * s, s * 0.52 + rand() * s * 0.15, 2 + rand() * 4, 1 + rand() * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Water at base
+    ctx.fillStyle = '#1976D2';
+    ctx.fillRect(0, s * 0.7, s, s * 0.3);
+
+    // Water Perlin
+    ctx.globalAlpha = 0.15;
+    for (let y = Math.floor(s * 0.7); y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 50.0, y / s + 50.0);
+        ctx.fillStyle = n > 0.5 ? '#1565C0' : '#42A5F5';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Wave crash at cliff base
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.72);
+    for (let x = 0; x < s; x += s * 0.08) {
+      ctx.lineTo(x, s * 0.72 + Math.sin(x / s * Math.PI * 4) * 2);
+    }
+    ctx.stroke();
+
+    // Grass tufts on cliff edge
+    ctx.strokeStyle = primary;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 8; i++) {
+      const gx = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(gx, s * 0.5);
+      ctx.lineTo(gx + (rand() - 0.5) * 2, s * 0.5 - 2 - rand() * 3);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawContinentalShelfN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Gradient from light turquoise to deeper blue-green
+    const shelfGrad = ctx.createLinearGradient(0, 0, s, s);
+    shelfGrad.addColorStop(0, secondary);
+    shelfGrad.addColorStop(0.4, primary);
+    shelfGrad.addColorStop(0.7, accent);
+    shelfGrad.addColorStop(1, '#006064');
+    ctx.fillStyle = shelfGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin depth variation
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 51.0, y / s + 51.0);
+        ctx.fillStyle = n > 0.55 ? '#00838F' : secondary;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Depth contour lines
+    const rand = this._seededRand(56);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 4; i++) {
+      const y = s * 0.15 + i * s * 0.2 + (rand() - 0.5) * s * 0.05;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.bezierCurveTo(s * 0.25, y + (rand() - 0.5) * 6, s * 0.75, y + (rand() - 0.5) * 6, s, y);
+      ctx.stroke();
+    }
+
+    // Gentle wave lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 3; i++) {
+      const wy = s * 0.2 + i * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(0, wy);
+      ctx.quadraticCurveTo(s * 0.25, wy - 2, s * 0.5, wy);
+      ctx.quadraticCurveTo(s * 0.75, wy + 2, s, wy);
+      ctx.stroke();
+    }
+
+    this._drawShorelines(ctx, s, neighbors);
     ctx.globalAlpha = 1;
     ctx.restore();
   }

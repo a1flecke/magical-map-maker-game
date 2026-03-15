@@ -7,9 +7,15 @@
     "transitionMode": "terrestrial",
     "baseTiles": [
       "grassland", "tall-grass", "wildflower-field", "wheat-field", "savanna", "farmland",
+      "short-grass", "steppe", "brush", "dust-patch", "red-clay", "salt-flat",
       "forest", "light-woods", "pine-forest", "clearing",
+      "jungle-canopy", "jungle-floor", "bamboo-grove", "mangrove", "fern-gully", "vine-wall",
       "ocean", "shallow-water", "river", "lake", "swamp",
-      "hills", "mountain", "desert-sand", "road", "bridge"
+      "wide-river", "stream", "pond", "rapids", "waterfall", "hot-spring", "delta",
+      "hills", "mountain", "desert-sand",
+      "desert-rock", "oasis", "sand-dunes", "badlands", "dry-creek",
+      "beach", "reef", "tidal-pool", "ocean-inlet", "coastal-bluffs", "continental-shelf",
+      "road", "bridge"
     ],
     "overlays": []
   }

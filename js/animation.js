@@ -321,6 +321,99 @@ class AnimationManager {
           dragonfly: this.showIntenseEffects ? Math.sin(t * 0.4 + phase) > 0.9 : false
         };
 
+      case 'wide-river':
+        return {
+          flowOffset: (t * 18 + phase * 3) % 30,
+          currentStrength: 0.6 + Math.sin(t + phase) * 0.2,
+          leafX: this.showIntenseEffects ? (t * 12 + phase * 8) % 50 : -1,
+          leafY: this.showIntenseEffects ? Math.sin(t * 1.5 + phase) * 4 : 0
+        };
+
+      case 'stream':
+        return {
+          flowOffset: (t * 12 + phase * 4) % 20,
+          currentStrength: 0.3 + Math.sin(t * 1.5 + phase) * 0.1,
+          sparkle: this.showGentleEffects,
+          sparklePhase: t * 4 + phase
+        };
+
+      case 'pond':
+        return {
+          rippleRadius: (t * 4 + phase * 3) % 12,
+          rippleAlpha: Math.max(0, 1 - ((t * 4 + phase * 3) % 12) / 12) * 0.25,
+          sparkle: this.showGentleEffects,
+          sparklePhase: t * 2 + phase
+        };
+
+      case 'rapids':
+        return {
+          flowOffset: (t * 30 + phase * 5) % 25,
+          splashX: this.showIntenseEffects ? (t * 20 + phase * 7) % 50 : -1,
+          splashAlpha: this.showIntenseEffects ? Math.abs(Math.sin(t * 3 + phase)) * 0.5 : 0,
+          foamShift: Math.sin(t * 2.5 + phase) * 2
+        };
+
+      case 'waterfall':
+        return {
+          fallOffset: (t * 40 + phase) % 30,
+          mistAlpha: this.showGentleEffects ? (Math.sin(t * 0.8 + phase) * 0.1 + 0.15) : 0,
+          splashRing: this.showIntenseEffects ? (t * 6 + phase) % 10 : -1
+        };
+
+      case 'hot-spring':
+        return {
+          steamY: this.showGentleEffects ? (t * 5 + phase * 2) % 20 : -1,
+          steamAlpha: Math.max(0, 1 - ((t * 5 + phase * 2) % 20) / 20) * 0.3,
+          rippleRadius: (t * 3 + phase) % 15,
+          rippleAlpha: Math.max(0, 1 - ((t * 3 + phase) % 15) / 15) * 0.2
+        };
+
+      case 'delta':
+        return {
+          tidalDrift: this.showGentleEffects ? Math.sin(t * 0.5 + phase) * 1.5 : 0,
+          sedimentShift: Math.sin(t * 0.3 + phase * 0.5) * 0.5,
+          sparkle: this.showGentleEffects,
+          sparklePhase: t * 2 + phase
+        };
+
+      case 'mangrove':
+        return {
+          rippleRadius: (t * 3 + phase * 2) % 12,
+          rippleAlpha: Math.max(0, 1 - ((t * 3 + phase * 2) % 12) / 12) * 0.2,
+          dripY: this.showGentleEffects ? (t * 8 + phase * 3) % 15 : -1,
+          dripAlpha: Math.max(0, 1 - ((t * 8 + phase * 3) % 15) / 15) * 0.3
+        };
+
+      case 'reef':
+        return {
+          waveOffset: Math.sin(t * 1.2 + phase) * 2,
+          fishDart: this.showIntenseEffects ? Math.sin(t * 0.5 + phase) > 0.9 : false,
+          sparkle: this.showGentleEffects,
+          sparklePhase: t * 3 + phase
+        };
+
+      case 'tidal-pool':
+        return {
+          rippleRadius: (t * 3.5 + phase * 2) % 10,
+          rippleAlpha: Math.max(0, 1 - ((t * 3.5 + phase * 2) % 10) / 10) * 0.2,
+          tideShift: this.showGentleEffects ? Math.sin(t * 0.4 + phase) * 1 : 0
+        };
+
+      case 'ocean-inlet':
+        return {
+          waveOffset: Math.sin(t * 1.5 + phase) * 3,
+          wavePhase: t * 0.8 + phase * 0.3,
+          foamAlpha: this.showIntenseEffects ? (Math.sin(t * 2 + phase) * 0.12 + 0.12) : 0
+        };
+
+      case 'continental-shelf':
+        return {
+          waveOffset: Math.sin(t * 1.0 + phase) * 2,
+          depthShift: Math.sin(t * 0.3 + phase * 0.2) * 0.5,
+          sparkle: this.showGentleEffects,
+          sparklePhase: t * 2 + phase
+        };
+
       default:
         return null;
     }
@@ -343,6 +436,8 @@ class AnimationManager {
       case 'tall-grass':
       case 'wildflowers':
       case 'savanna':
+      case 'short-grass':
+      case 'steppe':
         return {
           type: 'wind',
           windSway: Math.sin(t * 1.2 + phase) * 2,
@@ -361,6 +456,10 @@ class AnimationManager {
       case 'dense-forest':
       case 'light-woods':
       case 'pine-forest':
+      case 'jungle-canopy':
+      case 'jungle-floor':
+      case 'fern-gully':
+      case 'vine-wall':
         return {
           type: 'forest',
           rustleSway: Math.sin(t * 0.7 + phase) * 1.5,
@@ -382,6 +481,73 @@ class AnimationManager {
         return {
           type: 'constructed',
           trafficDust: Math.sin(t * 0.2 + phase) > 0.85
+        };
+
+      case 'brush':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 0.8 + phase) * 1.5,
+          windPhase: t * 0.4 + phase * 0.3,
+          gustAlpha: 0
+        };
+
+      case 'dust-patch':
+        return {
+          type: 'dust',
+          dustMoteX: this.showGentleEffects ? (t * 8 + phase * 5) % 50 : -1,
+          dustMoteY: this.showGentleEffects ? Math.sin(t * 2 + phase) * 3 : 0,
+          dustAlpha: this.showGentleEffects ? Math.abs(Math.sin(t * 1.5 + phase)) * 0.2 : 0
+        };
+
+      case 'red-clay':
+      case 'salt-flat':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'heat',
+          shimmerOffset: Math.sin(t * 2 + phase) * 1,
+          shimmerAlpha: Math.abs(Math.sin(t * 1.5 + phase * 0.5)) * 0.1
+        };
+
+      case 'bamboo-grove':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 0.6 + phase) * 1.8,
+          windPhase: t * 0.3 + phase * 0.4,
+          gustAlpha: this.showIntenseEffects ? Math.max(0, Math.sin(t * 0.5 + phase) - 0.75) * 0.3 : 0
+        };
+
+      case 'desert':
+      case 'desert-rock':
+      case 'sand-dunes':
+      case 'badlands':
+      case 'dry-creek':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'heat',
+          shimmerOffset: Math.sin(t * 2.5 + phase) * 1.5,
+          shimmerAlpha: Math.abs(Math.sin(t * 1.2 + phase * 0.4)) * 0.12
+        };
+
+      case 'oasis':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 0.7 + phase) * 2,
+          windPhase: t * 0.4 + phase * 0.3,
+          gustAlpha: 0
+        };
+
+      case 'beach':
+        return {
+          type: 'coastal',
+          waveLap: this.showGentleEffects ? Math.sin(t * 1.5 + phase) * 2 : 0,
+          seagullShadow: this.showIntenseEffects ? Math.sin(t * 0.2 + phase) > 0.93 : false
+        };
+
+      case 'coastal-bluffs':
+        return {
+          type: 'coastal',
+          waveLap: this.showGentleEffects ? Math.sin(t * 1.8 + phase) * 1.5 : 0,
+          seagullShadow: this.showIntenseEffects ? Math.sin(t * 0.25 + phase) > 0.92 : false
         };
 
       default:
