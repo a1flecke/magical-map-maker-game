@@ -61,6 +61,12 @@ class Editor {
     // Apply theme
     this._themeManager.applyTheme(this._containerEl, this._themeId);
 
+    // Set transition mode from theme
+    const theme = this._themeManager.getTheme(this._themeId);
+    if (theme && theme.transitionMode) {
+      this._tileRenderer.setTransitionMode(theme.transitionMode);
+    }
+
     // Create grid using factory
     const config = getGridConfig(this._shape, this._sizeKey);
     this._grid = Grid.create(this._shape, config.cols, config.rows, config.cellSize);
@@ -328,7 +334,7 @@ class Editor {
     });
   }
 
-  /** Layer 2: Lightweight per-frame animation effects on water tiles */
+  /** Layer 2: Lightweight per-frame animation effects on all animated tiles */
   _renderAnimationLayer(ctx) {
     const grid = this._grid;
     const cellSize = grid.cellSize;
@@ -336,7 +342,7 @@ class Editor {
     const viewport = this._getViewportBounds();
 
     grid.forEachCell((col, row, cell, cellType) => {
-      if (!cell.base || !isWaterTile(cell.base)) return;
+      if (!cell.base) return;
 
       // Viewport culling
       let cx, cy;
@@ -356,8 +362,12 @@ class Editor {
       // Animation staggering
       if (!this._animation.shouldAnimateCell(col, row)) return;
 
-      const effects = this._animation.getWaterEffects(cell.base, col, row);
-      if (!effects) return;
+      const isWater = isWaterTile(cell.base);
+      const waterFx = isWater ? this._animation.getWaterEffects(cell.base, col, row) : null;
+      const tileType = this._tileRenderer.getType(cell.base);
+      const landFx = !isWater && tileType ? this._animation.getLandEffects(cell.base, tileType.pattern, col, row) : null;
+
+      if (!waterFx && !landFx) return;
 
       // Get cell drawing bounds
       let ox, oy, drawW, drawH;
@@ -384,7 +394,11 @@ class Editor {
       }
 
       try {
-        this._drawWaterAnimation(ctx, cell.base, effects, ox, oy, drawW, drawH);
+        if (waterFx) {
+          this._drawWaterAnimation(ctx, cell.base, waterFx, ox, oy, drawW, drawH);
+        } else if (landFx) {
+          this._drawLandAnimation(ctx, landFx, ox, oy, drawW, drawH);
+        }
       } finally {
         if (shape !== 'square') {
           ctx.restore();
@@ -562,6 +576,84 @@ class Editor {
           ctx.fill();
         }
         break;
+      }
+    }
+
+    ctx.restore();
+  }
+
+  /** Draw per-frame land animation effects */
+  _drawLandAnimation(ctx, fx, x, y, w, h) {
+    ctx.save();
+
+    if (fx.type === 'wind') {
+      // Grass/wheat wind sway — animated highlight strokes
+      const sway = fx.windSway;
+      const phase = fx.windPhase;
+
+      // Swaying highlight lines (simulates grass movement)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 3; i++) {
+        const ly = y + h * (0.3 + i * 0.2);
+        const offset = Math.sin(phase + i * 0.8) * sway;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.1, ly);
+        ctx.quadraticCurveTo(x + w * 0.5 + offset, ly - 2, x + w * 0.9, ly);
+        ctx.stroke();
+      }
+
+      // Wind gust overlay
+      if (fx.gustAlpha > 0) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${fx.gustAlpha * 0.15})`;
+        const gustX = x + w * (0.2 + Math.sin(phase * 0.3) * 0.3);
+        ctx.beginPath();
+        ctx.ellipse(gustX, y + h * 0.4, w * 0.3, h * 0.15, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (fx.type === 'forest') {
+      // Tree canopy rustle
+      const sway = fx.rustleSway;
+      const lightShift = fx.dappleLightShift;
+
+      // Dappled light shift
+      ctx.fillStyle = 'rgba(255, 255, 200, 0.06)';
+      ctx.beginPath();
+      ctx.ellipse(
+        x + w * 0.4 + lightShift,
+        y + h * 0.5 + lightShift * 0.5,
+        w * 0.15, h * 0.1, 0, 0, Math.PI * 2
+      );
+      ctx.fill();
+
+      // Canopy edge sway
+      ctx.strokeStyle = 'rgba(0, 80, 0, 0.06)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + w * 0.2, y + h * 0.2);
+      ctx.quadraticCurveTo(x + w * 0.5 + sway, y + h * 0.15, x + w * 0.8, y + h * 0.2);
+      ctx.stroke();
+
+      // Falling leaf
+      if (fx.leafFall) {
+        const t = this._animation.animationTime;
+        const leafX = x + w * (0.3 + Math.sin(t * 4) * 0.2);
+        const leafY = y + h * ((t * 0.5) % 1);
+        ctx.fillStyle = 'rgba(139, 195, 74, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(leafX, leafY, 1.5, 0.8, t * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (fx.type === 'constructed') {
+      // Road/bridge dust
+      if (fx.trafficDust) {
+        const t = this._animation.animationTime;
+        ctx.fillStyle = 'rgba(160, 140, 120, 0.1)';
+        const dustX = x + w * (0.3 + Math.sin(t * 2) * 0.2);
+        const dustY = y + h * 0.6;
+        ctx.beginPath();
+        ctx.ellipse(dustX, dustY, 3, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 

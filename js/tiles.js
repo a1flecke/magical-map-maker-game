@@ -252,6 +252,9 @@ class TileRenderer {
     this._atlas = new TileAtlas();
     this._loaded = false;
 
+    // Transition mode (set by Editor on theme load)
+    this._transitionMode = 'terrestrial';
+
     // Dirty cell tracking (set by editor, processed per-frame)
     this._dirtyCells = new Set();
 
@@ -290,9 +293,9 @@ class TileRenderer {
     const type = this._typeMap[tileId];
     if (!type) return null;
 
-    // Build neighbor-aware cache key for water tiles
+    // Build neighbor-aware cache key for all tiles (neighbor context affects transitions)
     let neighborHash = '';
-    if (isWaterTile(tileId) && grid) {
+    if (grid) {
       neighborHash = this._getNeighborSignature(grid, col, row, cellType, tileId);
     }
 
@@ -330,10 +333,10 @@ class TileRenderer {
     ctx.save();
     ctx.translate(alloc.entry.sx, alloc.entry.sy);
 
-    // Gather neighbor info for water tiles
+    // Gather neighbor info for all tiles
     let neighbors = null;
-    if (isWaterTile(tileId) && grid) {
-      neighbors = this._getWaterNeighborInfo(grid, col, row, cellType, tileId);
+    if (grid) {
+      neighbors = this._getNeighborInfo(grid, col, row, cellType, tileId);
     }
 
     this._renderTile(ctx, type, w, neighbors);
@@ -381,16 +384,21 @@ class TileRenderer {
     return _fnv1a(sig);
   }
 
-  /** Get detailed water neighbor info for rendering */
-  _getWaterNeighborInfo(grid, col, row, cellType, tileId) {
+  /** General-purpose neighbor info for all tiles */
+  _getNeighborInfo(grid, col, row, cellType, tileId) {
     const neighbors = grid.getNeighbors(col, row, cellType);
+    const myType = this._typeMap[tileId];
+    const myProps = myType ? myType.materialProperties : null;
+
     const info = {
-      col, row, // current cell coords for delta calculations
+      col, row,
+      tileId,
       sameTypeEdges: 0,
       waterEdges: 0,
       totalEdges: neighbors.length,
       edges: [],
-      mergeMask: 0
+      mergeMask: 0,
+      materialProps: myProps
     };
 
     for (let i = 0; i < neighbors.length; i++) {
@@ -400,13 +408,27 @@ class TileRenderer {
       const isSameType = nBase === tileId;
       const isWater = nBase && isWaterTile(nBase);
       const nType = this._typeMap[nBase];
+      const nProps = nType ? nType.materialProperties : null;
+
+      // Material property deltas for transition rendering
+      let deltas = null;
+      if (myProps && nProps) {
+        deltas = {
+          dElevation: nProps.elevation - myProps.elevation,
+          dMoisture: nProps.moisture - myProps.moisture,
+          dTemperature: nProps.temperature - myProps.temperature,
+          dDensity: nProps.density - myProps.density,
+          dOrganic: nProps.organic - myProps.organic
+        };
+      }
 
       info.edges.push({
         col: n.col, row: n.row, cellType: n.cellType,
         tileId: nBase,
         isSameType,
         isWater,
-        materialProps: nType ? nType.materialProperties : null
+        materialProps: nProps,
+        deltas
       });
 
       if (isSameType) {
@@ -416,6 +438,11 @@ class TileRenderer {
       if (isWater) info.waterEdges++;
     }
     return info;
+  }
+
+  /** Set transition rendering mode (called by Editor on theme load) */
+  setTransitionMode(mode) {
+    this._transitionMode = mode || 'terrestrial';
   }
 
   /** Mark cell + neighbors dirty */
@@ -466,73 +493,78 @@ class TileRenderer {
 
   /** Procedural tile rendering per pattern */
   _renderTile(ctx, type, size, neighbors) {
-    const { primary, secondary, accent } = type.colors;
+    const colors = type.colors;
 
     // Base fill
-    ctx.fillStyle = primary;
+    ctx.fillStyle = colors.primary;
     ctx.fillRect(0, 0, size, size);
 
     switch (type.pattern) {
       case 'grass':
-        this._drawGrass(ctx, size, secondary, accent);
+        this._drawGrassN64(ctx, size, colors, neighbors);
         break;
       case 'tall-grass':
-        this._drawTallGrass(ctx, size, secondary, accent);
+        this._drawTallGrassN64(ctx, size, colors, neighbors);
         break;
       case 'wildflowers':
-        this._drawWildflowers(ctx, size, primary, secondary, accent);
+        this._drawWildflowersN64(ctx, size, colors, neighbors);
         break;
       case 'wheat':
-        this._drawWheat(ctx, size, secondary, accent);
+        this._drawWheatN64(ctx, size, colors, neighbors);
         break;
       case 'savanna':
-        this._drawSavanna(ctx, size, secondary, accent);
+        this._drawSavannaN64(ctx, size, colors, neighbors);
         break;
       case 'farmland':
-        this._drawFarmland(ctx, size, secondary, accent);
+        this._drawFarmlandN64(ctx, size, colors, neighbors);
         break;
       case 'dense-forest':
-        this._drawDenseForest(ctx, size, secondary, accent);
+        this._drawDenseForestN64(ctx, size, colors, neighbors);
         break;
       case 'light-woods':
-        this._drawLightWoods(ctx, size, secondary, accent);
+        this._drawLightWoodsN64(ctx, size, colors, neighbors);
         break;
       case 'pine-forest':
-        this._drawPineForest(ctx, size, secondary, accent);
+        this._drawPineForestN64(ctx, size, colors, neighbors);
         break;
       case 'clearing':
-        this._drawClearing(ctx, size, secondary, accent);
+        this._drawClearingN64(ctx, size, colors, neighbors);
         break;
       case 'ocean':
-        this._drawOceanN64(ctx, size, type.colors, neighbors);
+        this._drawOceanN64(ctx, size, colors, neighbors);
         break;
       case 'shallow-water':
-        this._drawShallowWaterN64(ctx, size, type.colors, neighbors);
+        this._drawShallowWaterN64(ctx, size, colors, neighbors);
         break;
       case 'river':
-        this._drawRiverN64(ctx, size, type.colors, neighbors);
+        this._drawRiverN64(ctx, size, colors, neighbors);
         break;
       case 'lake':
-        this._drawLakeN64(ctx, size, type.colors, neighbors);
+        this._drawLakeN64(ctx, size, colors, neighbors);
         break;
       case 'swamp':
-        this._drawSwampN64(ctx, size, type.colors, neighbors);
+        this._drawSwampN64(ctx, size, colors, neighbors);
         break;
       case 'hills':
-        this._drawHills(ctx, size, secondary, accent);
+        this._drawHillsN64(ctx, size, colors, neighbors);
         break;
       case 'mountain':
-        this._drawMountain(ctx, size, secondary, accent);
+        this._drawMountainN64(ctx, size, colors, neighbors);
         break;
       case 'desert':
-        this._drawDesert(ctx, size, secondary, accent);
+        this._drawDesertN64(ctx, size, colors, neighbors);
         break;
       case 'road':
-        this._drawRoad(ctx, size, secondary, accent);
+        this._drawRoadN64(ctx, size, colors, neighbors);
         break;
       case 'bridge':
-        this._drawBridge(ctx, size, secondary, accent);
+        this._drawBridgeN64(ctx, size, colors, neighbors);
         break;
+    }
+
+    // Render transitions on edges with different tile types
+    if (neighbors && !isWaterTile(type.id)) {
+      this._renderTransitions(ctx, size, neighbors, this._transitionMode);
     }
   }
 
@@ -678,7 +710,7 @@ class TileRenderer {
     // Water channel — organic bezier shape
     ctx.fillStyle = primary;
     ctx.beginPath();
-    if (flowDir === 'vertical' || flowDir === 'default') {
+    if (flowDir === 'default' || flowDir === 'toward-water') {
       const n1 = PerlinNoise.sampleNoise(0.3, 0.2) * 0.15;
       const n2 = PerlinNoise.sampleNoise(0.7, 0.8) * 0.15;
       ctx.moveTo(s * (0.25 + n1), 0);
@@ -725,7 +757,7 @@ class TileRenderer {
     ctx.strokeStyle = '#6D4C41';
     ctx.lineWidth = 1;
     ctx.globalAlpha = 0.4;
-    if (flowDir === 'vertical' || flowDir === 'default') {
+    if (flowDir === 'default' || flowDir === 'toward-water') {
       ctx.beginPath();
       ctx.moveTo(s * 0.25, 0);
       ctx.bezierCurveTo(s * 0.2, s * 0.3, s * 0.3, s * 0.7, s * 0.28, s);
@@ -1024,301 +1056,1300 @@ class TileRenderer {
   }
 
 
-  /* ==== Original Procedural Pattern Renderers (non-water) ==== */
+  /* ==== N64-Quality Land Renderers ==== */
 
-  _drawGrass(ctx, s, sec, acc) {
+  _drawGrassN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Perlin ground color variation
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 4) {
+      for (let x = 0; x < s; x += 4) {
+        const n = PerlinNoise.sampleNoise(x / s + 3.0, y / s + 3.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.35 ? accent : primary);
+        ctx.fillRect(x, y, 4, 4);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Ground texture dots
     const rand = this._seededRand(1);
-    ctx.strokeStyle = sec;
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 20; i++) {
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 12; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.8 + rand() * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Multi-layer grass blades
+    const bladeCount = Math.min(35, Math.max(15, Math.floor(s * 0.6)));
+    for (let layer = 0; layer < 2; layer++) {
+      const layerSeed = this._seededRand(1 + layer * 100);
+      ctx.lineWidth = layer === 0 ? 1.2 : 0.8;
+      for (let i = 0; i < bladeCount; i++) {
+        const x = layerSeed() * s;
+        const baseY = layerSeed() * s;
+        const h = 3 + layerSeed() * 6 + layer * 2;
+        const bend = (layerSeed() - 0.5) * 4;
+        const n = PerlinNoise.sampleNoise(x / s + layer, baseY / s);
+        ctx.strokeStyle = n > 0.5 ? secondary : accent;
+        ctx.globalAlpha = layer === 0 ? 0.7 : 0.9;
+        ctx.beginPath();
+        ctx.moveTo(x, baseY);
+        ctx.quadraticCurveTo(x + bend * 0.6, baseY - h * 0.5, x + bend, baseY - h);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawTallGrassN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Perlin ground variation
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 4) {
+      for (let x = 0; x < s; x += 4) {
+        const n = PerlinNoise.sampleNoise(x / s + 4.0, y / s + 4.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 4, 4);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dense tall blades in layers
+    const rand = this._seededRand(2);
+    for (let layer = 0; layer < 3; layer++) {
+      const count = 8 + layer * 4;
+      ctx.lineWidth = 2 - layer * 0.4;
+      for (let i = 0; i < count; i++) {
+        const x = rand() * s;
+        const baseY = s * 0.4 + rand() * s * 0.6;
+        const h = 10 + rand() * 14 + layer * 3;
+        const bend = (rand() - 0.5) * 10;
+        const midBend = bend * 0.4 + (rand() - 0.5) * 3;
+        ctx.strokeStyle = layer === 0 ? accent : (rand() > 0.5 ? secondary : primary);
+        ctx.globalAlpha = 0.6 + layer * 0.15;
+        ctx.beginPath();
+        ctx.moveTo(x, baseY);
+        ctx.bezierCurveTo(x + midBend, baseY - h * 0.4, x + bend * 0.7, baseY - h * 0.7, x + bend, baseY - h);
+        ctx.stroke();
+
+        // Seed head on some blades
+        if (rand() > 0.6 && layer > 0) {
+          ctx.fillStyle = accent;
+          ctx.globalAlpha = 0.5;
+          ctx.beginPath();
+          ctx.ellipse(x + bend, baseY - h - 1.5, 1, 2.5, bend * 0.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawWildflowersN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Grass base (lighter)
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 4) {
+      for (let x = 0; x < s; x += 4) {
+        const n = PerlinNoise.sampleNoise(x / s + 5.0, y / s + 5.0);
+        ctx.fillStyle = n > 0.5 ? '#8BC34A' : '#7CB342';
+        ctx.fillRect(x, y, 4, 4);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Grass blades
+    const rand = this._seededRand(3);
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 18; i++) {
       const x = rand() * s;
       const y = rand() * s;
       const h = 3 + rand() * 5;
+      ctx.strokeStyle = '#7CB342';
+      ctx.globalAlpha = 0.6;
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x + (rand() - 0.5) * 3, y - h);
+      ctx.quadraticCurveTo(x + (rand() - 0.5) * 3, y - h * 0.6, x + (rand() - 0.5) * 2, y - h);
       ctx.stroke();
     }
-  }
+    ctx.globalAlpha = 1;
 
-  _drawTallGrass(ctx, s, sec, acc) {
-    const rand = this._seededRand(2);
-    for (let i = 0; i < 15; i++) {
-      const x = rand() * s;
-      const y = rand() * s;
-      const h = 6 + rand() * 10;
-      ctx.strokeStyle = i % 2 === 0 ? sec : acc;
-      ctx.lineWidth = 1.5;
+    // Multi-petal flowers
+    const flowerColors = [secondary, accent, '#FF7043', '#AB47BC', '#FFA726', '#E91E63'];
+    for (let i = 0; i < 14; i++) {
+      const fx = rand() * s;
+      const fy = rand() * s;
+      const color = flowerColors[i % flowerColors.length];
+
+      // Stem
+      ctx.strokeStyle = '#558B2F';
+      ctx.lineWidth = 0.7;
+      ctx.globalAlpha = 0.5;
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.quadraticCurveTo(x + (rand() - 0.5) * 8, y - h * 0.6, x + (rand() - 0.5) * 4, y - h);
+      ctx.moveTo(fx, fy + 3);
+      ctx.lineTo(fx + (rand() - 0.5) * 2, fy);
       ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Petals
+      const petalCount = 4 + Math.floor(rand() * 3);
+      const petalR = 1.2 + rand() * 1.5;
+      ctx.fillStyle = color;
+      for (let p = 0; p < petalCount; p++) {
+        const angle = (p / petalCount) * Math.PI * 2;
+        const px = fx + Math.cos(angle) * petalR * 0.6;
+        const py = fy + Math.sin(angle) * petalR * 0.6;
+        ctx.beginPath();
+        ctx.arc(px, py, petalR * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Center
+      ctx.fillStyle = '#FFF176';
+      ctx.beginPath();
+      ctx.arc(fx, fy, petalR * 0.3, 0, Math.PI * 2);
+      ctx.fill();
     }
+    ctx.restore();
   }
 
-  _drawWildflowers(ctx, s, pri, sec, acc) {
-    this._drawGrass(ctx, s, pri, pri);
-    const rand = this._seededRand(3);
-    const colors = [sec, acc, '#FF7043', '#AB47BC', '#FFA726'];
+  _drawWheatN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Warm ground gradient
+    const grad = ctx.createLinearGradient(0, 0, s, s);
+    grad.addColorStop(0, primary);
+    grad.addColorStop(1, this._lerpColor(primary, accent, 0.3));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin soil patches
+    ctx.globalAlpha = 0.1;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 6.0, y / s + 6.0);
+        if (n > 0.6) {
+          ctx.fillStyle = '#795548';
+          ctx.fillRect(x, y, 3, 3);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Wheat stalks in rows
+    const rand = this._seededRand(4);
+    const rowCount = 6;
+    const rowGap = s / rowCount;
+    for (let r = 0; r < rowCount; r++) {
+      const baseX = r * rowGap + rowGap * 0.3;
+      const stalksInRow = 3 + Math.floor(rand() * 3);
+      for (let i = 0; i < stalksInRow; i++) {
+        const x = baseX + rand() * rowGap * 0.4;
+        const baseY = s * 0.5 + rand() * s * 0.5;
+        const h = 10 + rand() * 12;
+        const lean = (rand() - 0.5) * 3;
+
+        // Stalk
+        ctx.strokeStyle = secondary;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(x, baseY);
+        ctx.quadraticCurveTo(x + lean * 0.5, baseY - h * 0.5, x + lean, baseY - h);
+        ctx.stroke();
+
+        // Wheat ear
+        ctx.fillStyle = accent;
+        const earX = x + lean;
+        const earY = baseY - h;
+        ctx.beginPath();
+        ctx.ellipse(earX, earY - 2, 1.8, 4, lean * 0.05, 0, Math.PI * 2);
+        ctx.fill();
+        // Whiskers
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 0.5;
+        ctx.globalAlpha = 0.6;
+        for (let w = 0; w < 3; w++) {
+          const wy = earY - 3 + w * 1.5;
+          ctx.beginPath();
+          ctx.moveTo(earX, wy);
+          ctx.lineTo(earX + 3 + rand() * 2, wy - 2 - rand() * 2);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+    ctx.restore();
+  }
+
+  _drawSavannaN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dry earth Perlin texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 4) {
+      for (let x = 0; x < s; x += 4) {
+        const n = PerlinNoise.sampleNoise(x / s + 7.0, y / s + 7.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? '#A0522D' : primary);
+        ctx.fillRect(x, y, 4, 4);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Cracked earth lines
+    const rand = this._seededRand(5);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 5; i++) {
+      const sx = rand() * s;
+      const sy = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      let cx = sx, cy = sy;
+      for (let seg = 0; seg < 3; seg++) {
+        cx += (rand() - 0.5) * s * 0.2;
+        cy += (rand() - 0.5) * s * 0.2;
+        ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Sparse dry grass tufts
     for (let i = 0; i < 12; i++) {
       const x = rand() * s;
-      const y = rand() * s;
-      ctx.fillStyle = colors[i % colors.length];
+      const baseY = s * 0.4 + rand() * s * 0.6;
+      const h = 3 + rand() * 5;
+      ctx.strokeStyle = rand() > 0.5 ? secondary : accent;
+      ctx.lineWidth = 0.8;
       ctx.beginPath();
-      ctx.arc(x, y, 1.5 + rand() * 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  _drawWheat(ctx, s, sec, acc) {
-    const rand = this._seededRand(4);
-    ctx.strokeStyle = sec;
-    ctx.lineWidth = 1.5;
-    for (let i = 0; i < 14; i++) {
-      const x = rand() * s;
-      const y = rand() * s;
-      const h = 8 + rand() * 8;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y - h);
-      ctx.stroke();
-      ctx.fillStyle = acc;
-      ctx.beginPath();
-      ctx.ellipse(x, y - h - 2, 1.5, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  _drawSavanna(ctx, s, sec, acc) {
-    const rand = this._seededRand(5);
-    ctx.strokeStyle = sec;
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 10; i++) {
-      const x = rand() * s;
-      const y = s * 0.5 + rand() * s * 0.5;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y - 3 - rand() * 4);
+      ctx.moveTo(x, baseY);
+      ctx.lineTo(x + (rand() - 0.5) * 3, baseY - h);
       ctx.stroke();
     }
-    ctx.fillStyle = acc;
-    ctx.globalAlpha = 0.3;
-    ctx.beginPath();
-    ctx.ellipse(s * 0.3, s * 0.6, s * 0.15, s * 0.08, 0.3, 0, Math.PI * 2);
-    ctx.fill();
+
+    // Distant acacia silhouette
+    if (s >= 32) {
+      const treeX = s * (0.2 + rand() * 0.6);
+      const treeBaseY = s * (0.3 + rand() * 0.3);
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.25;
+      // Trunk
+      ctx.fillRect(treeX - 1, treeBaseY, 2, s * 0.12);
+      // Flat canopy
+      ctx.beginPath();
+      ctx.ellipse(treeX, treeBaseY - 2, s * 0.1, s * 0.04, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+  }
+
+  _drawFarmlandN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Soil texture via Perlin
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 8.0, y / s + 8.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.35 ? '#5D4037' : primary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
     ctx.globalAlpha = 1;
-  }
 
-  _drawFarmland(ctx, s, sec, acc) {
-    ctx.strokeStyle = sec;
-    ctx.lineWidth = 2;
-    const rows = 5;
+    // Plowed furrow rows with depth
+    const rows = 6;
     const gap = s / rows;
     for (let i = 0; i < rows; i++) {
       const y = gap * i + gap / 2;
+      // Shadow line (darker)
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 2.5;
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(0, y + 1);
+      ctx.lineTo(s, y + 1);
+      ctx.stroke();
+      // Ridge (lighter)
+      ctx.strokeStyle = secondary;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.5;
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(s, y);
       ctx.stroke();
     }
+    ctx.globalAlpha = 1;
+
+    // Crop sprouts between furrows
     const rand = this._seededRand(6);
-    ctx.fillStyle = acc;
-    for (let i = 0; i < 8; i++) {
-      ctx.beginPath();
-      ctx.arc(rand() * s, rand() * s, 1 + rand(), 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  _drawDenseForest(ctx, s, sec, acc) {
-    const rand = this._seededRand(7);
-    for (let i = 0; i < 5; i++) {
-      const cx = s * 0.15 + rand() * s * 0.7;
-      const cy = s * 0.25 + rand() * s * 0.5;
-      const r = s * 0.12 + rand() * s * 0.12;
-      ctx.fillStyle = i % 2 === 0 ? sec : acc;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = acc;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-    ctx.fillStyle = '#5D4037';
-    ctx.fillRect(s * 0.47, s * 0.7, s * 0.06, s * 0.15);
-  }
-
-  _drawLightWoods(ctx, s, sec, acc) {
-    const rand = this._seededRand(8);
-    for (let i = 0; i < 3; i++) {
-      const cx = s * 0.2 + rand() * s * 0.6;
-      const cy = s * 0.3 + rand() * s * 0.4;
-      const r = s * 0.1 + rand() * s * 0.08;
-      ctx.fillStyle = sec;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.fillStyle = '#6D4C41';
-    ctx.fillRect(s * 0.48, s * 0.65, s * 0.04, s * 0.12);
-  }
-
-  _drawPineForest(ctx, s, sec, acc) {
-    const rand = this._seededRand(9);
-    for (let i = 0; i < 4; i++) {
-      const cx = s * 0.15 + rand() * s * 0.7;
-      const base = s * 0.35 + rand() * s * 0.4;
-      const h = s * 0.25 + rand() * s * 0.15;
-      const w = s * 0.08 + rand() * s * 0.06;
-      ctx.fillStyle = i % 2 === 0 ? sec : acc;
-      ctx.beginPath();
-      ctx.moveTo(cx, base - h);
-      ctx.lineTo(cx - w, base);
-      ctx.lineTo(cx + w, base);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = '#4E342E';
-      ctx.fillRect(cx - 1.5, base, 3, s * 0.06);
-    }
-  }
-
-  _drawClearing(ctx, s, sec, acc) {
-    ctx.fillStyle = sec;
-    ctx.beginPath();
-    ctx.ellipse(s / 2, s / 2, s * 0.35, s * 0.3, 0, 0, Math.PI * 2);
-    ctx.fill();
-    const rand = this._seededRand(10);
-    ctx.strokeStyle = acc;
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      const x = s / 2 + Math.cos(angle) * s * 0.38;
-      const y = s / 2 + Math.sin(angle) * s * 0.32;
+    ctx.fillStyle = '#66BB6A';
+    ctx.strokeStyle = '#4CAF50';
+    ctx.lineWidth = 0.7;
+    for (let i = 0; i < 10; i++) {
+      const x = rand() * s;
+      const rowIdx = Math.floor(rand() * rows);
+      const y = gap * rowIdx + gap * 0.3;
+      const sproutH = 2 + rand() * 3;
+      ctx.globalAlpha = 0.6;
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x + (rand() - 0.5) * 3, y - 4);
+      ctx.lineTo(x - 1, y - sproutH);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 1, y - sproutH * 0.8);
+      ctx.stroke();
+      // Leaf dot
+      ctx.beginPath();
+      ctx.arc(x - 1, y - sproutH, 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawDenseForestN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dark forest floor
+    const floorGrad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.7);
+    floorGrad.addColorStop(0, this._lerpColor(primary, '#1A1A1A', 0.3));
+    floorGrad.addColorStop(1, primary);
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Undergrowth Perlin
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 9.0, y / s + 9.0);
+        if (n > 0.5) {
+          ctx.fillStyle = '#1B5E20';
+          ctx.fillRect(x, y, 3, 3);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    const rand = this._seededRand(7);
+
+    // Trunk glimpses
+    ctx.fillStyle = '#4E342E';
+    ctx.globalAlpha = 0.35;
+    for (let i = 0; i < 4; i++) {
+      const tx = s * 0.1 + rand() * s * 0.8;
+      const tw = 2 + rand() * 3;
+      ctx.fillRect(tx, s * 0.5, tw, s * 0.5);
+    }
+    ctx.globalAlpha = 1;
+
+    // Multi-depth canopy (back to front)
+    for (let layer = 0; layer < 3; layer++) {
+      const treeCount = 2 + layer;
+      const layerAlpha = 0.5 + layer * 0.2;
+      for (let i = 0; i < treeCount; i++) {
+        const cx = s * 0.08 + rand() * s * 0.84;
+        const cy = s * 0.15 + rand() * s * 0.5;
+        const r = s * 0.1 + rand() * s * 0.12 + layer * s * 0.02;
+        const treeColor = layer % 2 === 0 ? secondary : accent;
+
+        ctx.fillStyle = treeColor;
+        ctx.globalAlpha = layerAlpha;
+        // Organic canopy shape (overlapping circles)
+        for (let c = 0; c < 3; c++) {
+          const ox = cx + (rand() - 0.5) * r * 0.6;
+          const oy = cy + (rand() - 0.5) * r * 0.4;
+          ctx.beginPath();
+          ctx.arc(ox, oy, r * (0.6 + rand() * 0.3), 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Canopy shadow edge
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = layerAlpha * 0.4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.8, Math.PI * 0.8, Math.PI * 1.8);
+        ctx.stroke();
+      }
+    }
+
+    // Dappled light
+    ctx.fillStyle = '#AED581';
+    ctx.globalAlpha = 0.12;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 2 + rand() * 3, 1.5 + rand() * 2, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawLightWoodsN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Sunny grass floor
+    ctx.globalAlpha = 0.18;
+    for (let y = 0; y < s; y += 4) {
+      for (let x = 0; x < s; x += 4) {
+        const n = PerlinNoise.sampleNoise(x / s + 10.0, y / s + 10.0);
+        ctx.fillStyle = n > 0.5 ? '#8BC34A' : primary;
+        ctx.fillRect(x, y, 4, 4);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Grass blades on floor
+    const rand = this._seededRand(8);
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 12; i++) {
+      const x = rand() * s;
+      const y = rand() * s;
+      ctx.strokeStyle = rand() > 0.5 ? '#7CB342' : '#9CCC65';
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + (rand() - 0.5) * 2, y - 3 - rand() * 3);
       ctx.stroke();
     }
-  }
-
-  _drawHills(ctx, s, sec, acc) {
-    ctx.fillStyle = sec;
-    ctx.beginPath();
-    ctx.moveTo(0, s * 0.7);
-    ctx.quadraticCurveTo(s * 0.25, s * 0.35, s * 0.5, s * 0.5);
-    ctx.quadraticCurveTo(s * 0.75, s * 0.3, s, s * 0.6);
-    ctx.lineTo(s, s);
-    ctx.lineTo(0, s);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = acc;
-    ctx.globalAlpha = 0.3;
-    ctx.beginPath();
-    ctx.moveTo(s * 0.5, s * 0.5);
-    ctx.quadraticCurveTo(s * 0.75, s * 0.3, s, s * 0.6);
-    ctx.lineTo(s, s * 0.7);
-    ctx.quadraticCurveTo(s * 0.75, s * 0.45, s * 0.5, s * 0.6);
-    ctx.closePath();
-    ctx.fill();
     ctx.globalAlpha = 1;
+
+    // Scattered trees (fewer, more spaced)
+    for (let i = 0; i < 3; i++) {
+      const cx = s * 0.15 + rand() * s * 0.7;
+      const cy = s * 0.2 + rand() * s * 0.4;
+      const r = s * 0.08 + rand() * s * 0.1;
+
+      // Trunk
+      ctx.fillStyle = '#6D4C41';
+      ctx.globalAlpha = 0.5;
+      ctx.fillRect(cx - 1.5, cy + r * 0.3, 3, s * 0.15);
+      ctx.globalAlpha = 1;
+
+      // Canopy (organic overlapping)
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.arc(cx - r * 0.3, cy, r * 0.7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx + r * 0.3, cy - r * 0.1, r * 0.65, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy - r * 0.3, r * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Shadow edge
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 0.8;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.6, Math.PI * 0.5, Math.PI * 1.5);
+      ctx.stroke();
+    }
+
+    // Sunlight patches
+    ctx.fillStyle = '#FFEE58';
+    ctx.globalAlpha = 0.08;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 4 + rand() * 5, 3 + rand() * 4, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
-  _drawMountain(ctx, s, sec, acc) {
-    ctx.fillStyle = sec;
+  _drawPineForestN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dark needle-covered floor
+    const floorGrad = ctx.createLinearGradient(0, 0, 0, s);
+    floorGrad.addColorStop(0, this._lerpColor(primary, '#0A2A0A', 0.2));
+    floorGrad.addColorStop(1, primary);
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Needle texture via Perlin
+    ctx.globalAlpha = 0.12;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 11.0, y / s + 11.0);
+        if (n > 0.5) {
+          ctx.fillStyle = '#33691E';
+          ctx.fillRect(x, y, 3, 3);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Pine trees at multiple depths
+    const rand = this._seededRand(9);
+    for (let layer = 0; layer < 3; layer++) {
+      const count = 2 + layer;
+      for (let i = 0; i < count; i++) {
+        const cx = s * 0.08 + rand() * s * 0.84;
+        const baseY = s * 0.4 + rand() * s * 0.5;
+        const h = s * 0.28 + rand() * s * 0.18 + layer * s * 0.03;
+        const w = s * 0.07 + rand() * s * 0.05;
+        const treeColor = layer % 2 === 0 ? secondary : accent;
+
+        // Trunk
+        ctx.fillStyle = '#3E2723';
+        ctx.globalAlpha = 0.3 + layer * 0.15;
+        ctx.fillRect(cx - 1.5, baseY - h * 0.15, 3, h * 0.15 + 4);
+
+        // Layered triangular canopy
+        ctx.fillStyle = treeColor;
+        ctx.globalAlpha = 0.5 + layer * 0.18;
+        for (let t = 0; t < 3; t++) {
+          const tierY = baseY - h * (0.3 + t * 0.25);
+          const tierW = w * (1.3 - t * 0.25);
+          const tierH = h * 0.35;
+          ctx.beginPath();
+          ctx.moveTo(cx, tierY - tierH);
+          ctx.lineTo(cx - tierW, tierY);
+          ctx.lineTo(cx + tierW, tierY);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Shadow on right side
+        ctx.fillStyle = '#0D3B0F';
+        ctx.globalAlpha = 0.15;
+        for (let t = 0; t < 3; t++) {
+          const tierY = baseY - h * (0.3 + t * 0.25);
+          const tierW = w * (1.3 - t * 0.25);
+          const tierH = h * 0.35;
+          ctx.beginPath();
+          ctx.moveTo(cx, tierY - tierH);
+          ctx.lineTo(cx + tierW, tierY);
+          ctx.lineTo(cx, tierY);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawClearingN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Bright grass center
+    const clearingGrad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.5);
+    clearingGrad.addColorStop(0, secondary);
+    clearingGrad.addColorStop(0.7, primary);
+    clearingGrad.addColorStop(1, accent);
+    ctx.fillStyle = clearingGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin grass texture in center
+    ctx.globalAlpha = 0.12;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const dx = x / s - 0.5, dy = y / s - 0.5;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 0.4) {
+          const n = PerlinNoise.sampleNoise(x / s + 12.0, y / s + 12.0);
+          ctx.fillStyle = n > 0.5 ? '#AED581' : '#C5E1A5';
+          ctx.fillRect(x, y, 3, 3);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Tree line around edges
+    const rand = this._seededRand(10);
+    for (let i = 0; i < 10; i++) {
+      const angle = (i / 10) * Math.PI * 2 + rand() * 0.3;
+      const dist = s * 0.38 + rand() * s * 0.1;
+      const tx = s / 2 + Math.cos(angle) * dist;
+      const ty = s / 2 + Math.sin(angle) * dist;
+      const tr = s * 0.06 + rand() * s * 0.05;
+
+      ctx.fillStyle = rand() > 0.5 ? '#2E7D32' : '#388E3C';
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.arc(tx, ty, tr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Grass blades in center
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 15; i++) {
+      const gx = s * 0.25 + rand() * s * 0.5;
+      const gy = s * 0.25 + rand() * s * 0.5;
+      const gh = 2 + rand() * 4;
+      ctx.strokeStyle = rand() > 0.5 ? secondary : '#AED581';
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx + (rand() - 0.5) * 2, gy - gh);
+      ctx.stroke();
+    }
+
+    // Dappled sunlight
+    ctx.fillStyle = '#FFF9C4';
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 4; i++) {
+      const lx = s * 0.2 + rand() * s * 0.6;
+      const ly = s * 0.2 + rand() * s * 0.6;
+      ctx.beginPath();
+      ctx.ellipse(lx, ly, 3 + rand() * 4, 2 + rand() * 3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawHillsN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Rolling contour via Perlin
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 13.0, y / s * 2 + 13.0);
+        const elevation = n * 0.5 + 0.25 + (1 - y / s) * 0.3;
+        ctx.fillStyle = this._lerpColor(primary, secondary, Math.min(1, elevation));
+        ctx.globalAlpha = 0.4;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Main hill contours
+    const rand = this._seededRand(11);
+    for (let h = 0; h < 2; h++) {
+      const hillX = s * (0.2 + h * 0.4 + rand() * 0.2);
+      const hillTop = s * (0.25 + rand() * 0.15);
+      const hillW = s * (0.3 + rand() * 0.15);
+
+      // Hill body
+      ctx.fillStyle = secondary;
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(hillX - hillW, s);
+      ctx.quadraticCurveTo(hillX - hillW * 0.3, hillTop, hillX, hillTop - s * 0.05);
+      ctx.quadraticCurveTo(hillX + hillW * 0.3, hillTop, hillX + hillW, s);
+      ctx.closePath();
+      ctx.fill();
+
+      // Light side (left)
+      ctx.fillStyle = '#C5E1A5';
+      ctx.globalAlpha = 0.2;
+      ctx.beginPath();
+      ctx.moveTo(hillX - hillW, s);
+      ctx.quadraticCurveTo(hillX - hillW * 0.3, hillTop, hillX, hillTop - s * 0.05);
+      ctx.lineTo(hillX, s);
+      ctx.closePath();
+      ctx.fill();
+
+      // Shadow side (right)
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.2;
+      ctx.beginPath();
+      ctx.moveTo(hillX, hillTop - s * 0.05);
+      ctx.quadraticCurveTo(hillX + hillW * 0.3, hillTop, hillX + hillW, s);
+      ctx.lineTo(hillX, s);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Grass on hilltops
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 10; i++) {
+      const gx = rand() * s;
+      const gy = s * 0.3 + rand() * s * 0.4;
+      ctx.strokeStyle = secondary;
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx + (rand() - 0.5) * 2, gy - 3 - rand() * 3);
+      ctx.stroke();
+    }
+
+    // Exposed rock patches
+    ctx.fillStyle = '#90A4AE';
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, s * 0.5 + rand() * s * 0.4, 2 + rand() * 3, 1 + rand() * 2, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawMountainN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Base terrain gradient
+    const baseGrad = ctx.createLinearGradient(0, 0, 0, s);
+    baseGrad.addColorStop(0, '#ECEFF1');
+    baseGrad.addColorStop(0.25, secondary);
+    baseGrad.addColorStop(0.6, primary);
+    baseGrad.addColorStop(1, this._lerpColor(primary, '#4E342E', 0.3));
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Rock face texture via Perlin
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 14.0, y / s * 3 + 14.0);
+        if (n > 0.55) {
+          ctx.fillStyle = '#455A64';
+          ctx.fillRect(x, y, 3, 3);
+        } else if (n < 0.3) {
+          ctx.fillStyle = '#B0BEC5';
+          ctx.fillRect(x, y, 3, 3);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Mountain peak shape
+    const rand = this._seededRand(12);
+    const peakX = s * 0.5 + (rand() - 0.5) * s * 0.1;
+    const peakY = s * 0.08;
+    const baseL = s * 0.1;
+    const baseR = s * 0.9;
+
+    // Main mountain body
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.6;
     ctx.beginPath();
-    ctx.moveTo(s * 0.5, s * 0.1);
-    ctx.lineTo(s * 0.15, s * 0.85);
-    ctx.lineTo(s * 0.85, s * 0.85);
+    ctx.moveTo(peakX, peakY);
+    ctx.lineTo(baseL, s * 0.88);
+    ctx.lineTo(baseR, s * 0.88);
     ctx.closePath();
     ctx.fill();
+
+    // Shadow face (right)
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath();
+    ctx.moveTo(peakX, peakY);
+    ctx.lineTo(baseR, s * 0.88);
+    ctx.lineTo(peakX + s * 0.05, s * 0.88);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow cap with craggy edge
     ctx.fillStyle = '#ECEFF1';
+    ctx.globalAlpha = 0.85;
     ctx.beginPath();
-    ctx.moveTo(s * 0.5, s * 0.1);
-    ctx.lineTo(s * 0.38, s * 0.32);
-    ctx.lineTo(s * 0.62, s * 0.32);
+    ctx.moveTo(peakX, peakY);
+    const snowLine = s * 0.28;
+    const leftEdge = peakX - (peakX - baseL) * (snowLine / (s * 0.8));
+    const rightEdge = peakX + (baseR - peakX) * (snowLine / (s * 0.8));
+    ctx.lineTo(leftEdge, snowLine);
+    // Craggy snow line
+    const segments = 6;
+    for (let i = 1; i < segments; i++) {
+      const sx = leftEdge + (rightEdge - leftEdge) * (i / segments);
+      const sy = snowLine + (rand() - 0.3) * s * 0.05;
+      ctx.lineTo(sx, sy);
+    }
+    ctx.lineTo(rightEdge, snowLine);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = acc;
-    ctx.globalAlpha = 0.3;
+
+    // Altitude banding lines
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.15;
+    for (let band = 0; band < 4; band++) {
+      const by = s * 0.35 + band * s * 0.13;
+      const bLeft = peakX - (peakX - baseL) * (by / (s * 0.8));
+      const bRight = peakX + (baseR - peakX) * (by / (s * 0.8));
+      ctx.beginPath();
+      ctx.moveTo(bLeft + s * 0.02, by);
+      ctx.lineTo(bRight - s * 0.02, by);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Base scree
+    ctx.fillStyle = '#6D4C41';
+    ctx.globalAlpha = 0.15;
     ctx.beginPath();
-    ctx.moveTo(s * 0.5, s * 0.1);
-    ctx.lineTo(s * 0.85, s * 0.85);
-    ctx.lineTo(s * 0.5, s * 0.85);
+    ctx.moveTo(baseL - s * 0.05, s);
+    ctx.lineTo(baseL, s * 0.88);
+    ctx.lineTo(baseR, s * 0.88);
+    ctx.lineTo(baseR + s * 0.05, s);
     ctx.closePath();
     ctx.fill();
     ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
-  _drawDesert(ctx, s, sec, acc) {
-    ctx.fillStyle = sec;
+  _drawDesertN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Perlin dune contours
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 15.0, y / s * 1.5 + 15.0);
+        // Simulate light from top-left
+        const lightN = PerlinNoise.sampleNoise((x + 2) / s * 2 + 15.0, (y + 2) / s * 1.5 + 15.0);
+        const shadow = n - lightN;
+        let color;
+        if (shadow > 0.05) {
+          color = secondary; // lit face
+        } else if (shadow < -0.05) {
+          color = accent; // shadow face
+        } else {
+          color = primary;
+        }
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.35;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Sand ripple lines
+    const rand = this._seededRand(18);
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 8; i++) {
+      const ry = s * 0.1 + i * s * 0.12;
+      const offset = rand() * s * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(0, ry + offset);
+      for (let x = 0; x < s; x += s * 0.1) {
+        const wave = Math.sin(x / s * Math.PI * 2 + i) * 2;
+        ctx.lineTo(x, ry + offset + wave);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Wind shadow dune shape
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.2;
     ctx.beginPath();
     ctx.moveTo(0, s * 0.6);
-    ctx.quadraticCurveTo(s * 0.3, s * 0.4, s * 0.6, s * 0.55);
-    ctx.quadraticCurveTo(s * 0.8, s * 0.45, s, s * 0.5);
+    ctx.bezierCurveTo(s * 0.2, s * 0.4, s * 0.5, s * 0.35, s * 0.7, s * 0.5);
+    ctx.bezierCurveTo(s * 0.85, s * 0.55, s, s * 0.5, s, s * 0.55);
     ctx.lineTo(s, s);
     ctx.lineTo(0, s);
     ctx.closePath();
     ctx.fill();
-    const rand = this._seededRand(18);
-    ctx.fillStyle = acc;
-    ctx.globalAlpha = 0.3;
-    for (let i = 0; i < 8; i++) {
+
+    // Sparse rock details
+    ctx.fillStyle = '#8D6E63';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 3; i++) {
+      const rx = rand() * s;
+      const ry = s * 0.5 + rand() * s * 0.4;
       ctx.beginPath();
-      ctx.arc(rand() * s, rand() * s * 0.5, 1, 0, Math.PI * 2);
+      ctx.ellipse(rx, ry, 1.5 + rand() * 2, 1 + rand(), rand(), 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
-  _drawRoad(ctx, s, sec, acc) {
-    ctx.fillStyle = sec;
-    ctx.fillRect(s * 0.3, 0, s * 0.4, s);
-    ctx.strokeStyle = acc;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(s * 0.3, 0);
-    ctx.lineTo(s * 0.3, s);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(s * 0.7, 0);
-    ctx.lineTo(s * 0.7, s);
-    ctx.stroke();
+  _drawRoadN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Dirt shoulders
+    ctx.fillStyle = this._lerpColor(primary, '#8D6E63', 0.3);
+    ctx.fillRect(0, 0, s, s);
+
+    // Road surface
+    ctx.fillStyle = secondary;
+    ctx.fillRect(s * 0.25, 0, s * 0.5, s);
+
+    // Cobblestone texture via Perlin
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = Math.floor(s * 0.25); x < s * 0.75; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 16.0, y / s * 4 + 16.0);
+        ctx.fillStyle = n > 0.55 ? primary : (n < 0.35 ? accent : secondary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Road edge stones
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
     const rand = this._seededRand(19);
-    ctx.fillStyle = acc;
-    for (let i = 0; i < 4; i++) {
-      const y = s * 0.1 + i * s * 0.25;
+    // Left edge (slightly wavy)
+    ctx.beginPath();
+    ctx.moveTo(s * 0.25, 0);
+    for (let y = 0; y < s; y += s * 0.15) {
+      ctx.lineTo(s * 0.25 + (rand() - 0.5) * 2, y);
+    }
+    ctx.lineTo(s * 0.25, s);
+    ctx.stroke();
+    // Right edge
+    ctx.beginPath();
+    ctx.moveTo(s * 0.75, 0);
+    for (let y = 0; y < s; y += s * 0.15) {
+      ctx.lineTo(s * 0.75 + (rand() - 0.5) * 2, y);
+    }
+    ctx.lineTo(s * 0.75, s);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Wheel ruts
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.15;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.38, 0);
+    ctx.lineTo(s * 0.38, s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(s * 0.62, 0);
+    ctx.lineTo(s * 0.62, s);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Small stones/pebbles
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 6; i++) {
+      const px = s * 0.28 + rand() * s * 0.44;
+      const py = rand() * s;
       ctx.beginPath();
-      ctx.ellipse(s * 0.5, y, 2 + rand() * 2, 1.5, 0, 0, Math.PI * 2);
+      ctx.ellipse(px, py, 1 + rand() * 1.5, 0.8 + rand(), rand(), 0, Math.PI * 2);
       ctx.fill();
     }
+    ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
-  _drawBridge(ctx, s, sec, acc) {
+  _drawBridgeN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Water underneath
     ctx.fillStyle = '#42A5F5';
     ctx.fillRect(0, 0, s, s);
-    ctx.fillStyle = sec;
-    ctx.fillRect(s * 0.2, 0, s * 0.6, s);
-    ctx.strokeStyle = acc;
-    ctx.lineWidth = 1;
-    const planks = 6;
-    for (let i = 0; i <= planks; i++) {
-      const y = (i / planks) * s;
+    // Water ripples
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 3; i++) {
+      const wy = s * 0.2 + i * s * 0.3;
       ctx.beginPath();
-      ctx.moveTo(s * 0.2, y);
-      ctx.lineTo(s * 0.8, y);
+      ctx.moveTo(0, wy);
+      ctx.quadraticCurveTo(s * 0.25, wy - 2, s * 0.5, wy);
+      ctx.quadraticCurveTo(s * 0.75, wy + 2, s, wy);
       ctx.stroke();
     }
-    ctx.strokeStyle = acc;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(s * 0.2, 0);
-    ctx.lineTo(s * 0.2, s);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(s * 0.8, 0);
-    ctx.lineTo(s * 0.8, s);
-    ctx.stroke();
+
+    // Bridge deck
+    ctx.fillStyle = secondary;
+    ctx.fillRect(s * 0.18, 0, s * 0.64, s);
+
+    // Wood plank texture via Perlin
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = Math.floor(s * 0.18); x < s * 0.82; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 6 + 17.0, y / s * 1 + 17.0);
+        ctx.fillStyle = n > 0.55 ? primary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Plank lines
+    const rand = this._seededRand(20);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.4;
+    const plankCount = 8;
+    for (let i = 0; i <= plankCount; i++) {
+      const y = (i / plankCount) * s;
+      ctx.beginPath();
+      ctx.moveTo(s * 0.18, y);
+      ctx.lineTo(s * 0.82, y);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Structural beams (railings)
+    ctx.fillStyle = accent;
+    ctx.fillRect(s * 0.16, 0, s * 0.04, s);
+    ctx.fillRect(s * 0.80, 0, s * 0.04, s);
+
+    // Railing posts
+    ctx.fillStyle = this._lerpColor(accent, '#3E2723', 0.3);
+    const postCount = 4;
+    for (let i = 0; i < postCount; i++) {
+      const py = s * 0.1 + i * s * 0.25;
+      // Left post
+      ctx.fillRect(s * 0.14, py - 1, s * 0.06, 3);
+      // Right post
+      ctx.fillRect(s * 0.80, py - 1, s * 0.06, 3);
+    }
+
+    // Nail details
+    ctx.fillStyle = '#37474F';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 5; i++) {
+      const nx = s * 0.22 + rand() * s * 0.56;
+      const ny = rand() * s;
+      ctx.beginPath();
+      ctx.arc(nx, ny, 0.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+
+  /* ==== Transition System ==== */
+
+  /** Render transitions on edges where neighbor tile type differs */
+  _renderTransitions(ctx, s, neighbors, mode) {
+    if (!neighbors || s < 16) return;
+    if (mode !== 'terrestrial') return; // space/dungeon stubbed
+
+    const edgeCount = neighbors.edges.length;
+    if (edgeCount === 0) return;
+
+    ctx.save();
+    const strip = Math.max(2, s * 0.15); // 15% cell width for gradient strip
+
+    for (let i = 0; i < edgeCount; i++) {
+      const edge = neighbors.edges[i];
+      if (edge.isSameType || !edge.tileId || !edge.deltas) continue;
+
+      // Find dominant material delta
+      const d = edge.deltas;
+      const absDeltas = [
+        { axis: 'elevation', val: Math.abs(d.dElevation) },
+        { axis: 'moisture', val: Math.abs(d.dMoisture) },
+        { axis: 'temperature', val: Math.abs(d.dTemperature) },
+        { axis: 'density', val: Math.abs(d.dDensity) },
+        { axis: 'organic', val: Math.abs(d.dOrganic) }
+      ];
+      absDeltas.sort((a, b) => b.val - a.val);
+      const dominant = absDeltas[0];
+      if (dominant.val < 0.1) continue; // too similar, skip
+
+      // Determine transition color/style by dominant axis
+      let transColor, transAlpha;
+      switch (dominant.axis) {
+        case 'elevation':
+          transColor = d.dElevation > 0 ? '#546E7A' : '#8D6E63'; // cliff shadow / rocky
+          transAlpha = Math.min(0.35, dominant.val * 0.4);
+          break;
+        case 'moisture':
+          transColor = d.dMoisture > 0 ? '#5D99C6' : '#A1887F'; // wetland / dry
+          transAlpha = Math.min(0.3, dominant.val * 0.35);
+          break;
+        case 'temperature':
+          transColor = d.dTemperature > 0 ? '#E65100' : '#42A5F5'; // warm / cold
+          transAlpha = Math.min(0.25, dominant.val * 0.3);
+          break;
+        case 'density':
+          transColor = d.dDensity > 0 ? '#2E7D32' : '#AED581'; // dense / sparse
+          transAlpha = Math.min(0.3, dominant.val * 0.35);
+          break;
+        case 'organic':
+          transColor = '#795548'; // natural/constructed boundary
+          transAlpha = Math.min(0.35, dominant.val * 0.4);
+          break;
+        default:
+          continue;
+      }
+
+      // Draw edge gradient strip
+      ctx.globalAlpha = transAlpha;
+
+      // Build transparent version of transColor (avoids black fringe from 'transparent')
+      const tr = parseInt(transColor.slice(1, 3), 16);
+      const tg = parseInt(transColor.slice(3, 5), 16);
+      const tb = parseInt(transColor.slice(5, 7), 16);
+      const transColorFade = `rgba(${tr},${tg},${tb},0)`;
+
+      if (edgeCount === 4) {
+        // Square grid edges
+        let grad;
+        switch (i) {
+          case 0: // N
+            grad = ctx.createLinearGradient(0, 0, 0, strip);
+            grad.addColorStop(0, transColor);
+            grad.addColorStop(1, transColorFade);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, s, strip);
+            break;
+          case 1: // E
+            grad = ctx.createLinearGradient(s, 0, s - strip, 0);
+            grad.addColorStop(0, transColor);
+            grad.addColorStop(1, transColorFade);
+            ctx.fillStyle = grad;
+            ctx.fillRect(s - strip, 0, strip, s);
+            break;
+          case 2: // S
+            grad = ctx.createLinearGradient(0, s, 0, s - strip);
+            grad.addColorStop(0, transColor);
+            grad.addColorStop(1, transColorFade);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, s - strip, s, strip);
+            break;
+          case 3: // W
+            grad = ctx.createLinearGradient(0, 0, strip, 0);
+            grad.addColorStop(0, transColor);
+            grad.addColorStop(1, transColorFade);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, strip, s);
+            break;
+        }
+      } else {
+        // Non-square: radial fade from edge direction
+        const angle = (i / edgeCount) * Math.PI * 2;
+        const edgeX = s / 2 + Math.cos(angle) * s * 0.45;
+        const edgeY = s / 2 + Math.sin(angle) * s * 0.45;
+        const grad = ctx.createRadialGradient(edgeX, edgeY, 0, edgeX, edgeY, strip);
+        grad.addColorStop(0, transColor);
+        grad.addColorStop(1, transColorFade);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, s, s);
+      }
+
+      // Scatter objects at edges (only at full detail, >=48px)
+      if (s >= 48) {
+        this._drawTransitionScatter(ctx, s, i, edgeCount, dominant.axis, d, neighbors.col, neighbors.row);
+      }
+    }
+
+    ctx.restore();
+  }
+
+
+  /* ==== Scatter Objects ==== */
+
+  /** Draw scatter objects at transition edges */
+  _drawTransitionScatter(ctx, s, edgeIdx, totalEdges, axis, deltas, col, row) {
+    // Seeded positions from Perlin — deterministic per cell+edge
+    const seed = col * 73 + row * 137 + edgeIdx * 31 + 1;
+    const rand = this._seededRand(seed);
+    const maxScatter = 4;
+    const count = 1 + Math.floor(rand() * Math.min(maxScatter, 3));
+
+    // Edge center position
+    let baseX = s * 0.5, baseY = s * 0.5;
+    if (totalEdges === 4) {
+      switch (edgeIdx) {
+        case 0: baseX = s * 0.5; baseY = s * 0.08; break;
+        case 1: baseX = s * 0.92; baseY = s * 0.5; break;
+        case 2: baseX = s * 0.5; baseY = s * 0.92; break;
+        case 3: baseX = s * 0.08; baseY = s * 0.5; break;
+      }
+    } else {
+      const angle = (edgeIdx / totalEdges) * Math.PI * 2;
+      baseX = s / 2 + Math.cos(angle) * s * 0.38;
+      baseY = s / 2 + Math.sin(angle) * s * 0.38;
+    }
+
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < count; i++) {
+      const ox = baseX + (rand() - 0.5) * s * 0.2;
+      const oy = baseY + (rand() - 0.5) * s * 0.2;
+      const objSize = 2 + rand() * 3;
+
+      switch (axis) {
+        case 'elevation':
+          // Small rocks
+          ctx.fillStyle = '#78909C';
+          ctx.beginPath();
+          ctx.ellipse(ox, oy, objSize, objSize * 0.6, rand() * Math.PI, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+        case 'moisture':
+          // Reeds/cattails
+          ctx.strokeStyle = '#33691E';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(ox, oy);
+          ctx.lineTo(ox + (rand() - 0.5) * 2, oy - objSize * 2);
+          ctx.stroke();
+          break;
+        case 'density':
+          // Tree stumps
+          ctx.fillStyle = '#5D4037';
+          ctx.beginPath();
+          ctx.ellipse(ox, oy, objSize * 0.8, objSize * 0.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#8D6E63';
+          ctx.beginPath();
+          ctx.ellipse(ox, oy - 0.5, objSize * 0.6, objSize * 0.3, 0, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+        case 'temperature':
+          // Frost crystals / heat shimmer
+          ctx.fillStyle = deltas.dTemperature < 0 ? '#B3E5FC' : '#FFCC80';
+          ctx.globalAlpha = 0.3;
+          for (let s2 = 0; s2 < 3; s2++) {
+            ctx.beginPath();
+            ctx.arc(ox + (rand() - 0.5) * 4, oy + (rand() - 0.5) * 4, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 0.5;
+          break;
+        case 'organic':
+          // Boundary stones
+          ctx.fillStyle = '#9E9E9E';
+          ctx.beginPath();
+          ctx.rect(ox - objSize * 0.3, oy - objSize * 0.5, objSize * 0.6, objSize);
+          ctx.fill();
+          break;
+      }
+    }
+  }
+
+
+  /* ==== Color Utilities ==== */
+
+  /** Lerp between two hex colors */
+  _lerpColor(hex1, hex2, t) {
+    const r1 = parseInt(hex1.slice(1, 3), 16);
+    const g1 = parseInt(hex1.slice(3, 5), 16);
+    const b1 = parseInt(hex1.slice(5, 7), 16);
+    const r2 = parseInt(hex2.slice(1, 3), 16);
+    const g2 = parseInt(hex2.slice(3, 5), 16);
+    const b2 = parseInt(hex2.slice(5, 7), 16);
+    const r = Math.round(r1 + (r2 - r1) * t);
+    const g = Math.round(g1 + (g2 - g1) * t);
+    const b = Math.round(b1 + (b2 - b1) * t);
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   }
 }

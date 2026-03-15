@@ -325,4 +325,67 @@ class AnimationManager {
         return null;
     }
   }
+
+  /* ---- Land Animation Effects ---- */
+
+  /**
+   * Get animation parameters for a land tile at current time.
+   * Returns effect params for per-frame animation layer, or null.
+   */
+  getLandEffects(tileId, pattern, col, row) {
+    if (!this.showAnyAnimation) return null;
+
+    const t = this.animationTime;
+    const phase = (col * 0.7 + row * 1.3);
+
+    switch (pattern) {
+      case 'grass':
+      case 'tall-grass':
+      case 'wildflowers':
+      case 'savanna':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 1.2 + phase) * 2,
+          windPhase: t * 0.6 + phase * 0.4,
+          gustAlpha: this.showIntenseEffects ? Math.max(0, Math.sin(t * 0.8 + phase * 0.5) - 0.7) * 0.5 : 0
+        };
+
+      case 'wheat':
+        return {
+          type: 'wind',
+          windSway: Math.sin(t * 0.9 + phase) * 2.5,
+          windPhase: t * 0.5 + phase * 0.3,
+          gustAlpha: this.showIntenseEffects ? Math.max(0, Math.sin(t * 0.6 + phase * 0.4) - 0.6) * 0.4 : 0
+        };
+
+      case 'dense-forest':
+      case 'light-woods':
+      case 'pine-forest':
+        return {
+          type: 'forest',
+          rustleSway: Math.sin(t * 0.7 + phase) * 1.5,
+          dappleLightShift: Math.sin(t * 0.4 + phase * 0.3) * 2,
+          leafFall: this.showIntenseEffects && Math.sin(t * 0.3 + phase) > 0.92
+        };
+
+      case 'clearing':
+        return {
+          type: 'forest',
+          rustleSway: Math.sin(t * 0.5 + phase) * 1,
+          dappleLightShift: Math.sin(t * 0.3 + phase * 0.2) * 3,
+          leafFall: false
+        };
+
+      case 'road':
+      case 'bridge':
+        if (!this.showIntenseEffects) return null;
+        return {
+          type: 'constructed',
+          trafficDust: Math.sin(t * 0.2 + phase) > 0.85
+        };
+
+      default:
+        return null;
+    }
+  }
 }
