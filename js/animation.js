@@ -582,6 +582,237 @@ class AnimationManager {
           hawkShadow: this.showIntenseEffects ? Math.sin(t * 0.18 + phase * 1.3) > 0.88 : false
         };
 
+      // Session 6: Elevation tiles
+      case 'foothill':
+        return {
+          type: 'elevation',
+          windSway: this.showGentleEffects ? Math.sin(t * 1.0 + phase) * 1.2 : 0,
+          windPhase: t * 0.5 + phase * 0.3,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.18 + phase * 0.25) * 0.25 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.14 + phase * 0.4) * 0.06 + 0.03) : 0,
+          livestockShadow: false,
+          hawkShadow: false
+        };
+
+      case 'high-peak':
+      case 'ridge':
+        return {
+          type: 'elevation',
+          windSway: 0,
+          windPhase: 0,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.12 + phase * 0.2) * 0.4 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.1 + phase * 0.3) * 0.12 + 0.06) : 0,
+          livestockShadow: false,
+          hawkShadow: this.showIntenseEffects ? Math.sin(t * 0.2 + phase * 1.5) > 0.9 : false
+        };
+
+      case 'snow-peak':
+        return {
+          type: 'arctic',
+          snowDriftX: this.showGentleEffects ? (t * 6 + phase * 4) % 40 : -1,
+          snowDriftAlpha: this.showGentleEffects ? Math.abs(Math.sin(t * 0.8 + phase)) * 0.15 : 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 4 + phase,
+          auroraShimmer: false,
+          crackPropagation: false
+        };
+
+      case 'cliff':
+      case 'canyon':
+        return {
+          type: 'elevation',
+          windSway: 0,
+          windPhase: 0,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.15 + phase * 0.2) * 0.3 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.12 + phase * 0.4) * 0.08 + 0.04) : 0,
+          livestockShadow: false,
+          hawkShadow: this.showIntenseEffects ? Math.sin(t * 0.22 + phase * 1.8) > 0.91 : false
+        };
+
+      case 'plateau':
+        return {
+          type: 'elevation',
+          windSway: this.showGentleEffects ? Math.sin(t * 0.8 + phase) * 1 : 0,
+          windPhase: t * 0.4 + phase * 0.3,
+          cloudShadowX: this.showGentleEffects ? Math.sin(t * 0.15 + phase * 0.2) * 0.25 : 0,
+          cloudShadowAlpha: this.showGentleEffects ? (Math.sin(t * 0.12 + phase * 0.4) * 0.07 + 0.03) : 0,
+          livestockShadow: false,
+          hawkShadow: false
+        };
+
+      case 'scree':
+        if (!this.showIntenseEffects) return null;
+        return {
+          type: 'scree',
+          rockTumble: Math.sin(t * 0.1 + phase * 2.5) > 0.94,
+          tumblePhase: t * 2 + phase
+        };
+
+      // Session 6: Arctic tiles
+      case 'tundra':
+      case 'permafrost':
+        return {
+          type: 'arctic',
+          snowDriftX: this.showGentleEffects ? (t * 4 + phase * 3) % 30 : -1,
+          snowDriftAlpha: this.showGentleEffects ? Math.abs(Math.sin(t * 0.6 + phase)) * 0.1 : 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 3 + phase,
+          auroraShimmer: false,
+          crackPropagation: false
+        };
+
+      case 'frozen-water':
+        return {
+          type: 'arctic',
+          snowDriftX: -1,
+          snowDriftAlpha: 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 5 + phase,
+          auroraShimmer: false,
+          crackPropagation: this.showIntenseEffects ? Math.sin(t * 0.08 + phase * 3) > 0.95 : false
+        };
+
+      case 'ice-plain':
+      case 'ice-shelf':
+        return {
+          type: 'arctic',
+          snowDriftX: this.showGentleEffects ? (t * 5 + phase * 4) % 35 : -1,
+          snowDriftAlpha: this.showGentleEffects ? Math.abs(Math.sin(t * 0.7 + phase)) * 0.08 : 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 4 + phase,
+          auroraShimmer: false,
+          crackPropagation: false
+        };
+
+      case 'glacier':
+        return {
+          type: 'arctic',
+          snowDriftX: this.showGentleEffects ? (t * 3 + phase * 2) % 25 : -1,
+          snowDriftAlpha: this.showGentleEffects ? Math.abs(Math.sin(t * 0.5 + phase)) * 0.1 : 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 3 + phase,
+          auroraShimmer: false,
+          crackPropagation: false
+        };
+
+      case 'ice-cave':
+        return {
+          type: 'arctic',
+          snowDriftX: -1,
+          snowDriftAlpha: 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 6 + phase,
+          auroraShimmer: this.showGentleEffects,
+          auroraPhase: t * 0.3 + phase * 0.2,
+          crackPropagation: false
+        };
+
+      case 'snow-field':
+        return {
+          type: 'arctic',
+          snowDriftX: this.showGentleEffects ? (t * 7 + phase * 5) % 40 : -1,
+          snowDriftAlpha: this.showGentleEffects ? Math.abs(Math.sin(t * 0.9 + phase)) * 0.12 : 0,
+          iceSparkle: this.showGentleEffects,
+          sparklePhase: t * 5 + phase,
+          auroraShimmer: false,
+          crackPropagation: false
+        };
+
+      // Session 6: Dungeon tiles
+      case 'stone-floor':
+      case 'cobblestone':
+      case 'crypt':
+      case 'throne-room':
+        return {
+          type: 'dungeon',
+          torchFlicker: this.showGentleEffects ? Math.sin(t * 4 + phase) * 0.5 + Math.sin(t * 7 + phase * 1.3) * 0.3 : 0,
+          dustMote: this.showGentleEffects,
+          dustPhase: t * 2 + phase,
+          dripping: false,
+          ratScurry: false
+        };
+
+      case 'corridor':
+      case 'dark-room':
+        return {
+          type: 'dungeon',
+          torchFlicker: this.showGentleEffects ? Math.sin(t * 5 + phase) * 0.6 + Math.sin(t * 8 + phase * 1.5) * 0.3 : 0,
+          dustMote: this.showGentleEffects,
+          dustPhase: t * 1.5 + phase,
+          dripping: false,
+          ratScurry: this.showIntenseEffects ? Math.sin(t * 0.15 + phase * 2.3) > 0.93 : false
+        };
+
+      case 'cavern':
+        return {
+          type: 'dungeon',
+          torchFlicker: 0,
+          dustMote: false,
+          dustPhase: 0,
+          dripping: this.showGentleEffects,
+          dripPhase: t * 3 + phase,
+          ratScurry: this.showIntenseEffects ? Math.sin(t * 0.12 + phase * 1.9) > 0.94 : false
+        };
+
+      case 'underground-river':
+      case 'sewer':
+        return {
+          type: 'dungeon',
+          torchFlicker: 0,
+          dustMote: false,
+          dustPhase: 0,
+          dripping: this.showGentleEffects,
+          dripPhase: t * 4 + phase,
+          bubbleY: this.showGentleEffects ? (t * 5 + phase * 3) % 15 : -1,
+          bubbleAlpha: Math.max(0, 1 - ((t * 5 + phase * 3) % 15) / 15) * 0.3,
+          ratScurry: false
+        };
+
+      case 'pit':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'dungeon',
+          torchFlicker: 0,
+          dustMote: this.showGentleEffects,
+          dustPhase: t * 1 + phase,
+          dripping: false,
+          ratScurry: false
+        };
+
+      // Session 6: Battlefield tiles
+      case 'mud':
+        return {
+          type: 'battlefield',
+          mudBubble: this.showGentleEffects,
+          bubblePhase: t * 2 + phase,
+          currentFlow: false
+        };
+
+      case 'moat':
+        return {
+          type: 'battlefield',
+          mudBubble: false,
+          currentFlow: this.showGentleEffects,
+          flowPhase: t * 0.8 + phase * 0.5
+        };
+
+      case 'rocky-ground':
+        if (!this.showIntenseEffects) return null;
+        return {
+          type: 'scree',
+          rockTumble: Math.sin(t * 0.08 + phase * 2.2) > 0.96,
+          tumblePhase: t * 1.5 + phase
+        };
+
+      case 'dam':
+        if (!this.showGentleEffects) return null;
+        return {
+          type: 'battlefield',
+          mudBubble: false,
+          currentFlow: this.showGentleEffects,
+          flowPhase: t * 0.6 + phase * 0.4
+        };
+
       default:
         return null;
     }

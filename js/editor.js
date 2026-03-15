@@ -969,6 +969,171 @@ class Editor {
         ctx.closePath();
         ctx.fill();
       }
+    } else if (fx.type === 'arctic') {
+      // Snow drift
+      if (fx.snowDriftX >= 0 && fx.snowDriftAlpha > 0.01) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${fx.snowDriftAlpha})`;
+        const dx = x + (fx.snowDriftX % w);
+        ctx.beginPath();
+        ctx.ellipse(dx, y + h * 0.3, w * 0.15, h * 0.06, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(x + ((fx.snowDriftX + 15) % w), y + h * 0.6, w * 0.1, h * 0.04, -0.1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Ice sparkle
+      if (fx.iceSparkle) {
+        const t = this._animation.animationTime;
+        const sp = fx.sparklePhase;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        for (let i = 0; i < 3; i++) {
+          const alpha = Math.max(0, Math.sin(sp + i * 2.1));
+          if (alpha > 0.7) {
+            ctx.globalAlpha = alpha * 0.5;
+            const sx = x + w * (0.2 + Math.sin(sp * 0.3 + i * 1.7) * 0.3);
+            const sy = y + h * (0.2 + Math.cos(sp * 0.4 + i * 2.3) * 0.3);
+            ctx.beginPath();
+            ctx.arc(sx, sy, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // Aurora shimmer (ice cave)
+      if (fx.auroraShimmer) {
+        const ap = fx.auroraPhase;
+        const hue = (ap * 60) % 360;
+        ctx.fillStyle = `hsla(${hue}, 60%, 50%, 0.04)`;
+        ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = `hsla(${(hue + 120) % 360}, 60%, 50%, 0.03)`;
+        ctx.fillRect(x, y + h * 0.3, w, h * 0.4);
+      }
+
+      // Crack propagation (frozen water)
+      if (fx.crackPropagation) {
+        const t = this._animation.animationTime;
+        ctx.strokeStyle = 'rgba(100, 150, 200, 0.15)';
+        ctx.lineWidth = 0.5;
+        const cx = x + w * 0.5;
+        const cy = y + h * 0.5;
+        const len = w * 0.3 * Math.min(1, (t % 3) / 1.5);
+        const angle = Math.floor(t * 0.5) * 1.2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+        ctx.stroke();
+      }
+    } else if (fx.type === 'scree') {
+      // Rock tumble animation
+      if (fx.rockTumble) {
+        const tp = fx.tumblePhase;
+        ctx.fillStyle = 'rgba(120, 120, 120, 0.3)';
+        const progress = (tp % 2) / 2;
+        const rx = x + w * (0.3 + progress * 0.4);
+        const ry = y + h * (0.2 + progress * 0.6);
+        ctx.beginPath();
+        ctx.ellipse(rx, ry, 1.5, 1, tp * 3, 0, Math.PI * 2);
+        ctx.fill();
+        // Dust trail
+        ctx.fillStyle = 'rgba(180, 170, 160, 0.1)';
+        ctx.beginPath();
+        ctx.ellipse(rx - 3, ry - 2, 3, 1.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (fx.type === 'dungeon') {
+      // Torch flicker — warm glow pulsing
+      if (Math.abs(fx.torchFlicker) > 0.1) {
+        const intensity = (fx.torchFlicker + 1) * 0.5; // normalize 0–1
+        ctx.fillStyle = `rgba(255, 160, 50, ${intensity * 0.04})`;
+        ctx.fillRect(x, y, w, h);
+      }
+
+      // Dust motes floating
+      if (fx.dustMote) {
+        const dp = fx.dustPhase;
+        ctx.fillStyle = 'rgba(200, 180, 150, 0.15)';
+        for (let i = 0; i < 2; i++) {
+          const mx = x + w * (0.3 + Math.sin(dp + i * 2.5) * 0.2);
+          const my = y + h * (0.2 + ((dp * 0.3 + i * 0.5) % 1) * 0.6);
+          ctx.beginPath();
+          ctx.arc(mx, my, 0.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Dripping water
+      if (fx.dripping) {
+        const dp = fx.dripPhase;
+        const dripProgress = (dp % 2) / 2;
+        ctx.fillStyle = `rgba(150, 200, 255, ${(1 - dripProgress) * 0.3})`;
+        const dx = x + w * 0.4;
+        const dy = y + dripProgress * h * 0.4;
+        ctx.beginPath();
+        ctx.ellipse(dx, dy, 0.8, 1.2 + dripProgress, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Bubbles (underground river / sewer)
+      if (fx.bubbleY >= 0 && fx.bubbleAlpha > 0.02) {
+        ctx.strokeStyle = `rgba(150, 200, 255, ${fx.bubbleAlpha})`;
+        ctx.lineWidth = 0.5;
+        const by = y + h - fx.bubbleY;
+        ctx.beginPath();
+        ctx.arc(x + w * 0.5, by, 1.5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Rat scurrying
+      if (fx.ratScurry) {
+        const t = this._animation.animationTime;
+        ctx.fillStyle = 'rgba(80, 60, 40, 0.15)';
+        const ratX = x + w * ((t * 2 + (x + y) * 0.01) % 1);
+        const ratY = y + h * 0.8;
+        ctx.beginPath();
+        ctx.ellipse(ratX, ratY, 2, 1, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Tail
+        ctx.strokeStyle = 'rgba(80, 60, 40, 0.1)';
+        ctx.lineWidth = 0.4;
+        ctx.beginPath();
+        ctx.moveTo(ratX - 2, ratY);
+        ctx.quadraticCurveTo(ratX - 4, ratY - 1, ratX - 5, ratY + 0.5);
+        ctx.stroke();
+      }
+    } else if (fx.type === 'battlefield') {
+      // Mud bubbles
+      if (fx.mudBubble) {
+        const bp = fx.bubblePhase;
+        const bubbleProgress = (bp % 3) / 3;
+        const ba = Math.max(0, 1 - bubbleProgress) * 0.2;
+        if (ba > 0.02) {
+          ctx.strokeStyle = `rgba(100, 80, 60, ${ba})`;
+          ctx.lineWidth = 0.5;
+          const bx = x + w * (0.4 + Math.sin(bp * 0.7) * 0.15);
+          const by = y + h * 0.5;
+          const br = 1 + bubbleProgress * 2;
+          ctx.beginPath();
+          ctx.arc(bx, by, br, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // Gentle current flow (moat/dam)
+      if (fx.currentFlow) {
+        const fp = fx.flowPhase;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = 0.8;
+        for (let i = 0; i < 2; i++) {
+          const fy = y + h * (0.35 + i * 0.3);
+          const offset = Math.sin(fp + i * 1.5) * 2;
+          ctx.beginPath();
+          ctx.moveTo(x, fy);
+          ctx.quadraticCurveTo(x + w * 0.5 + offset, fy - 1, x + w, fy);
+          ctx.stroke();
+        }
+      }
     }
 
     ctx.restore();

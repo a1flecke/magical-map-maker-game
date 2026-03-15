@@ -650,6 +650,96 @@ class TileRenderer {
       case 'continental-shelf':
         this._drawContinentalShelfN64(ctx, size, colors, neighbors);
         break;
+      case 'foothill':
+        this._drawFoothillN64(ctx, size, colors, neighbors);
+        break;
+      case 'high-peak':
+        this._drawHighPeakN64(ctx, size, colors, neighbors);
+        break;
+      case 'snow-peak':
+        this._drawSnowPeakN64(ctx, size, colors, neighbors);
+        break;
+      case 'cliff':
+        this._drawCliffN64(ctx, size, colors, neighbors);
+        break;
+      case 'canyon':
+        this._drawCanyonN64(ctx, size, colors, neighbors);
+        break;
+      case 'plateau':
+        this._drawPlateauN64(ctx, size, colors, neighbors);
+        break;
+      case 'ridge':
+        this._drawRidgeN64(ctx, size, colors, neighbors);
+        break;
+      case 'scree':
+        this._drawScreeN64(ctx, size, colors, neighbors);
+        break;
+      case 'tundra':
+        this._drawTundraN64(ctx, size, colors, neighbors);
+        break;
+      case 'frozen-water':
+        this._drawFrozenWaterN64(ctx, size, colors, neighbors);
+        break;
+      case 'ice-plain':
+        this._drawIcePlainN64(ctx, size, colors, neighbors);
+        break;
+      case 'glacier':
+        this._drawGlacierN64(ctx, size, colors, neighbors);
+        break;
+      case 'ice-cave':
+        this._drawIceCaveN64(ctx, size, colors, neighbors);
+        break;
+      case 'snow-field':
+        this._drawSnowFieldN64(ctx, size, colors, neighbors);
+        break;
+      case 'permafrost':
+        this._drawPermafrostN64(ctx, size, colors, neighbors);
+        break;
+      case 'ice-shelf':
+        this._drawIceShelfN64(ctx, size, colors, neighbors);
+        break;
+      case 'stone-floor':
+        this._drawStoneFloorN64(ctx, size, colors, neighbors);
+        break;
+      case 'cobblestone':
+        this._drawCobblestoneN64(ctx, size, colors, neighbors);
+        break;
+      case 'corridor':
+        this._drawCorridorN64(ctx, size, colors, neighbors);
+        break;
+      case 'cavern':
+        this._drawCavernN64(ctx, size, colors, neighbors);
+        break;
+      case 'underground-river':
+        this._drawUndergroundRiverN64(ctx, size, colors, neighbors);
+        break;
+      case 'pit':
+        this._drawPitN64(ctx, size, colors, neighbors);
+        break;
+      case 'dark-room':
+        this._drawDarkRoomN64(ctx, size, colors, neighbors);
+        break;
+      case 'crypt':
+        this._drawCryptN64(ctx, size, colors, neighbors);
+        break;
+      case 'throne-room':
+        this._drawThroneRoomN64(ctx, size, colors, neighbors);
+        break;
+      case 'sewer':
+        this._drawSewerN64(ctx, size, colors, neighbors);
+        break;
+      case 'mud':
+        this._drawMudN64(ctx, size, colors, neighbors);
+        break;
+      case 'moat':
+        this._drawMoatN64(ctx, size, colors, neighbors);
+        break;
+      case 'rocky-ground':
+        this._drawRockyGroundN64(ctx, size, colors, neighbors);
+        break;
+      case 'dam':
+        this._drawDamN64(ctx, size, colors, neighbors);
+        break;
     }
 
     // Render transitions on edges with different tile types
@@ -4378,6 +4468,1734 @@ class TileRenderer {
           break;
       }
     }
+  }
+
+
+  /* ==== Session 6: Elevation (8 tiles) ==== */
+
+  _drawFoothillN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Perlin ground variation
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 60.0, y / s * 4 + 60.0);
+        ctx.fillStyle = this._lerpColor(primary, accent, n * 0.4);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    // Warm lighting gradient (lighter on left/top)
+    const lg = ctx.createLinearGradient(0, 0, s, s);
+    lg.addColorStop(0, 'rgba(255,255,220,0.18)');
+    lg.addColorStop(1, 'rgba(0,0,0,0.12)');
+    ctx.fillStyle = lg;
+    ctx.fillRect(0, 0, s, s);
+    // Gentle mound shapes
+    const rand = this._seededRand(70);
+    const mounds = [
+      { cx: s * 0.25, base: s * 0.7, w: s * 0.4, h: s * 0.22 },
+      { cx: s * 0.6, base: s * 0.65, w: s * 0.45, h: s * 0.28 },
+      { cx: s * 0.85, base: s * 0.75, w: s * 0.3, h: s * 0.18 }
+    ];
+    for (const m of mounds) {
+      const gc = ctx.createLinearGradient(m.cx - m.w / 2, m.base - m.h, m.cx + m.w / 2, m.base);
+      gc.addColorStop(0, secondary);
+      gc.addColorStop(1, primary);
+      ctx.fillStyle = gc;
+      ctx.beginPath();
+      ctx.moveTo(m.cx - m.w / 2, m.base);
+      ctx.quadraticCurveTo(m.cx - m.w * 0.15, m.base - m.h, m.cx, m.base - m.h * 0.95);
+      ctx.quadraticCurveTo(m.cx + m.w * 0.15, m.base - m.h, m.cx + m.w / 2, m.base);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Grass tufts on top of hills
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 40);
+    for (let i = 0; i < 12; i++) {
+      const m = mounds[Math.floor(rand() * mounds.length)];
+      const tx = m.cx + (rand() - 0.5) * m.w * 0.5;
+      const ty = m.base - m.h * (0.5 + rand() * 0.4);
+      const th = s * 0.04;
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx - th * 0.3, ty - th);
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx + th * 0.3, ty - th);
+      ctx.stroke();
+    }
+    // Exposed soil patches
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = accent;
+    for (let i = 0; i < 5; i++) {
+      const px = rand() * s;
+      const py = s * 0.7 + rand() * s * 0.25;
+      ctx.beginPath();
+      ctx.ellipse(px, py, s * 0.03, s * 0.015, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawHighPeakN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Gray gradient base — darker at top for dramatic effect
+    const bg = ctx.createLinearGradient(0, 0, 0, s);
+    bg.addColorStop(0, accent);
+    bg.addColorStop(0.5, primary);
+    bg.addColorStop(1, secondary);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, s, s);
+    // Rock face texture via Perlin
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 6 + 61.0, y / s * 6 + 61.0);
+        ctx.globalAlpha = n * 0.3;
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Sharp angular peak shapes
+    const rand = this._seededRand(71);
+    const peaks = [
+      { cx: s * 0.3, base: s * 0.85, top: s * 0.1 },
+      { cx: s * 0.55, base: s * 0.9, top: s * 0.05 },
+      { cx: s * 0.78, base: s * 0.88, top: s * 0.15 }
+    ];
+    for (const p of peaks) {
+      const gp = ctx.createLinearGradient(p.cx - s * 0.15, p.top, p.cx + s * 0.15, p.base);
+      gp.addColorStop(0, accent);
+      gp.addColorStop(0.5, primary);
+      gp.addColorStop(1, secondary);
+      ctx.fillStyle = gp;
+      ctx.beginPath();
+      ctx.moveTo(p.cx - s * 0.2, p.base);
+      ctx.lineTo(p.cx - s * 0.05, p.top + s * 0.15);
+      ctx.lineTo(p.cx, p.top);
+      ctx.lineTo(p.cx + s * 0.06, p.top + s * 0.12);
+      ctx.lineTo(p.cx + s * 0.18, p.base);
+      ctx.closePath();
+      ctx.fill();
+      // Shadow on right face
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.beginPath();
+      ctx.moveTo(p.cx, p.top);
+      ctx.lineTo(p.cx + s * 0.06, p.top + s * 0.12);
+      ctx.lineTo(p.cx + s * 0.18, p.base);
+      ctx.lineTo(p.cx, p.base);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Deep shadow crevice details
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 50);
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 8; i++) {
+      const x1 = rand() * s;
+      const y1 = s * 0.3 + rand() * s * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x1 + (rand() - 0.5) * s * 0.1, y1 + s * 0.08);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawSnowPeakN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // White/light gray gradient
+    const bg = ctx.createLinearGradient(0, 0, 0, s);
+    bg.addColorStop(0, primary);
+    bg.addColorStop(1, secondary);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, s, s);
+    // Snow coverage Perlin
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 62.0, y / s * 4 + 62.0);
+        ctx.fillStyle = this._lerpColor(primary, '#FFFFFF', n * 0.5);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    // Mountain peak shape with heavy snow
+    const peakGrad = ctx.createLinearGradient(s * 0.5, 0, s * 0.5, s);
+    peakGrad.addColorStop(0, '#FFFFFF');
+    peakGrad.addColorStop(0.6, primary);
+    peakGrad.addColorStop(1, accent);
+    ctx.fillStyle = peakGrad;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.1, s * 0.9);
+    ctx.lineTo(s * 0.35, s * 0.25);
+    ctx.lineTo(s * 0.5, s * 0.08);
+    ctx.lineTo(s * 0.65, s * 0.2);
+    ctx.lineTo(s * 0.9, s * 0.9);
+    ctx.closePath();
+    ctx.fill();
+    // Blue shadow in carved areas
+    ctx.fillStyle = 'rgba(100,150,200,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(s * 0.5, s * 0.08);
+    ctx.lineTo(s * 0.65, s * 0.2);
+    ctx.lineTo(s * 0.9, s * 0.9);
+    ctx.lineTo(s * 0.5, s * 0.9);
+    ctx.closePath();
+    ctx.fill();
+    // Wind-carved ridge lines
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 60);
+    ctx.globalAlpha = 0.4;
+    const rand = this._seededRand(72);
+    for (let i = 0; i < 5; i++) {
+      const y = s * 0.15 + i * s * 0.12;
+      ctx.beginPath();
+      ctx.moveTo(s * 0.3 + rand() * s * 0.1, y);
+      ctx.lineTo(s * 0.6 + rand() * s * 0.1, y + (rand() - 0.5) * s * 0.04);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Ice crystal sparkle dots
+    ctx.fillStyle = '#FFFFFF';
+    for (let i = 0; i < 15; i++) {
+      const sx = s * 0.15 + rand() * s * 0.7;
+      const sy = s * 0.1 + rand() * s * 0.6;
+      const r = s * 0.008 + rand() * s * 0.008;
+      ctx.beginPath();
+      ctx.arc(sx, sy, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  _drawCliffN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Base rock
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+    // Horizontal strata layers (5 bands)
+    const bandH = s / 5;
+    const rand = this._seededRand(73);
+    const bandColors = [secondary, primary, accent, secondary, primary];
+    for (let i = 0; i < 5; i++) {
+      const y = i * bandH;
+      // Directional Perlin for rock face texture (stretched horizontally)
+      for (let py = y; py < y + bandH; py += 2) {
+        for (let px = 0; px < s; px += 2) {
+          const n = PerlinNoise.sampleNoise(px / s * 8 + 63.0, py / s * 3 + 63.0);
+          ctx.fillStyle = this._lerpColor(bandColors[i], bandColors[(i + 1) % 5], n * 0.3);
+          ctx.fillRect(px, py, 2, 2);
+        }
+      }
+      // Strata line between bands
+      if (i > 0) {
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = Math.max(1, s / 50);
+        ctx.globalAlpha = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(0, y + (rand() - 0.5) * 2);
+        ctx.lineTo(s * 0.3, y + (rand() - 0.5) * 3);
+        ctx.lineTo(s * 0.7, y + (rand() - 0.5) * 3);
+        ctx.lineTo(s, y + (rand() - 0.5) * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+    // Deep shadow at base (bottom 20%)
+    const shadow = ctx.createLinearGradient(0, s * 0.8, 0, s);
+    shadow.addColorStop(0, 'rgba(0,0,0,0)');
+    shadow.addColorStop(1, 'rgba(0,0,0,0.4)');
+    ctx.fillStyle = shadow;
+    ctx.fillRect(0, s * 0.8, s, s * 0.2);
+    // Small rock debris at base
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 8; i++) {
+      const dx = rand() * s;
+      const dy = s * 0.88 + rand() * s * 0.1;
+      const dr = s * 0.01 + rand() * s * 0.015;
+      ctx.beginPath();
+      ctx.ellipse(dx, dy, dr, dr * 0.7, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCanyonN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Layered orange-red walls — horizontal bands
+    const bandCount = 6;
+    const bandH = s / bandCount;
+    const wallColors = [secondary, primary, secondary, accent, primary, secondary];
+    for (let i = 0; i < bandCount; i++) {
+      const y = i * bandH;
+      for (let py = y; py < y + bandH; py += 2) {
+        for (let px = 0; px < s; px += 2) {
+          const n = PerlinNoise.sampleNoise(px / s * 5 + 64.0, py / s * 3 + 64.0);
+          ctx.fillStyle = this._lerpColor(wallColors[i], wallColors[(i + 1) % bandCount], n * 0.3);
+          ctx.fillRect(px, py, 2, 2);
+        }
+      }
+      // Wavy strata lines
+      if (i > 0) {
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = Math.max(1, s / 55);
+        ctx.globalAlpha = 0.4;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        for (let x = 0; x < s; x += s * 0.1) {
+          ctx.lineTo(x, y + Math.sin(x / s * Math.PI * 3) * s * 0.015);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+    // Narrow gap in center — dark shadow for depth
+    const gapW = s * 0.15;
+    const gapX = s * 0.5 - gapW / 2;
+    const depthGrad = ctx.createLinearGradient(gapX, 0, gapX + gapW, 0);
+    depthGrad.addColorStop(0, 'rgba(0,0,0,0.05)');
+    depthGrad.addColorStop(0.3, 'rgba(0,0,0,0.5)');
+    depthGrad.addColorStop(0.5, 'rgba(0,0,0,0.65)');
+    depthGrad.addColorStop(0.7, 'rgba(0,0,0,0.5)');
+    depthGrad.addColorStop(1, 'rgba(0,0,0,0.05)');
+    ctx.fillStyle = depthGrad;
+    ctx.fillRect(gapX - s * 0.05, 0, gapW + s * 0.1, s);
+    // Dark shadow at bottom center (radial)
+    const radGrad = ctx.createRadialGradient(s * 0.5, s * 0.9, 0, s * 0.5, s * 0.9, s * 0.4);
+    radGrad.addColorStop(0, 'rgba(0,0,0,0.4)');
+    radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = radGrad;
+    ctx.fillRect(0, s * 0.5, s, s * 0.5);
+    ctx.restore();
+  }
+
+  _drawPlateauN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Cliff faces (sides) with rock texture
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 5 + 65.0, y / s * 5 + 65.0);
+        const baseC = y < s * 0.4 ? this._lerpColor(primary, secondary, n * 0.3)
+          : this._lerpColor(accent, primary, n * 0.4);
+        ctx.fillStyle = baseC;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    // Mesa silhouette — flat top with steep edges
+    ctx.fillStyle = primary;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.1, s * 0.4);
+    ctx.lineTo(s * 0.15, s * 0.38);
+    ctx.lineTo(s * 0.2, s * 0.35);
+    ctx.lineTo(s * 0.8, s * 0.35);
+    ctx.lineTo(s * 0.85, s * 0.38);
+    ctx.lineTo(s * 0.9, s * 0.4);
+    ctx.lineTo(s * 0.9, s);
+    ctx.lineTo(s * 0.1, s);
+    ctx.closePath();
+    ctx.fill();
+    // Flat top surface
+    const topGrad = ctx.createLinearGradient(0, s * 0.3, 0, s * 0.42);
+    topGrad.addColorStop(0, secondary);
+    topGrad.addColorStop(1, primary);
+    ctx.fillStyle = topGrad;
+    ctx.fillRect(s * 0.15, s * 0.35, s * 0.7, s * 0.07);
+    // Steep edge shadows
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(s * 0.1, s * 0.4, s * 0.08, s * 0.6);
+    ctx.fillRect(s * 0.82, s * 0.4, s * 0.08, s * 0.6);
+    // Sparse vegetation on top
+    const rand = this._seededRand(74);
+    ctx.fillStyle = '#6B8C42';
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 8; i++) {
+      const vx = s * 0.2 + rand() * s * 0.6;
+      const vy = s * 0.36 + rand() * s * 0.03;
+      ctx.beginPath();
+      ctx.arc(vx, vy, s * 0.008 + rand() * s * 0.01, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // Rock texture on cliff faces
+    ctx.globalAlpha = 0.3;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 60);
+    for (let i = 0; i < 6; i++) {
+      const ly = s * 0.45 + i * s * 0.08;
+      ctx.beginPath();
+      ctx.moveTo(s * 0.1, ly);
+      ctx.lineTo(s * 0.9, ly + (rand() - 0.5) * s * 0.02);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawRidgeN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Base with directional Perlin (wind-exposed texture)
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 7 + 66.0, y / s * 3 + 66.0);
+        ctx.fillStyle = this._lerpColor(primary, accent, n * 0.5);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    // Elevated spine running diagonally
+    const spineGrad = ctx.createLinearGradient(0, 0, s, s);
+    spineGrad.addColorStop(0, secondary);
+    spineGrad.addColorStop(0.5, primary);
+    spineGrad.addColorStop(1, secondary);
+    ctx.fillStyle = spineGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.35);
+    ctx.lineTo(s * 0.3, s * 0.2);
+    ctx.lineTo(s * 0.7, s * 0.65);
+    ctx.lineTo(s, s * 0.5);
+    ctx.lineTo(s, s * 0.65);
+    ctx.lineTo(s * 0.7, s * 0.8);
+    ctx.lineTo(s * 0.3, s * 0.35);
+    ctx.lineTo(0, s * 0.5);
+    ctx.closePath();
+    ctx.fill();
+    // Shadow gradient on both sides (steep drop-offs)
+    ctx.globalAlpha = 0.25;
+    ctx.fillStyle = 'rgba(0,0,0,1)';
+    // Left/top drop
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.5);
+    ctx.lineTo(s * 0.3, s * 0.35);
+    ctx.lineTo(s * 0.7, s * 0.8);
+    ctx.lineTo(s, s * 0.65);
+    ctx.lineTo(s, s);
+    ctx.lineTo(0, s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    // Bright spine-line along top
+    ctx.strokeStyle = '#C0C8D0';
+    ctx.lineWidth = Math.max(1, s / 35);
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.42);
+    ctx.lineTo(s * 0.3, s * 0.27);
+    ctx.lineTo(s * 0.7, s * 0.72);
+    ctx.lineTo(s, s * 0.57);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    // Rocky surface detail
+    const rand = this._seededRand(75);
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 10; i++) {
+      const rx = rand() * s;
+      const ry = rand() * s;
+      ctx.beginPath();
+      ctx.arc(rx, ry, s * 0.01, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawScreeN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Light base
+    ctx.fillStyle = secondary;
+    ctx.fillRect(0, 0, s, s);
+    // Subtle base Perlin
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 67.0, y / s * 4 + 67.0);
+        ctx.globalAlpha = n * 0.2;
+        ctx.fillStyle = primary;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Scattered rock fragments — more toward bottom (gravity)
+    const rand = this._seededRand(76);
+    const fragColors = [primary, secondary, accent];
+    const fragCount = 50;
+    for (let i = 0; i < fragCount; i++) {
+      const fx = rand() * s;
+      // Bias y toward bottom — unstable sloped appearance
+      const fy = Math.pow(rand(), 0.6) * s;
+      const fw = s * 0.015 + rand() * s * 0.025;
+      const fh = fw * (0.5 + rand() * 0.5);
+      const angle = rand() * Math.PI;
+      ctx.fillStyle = fragColors[Math.floor(rand() * fragColors.length)];
+      ctx.globalAlpha = 0.6 + rand() * 0.4;
+      ctx.save();
+      ctx.translate(fx, fy);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, fw, fh, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    // Shadow hints between fragments
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = '#000000';
+    for (let i = 0; i < 15; i++) {
+      const sx = rand() * s;
+      const sy = s * 0.3 + rand() * s * 0.7;
+      ctx.beginPath();
+      ctx.arc(sx, sy, s * 0.008, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  /* ==== Session 6: Arctic/Cold (8 tiles) ==== */
+
+  _drawTundraN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Gray-white Perlin base
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 68.0, y / s * 4 + 68.0);
+        ctx.fillStyle = this._lerpColor(primary, secondary, n);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    // Frozen ground crack pattern
+    const rand = this._seededRand(77);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 60);
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 8; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      let px = cx, py = cy;
+      for (let j = 0; j < 3; j++) {
+        px += (rand() - 0.5) * s * 0.15;
+        py += (rand() - 0.5) * s * 0.15;
+        ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Frost patterns — thin white lines radiating from random points
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = Math.max(1, s / 80);
+    ctx.globalAlpha = 0.35;
+    for (let i = 0; i < 4; i++) {
+      const fx = rand() * s;
+      const fy = rand() * s;
+      for (let r = 0; r < 5; r++) {
+        const angle = rand() * Math.PI * 2;
+        const len = s * 0.04 + rand() * s * 0.06;
+        ctx.beginPath();
+        ctx.moveTo(fx, fy);
+        ctx.lineTo(fx + Math.cos(angle) * len, fy + Math.sin(angle) * len);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Sparse lichen dots
+    const lichenColors = ['#FF8F00', '#558B2F', '#F9A825'];
+    for (let i = 0; i < 12; i++) {
+      ctx.fillStyle = lichenColors[Math.floor(rand() * lichenColors.length)];
+      ctx.globalAlpha = 0.5 + rand() * 0.3;
+      const lx = rand() * s;
+      const ly = rand() * s;
+      ctx.beginPath();
+      ctx.arc(lx, ly, s * 0.006 + rand() * s * 0.01, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawFrozenWaterN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Ice surface with blue-white gradient
+    const bg = ctx.createLinearGradient(0, 0, s, s);
+    bg.addColorStop(0, secondary);
+    bg.addColorStop(0.5, primary);
+    bg.addColorStop(1, accent);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, s, s);
+    // Subtle Perlin texture
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 69.0, y / s * 4 + 69.0);
+        ctx.globalAlpha = n * 0.15;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Crack patterns branching from center/edges
+    const rand = this._seededRand(78);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 50);
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 5; i++) {
+      let cx = s * 0.3 + rand() * s * 0.4;
+      let cy = s * 0.3 + rand() * s * 0.4;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      for (let j = 0; j < 5; j++) {
+        cx += (rand() - 0.5) * s * 0.2;
+        cy += (rand() - 0.5) * s * 0.2;
+        ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Trapped air bubbles
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 10; i++) {
+      const bx = rand() * s;
+      const by = rand() * s;
+      const br = s * 0.008 + rand() * s * 0.012;
+      ctx.beginPath();
+      ctx.arc(bx, by, br, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    // Surface reflection highlight
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = Math.max(1, s / 30);
+    ctx.globalAlpha = 0.15;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.2, s * 0.3);
+    ctx.quadraticCurveTo(s * 0.5, s * 0.25, s * 0.8, s * 0.35);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+  _drawIcePlainN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Smooth pale blue-white surface
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+    // Wind-polished texture (very subtle directional Perlin)
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 6 + 70.0, y / s * 2 + 70.0);
+        ctx.globalAlpha = n * 0.1;
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Faint striations (thin horizontal lines, very low alpha)
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 80);
+    ctx.globalAlpha = 0.1;
+    const rand = this._seededRand(79);
+    for (let i = 0; i < 8; i++) {
+      const y = s * 0.1 + rand() * s * 0.8;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(s, y + (rand() - 0.5) * s * 0.02);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Occasional blue shadow depression
+    ctx.globalAlpha = 0.08;
+    for (let i = 0; i < 3; i++) {
+      const dx = rand() * s;
+      const dy = rand() * s;
+      const dr = s * 0.05 + rand() * s * 0.08;
+      const depGrad = ctx.createRadialGradient(dx, dy, 0, dx, dy, dr);
+      depGrad.addColorStop(0, accent);
+      depGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = depGrad;
+      ctx.fillRect(dx - dr, dy - dr, dr * 2, dr * 2);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawGlacierN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Blue-white base with depth gradient (bluer at bottom)
+    const bg = ctx.createLinearGradient(0, 0, 0, s);
+    bg.addColorStop(0, secondary);
+    bg.addColorStop(0.5, primary);
+    bg.addColorStop(1, accent);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, s, s);
+    // Perlin ice texture
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 71.0, y / s * 4 + 71.0);
+        ctx.globalAlpha = n * 0.15;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Deep crevasse lines (2-3 major ones)
+    const rand = this._seededRand(80);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 25);
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 3; i++) {
+      const startX = rand() * s * 0.3;
+      const startY = s * 0.15 + i * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.bezierCurveTo(
+        s * 0.3, startY + (rand() - 0.5) * s * 0.15,
+        s * 0.7, startY + (rand() - 0.5) * s * 0.15,
+        s - rand() * s * 0.3, startY + (rand() - 0.5) * s * 0.1
+      );
+      ctx.stroke();
+      // Blue depth glow in crevasse area
+      ctx.globalAlpha = 0.1;
+      ctx.lineWidth = Math.max(3, s / 10);
+      ctx.strokeStyle = '#0277BD';
+      ctx.stroke();
+      ctx.lineWidth = Math.max(1, s / 25);
+      ctx.strokeStyle = accent;
+      ctx.globalAlpha = 0.5;
+    }
+    ctx.globalAlpha = 1;
+    // Pressure ridges (thick white bumps perpendicular to crevasses)
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = Math.max(2, s / 20);
+    ctx.globalAlpha = 0.35;
+    for (let i = 0; i < 5; i++) {
+      const rx = s * 0.15 + rand() * s * 0.7;
+      const ry = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(rx, ry - s * 0.04);
+      ctx.lineTo(rx, ry + s * 0.04);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawIceCaveN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Dark interior base
+    const bg = ctx.createRadialGradient(s * 0.5, s * 0.5, 0, s * 0.5, s * 0.5, s * 0.7);
+    bg.addColorStop(0, secondary);
+    bg.addColorStop(0.6, primary);
+    bg.addColorStop(1, '#0D1117');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, s, s);
+    // Blue light glow from ice (radial gradient from center)
+    const glow = ctx.createRadialGradient(s * 0.5, s * 0.5, 0, s * 0.5, s * 0.5, s * 0.45);
+    glow.addColorStop(0, 'rgba(26,35,126,0.3)');
+    glow.addColorStop(0.5, 'rgba(26,35,126,0.1)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, s, s);
+    // Crystal formations — bright blue-white spikes from edges
+    const rand = this._seededRand(81);
+    const crystalColor = '#80D8FF';
+    ctx.fillStyle = crystalColor;
+    ctx.globalAlpha = 0.7;
+    // From left edge
+    for (let i = 0; i < 3; i++) {
+      const cy = s * 0.2 + rand() * s * 0.6;
+      const cw = s * 0.08 + rand() * s * 0.12;
+      const ch = s * 0.03 + rand() * s * 0.04;
+      ctx.beginPath();
+      ctx.moveTo(0, cy - ch);
+      ctx.lineTo(cw, cy);
+      ctx.lineTo(0, cy + ch);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // From right edge
+    for (let i = 0; i < 3; i++) {
+      const cy = s * 0.2 + rand() * s * 0.6;
+      const cw = s * 0.08 + rand() * s * 0.12;
+      const ch = s * 0.03 + rand() * s * 0.04;
+      ctx.beginPath();
+      ctx.moveTo(s, cy - ch);
+      ctx.lineTo(s - cw, cy);
+      ctx.lineTo(s, cy + ch);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // From bottom edge
+    for (let i = 0; i < 2; i++) {
+      const cx = s * 0.2 + rand() * s * 0.6;
+      const ch = s * 0.08 + rand() * s * 0.1;
+      const cw = s * 0.03 + rand() * s * 0.04;
+      ctx.beginPath();
+      ctx.moveTo(cx - cw, s);
+      ctx.lineTo(cx, s - ch);
+      ctx.lineTo(cx + cw, s);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    // Icicle stalactites hanging from top
+    ctx.fillStyle = '#B3E5FC';
+    ctx.globalAlpha = 0.8;
+    for (let i = 0; i < 6; i++) {
+      const ix = s * 0.08 + rand() * s * 0.84;
+      const iw = s * 0.01 + rand() * s * 0.015;
+      const ih = s * 0.06 + rand() * s * 0.14;
+      ctx.beginPath();
+      ctx.moveTo(ix - iw, 0);
+      ctx.lineTo(ix, ih);
+      ctx.lineTo(ix + iw, 0);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawSnowFieldN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Pure white base
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+    // Wind-drift texture (subtle curved lines)
+    const rand = this._seededRand(82);
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 3 + 72.0, y / s * 3 + 72.0);
+        ctx.globalAlpha = n * 0.06;
+        ctx.fillStyle = accent;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Subtle blue shadows in low areas
+    ctx.globalAlpha = 0.06;
+    for (let i = 0; i < 4; i++) {
+      const sx = rand() * s;
+      const sy = rand() * s;
+      const sr = s * 0.08 + rand() * s * 0.12;
+      const shGrad = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+      shGrad.addColorStop(0, '#90CAF9');
+      shGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = shGrad;
+      ctx.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
+    }
+    ctx.globalAlpha = 1;
+    // Wind drift curves
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = Math.max(1, s / 70);
+    ctx.globalAlpha = 0.12;
+    for (let i = 0; i < 6; i++) {
+      const dy = s * 0.1 + rand() * s * 0.8;
+      ctx.beginPath();
+      ctx.moveTo(0, dy);
+      ctx.quadraticCurveTo(s * 0.5, dy + (rand() - 0.5) * s * 0.06, s, dy + (rand() - 0.5) * s * 0.03);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Sparkle points
+    ctx.fillStyle = '#FFFFFF';
+    for (let i = 0; i < 20; i++) {
+      const px = rand() * s;
+      const py = rand() * s;
+      const pr = s * 0.004 + rand() * s * 0.006;
+      ctx.globalAlpha = 0.4 + rand() * 0.6;
+      ctx.beginPath();
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawPermafrostN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // Gray-brown frozen earth base with Perlin
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 73.0, y / s * 4 + 73.0);
+        ctx.fillStyle = this._lerpColor(primary, accent, n * 0.5);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    // Geometric frost heave patterns — polygonal cracking
+    const rand = this._seededRand(83);
+    // Generate polygon centers
+    const centers = [];
+    for (let i = 0; i < 8; i++) {
+      centers.push({ x: rand() * s, y: rand() * s });
+    }
+    // Draw cracks between nearest centers (Voronoi-like edges)
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = Math.max(1, s / 40);
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < centers.length; i++) {
+      for (let j = i + 1; j < centers.length; j++) {
+        const dx = centers[j].x - centers[i].x;
+        const dy = centers[j].y - centers[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < s * 0.45) {
+          const mx = (centers[i].x + centers[j].x) / 2;
+          const my = (centers[i].y + centers[j].y) / 2;
+          // Draw perpendicular crack segment at midpoint
+          const nx = -dy / dist * s * 0.12;
+          const ny = dx / dist * s * 0.12;
+          ctx.beginPath();
+          ctx.moveTo(mx - nx, my - ny);
+          ctx.lineTo(mx + nx, my + ny);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Earth visible between polygons (darker patches at centers)
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = accent;
+    for (const c of centers) {
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, s * 0.04, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    // Frost on surface (white speckles)
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 25; i++) {
+      const fx = rand() * s;
+      const fy = rand() * s;
+      ctx.beginPath();
+      ctx.arc(fx, fy, s * 0.005 + rand() * s * 0.008, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawIceShelfN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    // White ice surface for upper 70%
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s * 0.7);
+    // Blue water visible at bottom 30%
+    const waterGrad = ctx.createLinearGradient(0, s * 0.65, 0, s);
+    waterGrad.addColorStop(0, secondary);
+    waterGrad.addColorStop(1, accent);
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(0, s * 0.65, s, s * 0.35);
+    // Subtle ice texture via Perlin (very light)
+    for (let y = 0; y < s * 0.7; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 74.0, y / s * 4 + 74.0);
+        ctx.globalAlpha = n * 0.08;
+        ctx.fillStyle = secondary;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Fracture lines — dark cracks running across the ice surface
+    const rand = this._seededRand(84);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(1, s / 45);
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 4; i++) {
+      let cx = rand() * s * 0.3;
+      let cy = rand() * s * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      for (let j = 0; j < 4; j++) {
+        cx += s * 0.15 + rand() * s * 0.1;
+        cy += (rand() - 0.5) * s * 0.12;
+        ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Blue water showing through cracks at bottom area
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = accent;
+    for (let i = 0; i < 5; i++) {
+      const bx = rand() * s;
+      const by = s * 0.55 + rand() * s * 0.15;
+      const bw = s * 0.04 + rand() * s * 0.06;
+      ctx.beginPath();
+      ctx.ellipse(bx, by, bw, bw * 0.3, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+
+  /* ==== Session 6: Dungeon (10 tiles) ==== */
+
+  _drawStoneFloorN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(90);
+
+    // Base fill with Perlin variation
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 80.0, y / s + 80.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Fitted stone blocks with grout lines
+    const blockW = s / 4;
+    const blockH = s / 3;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.5;
+    for (let row = 0; row < 3; row++) {
+      const offset = (row % 2) * blockW * 0.5;
+      for (let col = -1; col < 5; col++) {
+        const bx = col * blockW + offset;
+        const by = row * blockH;
+        ctx.strokeRect(bx + 0.5, by + 0.5, blockW - 1, blockH - 1);
+        // Worn surface highlight
+        ctx.fillStyle = secondary;
+        ctx.globalAlpha = 0.08;
+        ctx.fillRect(bx + 2, by + 2, blockW * 0.4, blockH * 0.3);
+        ctx.globalAlpha = 0.5;
+      }
+    }
+
+    // Cracks in some blocks
+    ctx.strokeStyle = '#37474F';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 3; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + (rand() - 0.5) * 8, cy + (rand() - 0.5) * 8);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCobblestoneN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(91);
+
+    // Packed rounded stones
+    const stoneCount = Math.max(12, Math.floor(s * 0.4));
+    for (let i = 0; i < stoneCount; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      const rx = 3 + rand() * 5;
+      const ry = 2 + rand() * 4;
+      const rot = rand() * Math.PI;
+
+      // Stone body
+      const shade = rand();
+      ctx.fillStyle = shade > 0.6 ? secondary : (shade < 0.3 ? accent : primary);
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, rot, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Top highlight
+      ctx.fillStyle = '#BDBDBD';
+      ctx.globalAlpha = 0.15;
+      ctx.beginPath();
+      ctx.ellipse(cx - rx * 0.2, cy - ry * 0.2, rx * 0.5, ry * 0.4, rot, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Moss in gaps
+    ctx.fillStyle = '#4CAF50';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 8; i++) {
+      ctx.beginPath();
+      ctx.arc(rand() * s, rand() * s, 0.8 + rand() * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCorridorN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(92);
+
+    // Floor
+    ctx.fillStyle = secondary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin floor texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 81.0, y / s + 81.0);
+        ctx.fillStyle = n > 0.5 ? primary : accent;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dark walls at sides
+    const wallW = s * 0.15;
+    const wallGradL = ctx.createLinearGradient(0, 0, wallW, 0);
+    wallGradL.addColorStop(0, accent);
+    wallGradL.addColorStop(1, 'rgba(55,71,79,0)');
+    ctx.fillStyle = wallGradL;
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(0, 0, wallW * 2, s);
+
+    const wallGradR = ctx.createLinearGradient(s, 0, s - wallW, 0);
+    wallGradR.addColorStop(0, accent);
+    wallGradR.addColorStop(1, 'rgba(55,71,79,0)');
+    ctx.fillStyle = wallGradR;
+    ctx.fillRect(s - wallW * 2, 0, wallW * 2, s);
+    ctx.globalAlpha = 1;
+
+    // Torch sconce marks
+    ctx.fillStyle = '#FF8F00';
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.arc(s * 0.08, s * 0.3, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(s * 0.92, s * 0.7, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Torch glow
+    const glow = ctx.createRadialGradient(s * 0.08, s * 0.3, 0, s * 0.08, s * 0.3, s * 0.2);
+    glow.addColorStop(0, 'rgba(255,143,0,0.15)');
+    glow.addColorStop(1, 'rgba(255,143,0,0)');
+    ctx.fillStyle = glow;
+    ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, s, s);
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCavernN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(93);
+
+    // Dark rock base
+    const baseGrad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.7);
+    baseGrad.addColorStop(0, secondary);
+    baseGrad.addColorStop(1, accent);
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // High-frequency rock texture
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 4 + 82.0, y / s * 4 + 82.0);
+        if (n > 0.6) {
+          ctx.fillStyle = '#4E342E';
+          ctx.fillRect(x, y, 2, 2);
+        } else if (n < 0.25) {
+          ctx.fillStyle = primary;
+          ctx.fillRect(x, y, 2, 2);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Stalactites from top
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.6;
+    for (let i = 0; i < 4; i++) {
+      const tx = s * 0.1 + rand() * s * 0.8;
+      const tw = 2 + rand() * 3;
+      const th = 4 + rand() * 8;
+      ctx.beginPath();
+      ctx.moveTo(tx - tw, 0);
+      ctx.lineTo(tx, th);
+      ctx.lineTo(tx + tw, 0);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Stalagmites from bottom
+    for (let i = 0; i < 3; i++) {
+      const bx = s * 0.15 + rand() * s * 0.7;
+      const bw = 2 + rand() * 3;
+      const bh = 3 + rand() * 6;
+      ctx.beginPath();
+      ctx.moveTo(bx - bw, s);
+      ctx.lineTo(bx, s - bh);
+      ctx.lineTo(bx + bw, s);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Dampness sheen
+    ctx.strokeStyle = 'rgba(180,220,255,0.08)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(rand() * s, rand() * s);
+      ctx.lineTo(rand() * s, rand() * s);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawUndergroundRiverN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(94);
+
+    // Stone banks
+    ctx.fillStyle = '#5D4037';
+    ctx.fillRect(0, 0, s, s);
+
+    // Stone texture on banks
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 83.0, y / s + 83.0);
+        ctx.fillStyle = n > 0.5 ? '#6D4C41' : '#3E2723';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Dark water channel in center
+    const channelW = s * 0.6;
+    const cx = (s - channelW) / 2;
+    const waterGrad = ctx.createLinearGradient(cx, 0, cx + channelW, 0);
+    waterGrad.addColorStop(0, accent);
+    waterGrad.addColorStop(0.3, primary);
+    waterGrad.addColorStop(0.7, primary);
+    waterGrad.addColorStop(1, accent);
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(cx, 0, channelW, s);
+
+    // Depth gradient
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(cx + channelW * 0.2, 0, channelW * 0.6, s);
+    ctx.globalAlpha = 1;
+
+    // Current lines
+    ctx.strokeStyle = 'rgba(100,150,255,0.15)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 4; i++) {
+      const ly = s * 0.15 + i * s * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(cx + 3, ly);
+      ctx.quadraticCurveTo(s / 2, ly - 2, cx + channelW - 3, ly);
+      ctx.stroke();
+    }
+
+    // Dripping from ceiling
+    ctx.fillStyle = '#81D4FA';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 2; i++) {
+      const dx = cx + channelW * 0.2 + rand() * channelW * 0.6;
+      ctx.beginPath();
+      ctx.ellipse(dx, 2, 1, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+  _drawPitN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(95);
+
+    // Depth illusion — concentric radial gradient
+    const depthGrad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.5);
+    depthGrad.addColorStop(0, accent);   // black center
+    depthGrad.addColorStop(0.5, primary); // dark gray ring
+    depthGrad.addColorStop(0.85, secondary); // lighter edge
+    depthGrad.addColorStop(1, '#78909C');
+    ctx.fillStyle = depthGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Crumbling stone edge
+    ctx.strokeStyle = '#78909C';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    const edgeR = s * 0.38;
+    ctx.beginPath();
+    for (let i = 0; i < 20; i++) {
+      const angle = (i / 20) * Math.PI * 2;
+      const r = edgeR + (rand() - 0.5) * s * 0.08;
+      const ex = s / 2 + Math.cos(angle) * r;
+      const ey = s / 2 + Math.sin(angle) * r;
+      if (i === 0) ctx.moveTo(ex, ey);
+      else ctx.lineTo(ex, ey);
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    // Small rocks on edge
+    ctx.fillStyle = '#757575';
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 6; i++) {
+      const angle = rand() * Math.PI * 2;
+      const r = edgeR + rand() * 4;
+      ctx.beginPath();
+      ctx.ellipse(s / 2 + Math.cos(angle) * r, s / 2 + Math.sin(angle) * r, 1.5 + rand() * 2, 1 + rand(), rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawDarkRoomN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+
+    // Very dark base
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, s, s);
+
+    // Barely visible floor texture
+    ctx.globalAlpha = 0.08;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 84.0, y / s + 84.0);
+        ctx.fillStyle = n > 0.5 ? secondary : primary;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+
+    // Torch glow from edges (corners)
+    ctx.globalAlpha = 1;
+    const corners = [[0, 0], [s, 0], [0, s], [s, s]];
+    for (const [gx, gy] of corners) {
+      const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, s * 0.5);
+      glow.addColorStop(0, 'rgba(255,143,0,0.08)');
+      glow.addColorStop(1, 'rgba(255,143,0,0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, s, s);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawCryptN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(96);
+
+    // Stone base
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 85.0, y / s + 85.0);
+        ctx.fillStyle = n > 0.5 ? secondary : accent;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Sarcophagus in center
+    const sx2 = s * 0.3, sy2 = s * 0.25, sw = s * 0.4, sh = s * 0.5;
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(sx2 + 3, sy2);
+    ctx.lineTo(sx2 + sw - 3, sy2);
+    ctx.quadraticCurveTo(sx2 + sw, sy2, sx2 + sw, sy2 + 3);
+    ctx.lineTo(sx2 + sw, sy2 + sh - 3);
+    ctx.quadraticCurveTo(sx2 + sw, sy2 + sh, sx2 + sw - 3, sy2 + sh);
+    ctx.lineTo(sx2 + 3, sy2 + sh);
+    ctx.quadraticCurveTo(sx2, sy2 + sh, sx2, sy2 + sh - 3);
+    ctx.lineTo(sx2, sy2 + 3);
+    ctx.quadraticCurveTo(sx2, sy2, sx2 + 3, sy2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Lid highlight
+    ctx.fillStyle = primary;
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(sx2 + 2, sy2 + 2, sw - 4, sh * 0.3);
+
+    // Cold blue atmosphere
+    ctx.fillStyle = 'rgba(100,150,255,0.06)';
+    ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, s, s);
+
+    // Decorative border
+    ctx.strokeStyle = secondary;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.3;
+    ctx.strokeRect(s * 0.05, s * 0.05, s * 0.9, s * 0.9);
+
+    // Rune marks
+    ctx.fillStyle = '#90A4AE';
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < 4; i++) {
+      const rx = s * 0.1 + rand() * s * 0.15;
+      const ry = s * 0.1 + rand() * s * 0.8;
+      ctx.fillRect(rx, ry, 2, 3);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawThroneRoomN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(97);
+
+    // Polished stone floor
+    const floorGrad = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s * 0.7);
+    floorGrad.addColorStop(0, secondary);
+    floorGrad.addColorStop(1, primary);
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0, 0, s, s);
+
+    // Floor texture
+    ctx.globalAlpha = 0.15;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 86.0, y / s + 86.0);
+        ctx.fillStyle = n > 0.5 ? secondary : primary;
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Red carpet center stripe
+    const carpetW = s * 0.3;
+    const carpetX = (s - carpetW) / 2;
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(carpetX, 0, carpetW, s);
+
+    // Carpet border
+    ctx.strokeStyle = '#880E4F';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.5;
+    ctx.strokeRect(carpetX + 1, 0, carpetW - 2, s);
+
+    // Carpet pattern — diamond shapes
+    ctx.fillStyle = '#D32F2F';
+    ctx.globalAlpha = 0.25;
+    for (let i = 0; i < 4; i++) {
+      const dy = s * 0.15 + i * s * 0.22;
+      ctx.beginPath();
+      ctx.moveTo(s / 2, dy - 4);
+      ctx.lineTo(s / 2 + 5, dy);
+      ctx.lineTo(s / 2, dy + 4);
+      ctx.lineTo(s / 2 - 5, dy);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Pillars in corners
+    ctx.fillStyle = '#9E9E9E';
+    ctx.globalAlpha = 0.5;
+    const pillarR = s * 0.06;
+    ctx.beginPath(); ctx.arc(s * 0.1, s * 0.1, pillarR, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(s * 0.9, s * 0.1, pillarR, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(s * 0.1, s * 0.9, pillarR, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(s * 0.9, s * 0.9, pillarR, 0, Math.PI * 2); ctx.fill();
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawSewerN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(98);
+
+    // Stone walls on sides
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, 0, s, s);
+
+    // Stone texture
+    ctx.globalAlpha = 0.2;
+    for (let y = 0; y < s; y += 3) {
+      for (let x = 0; x < s; x += 3) {
+        const n = PerlinNoise.sampleNoise(x / s + 87.0, y / s + 87.0);
+        ctx.fillStyle = n > 0.5 ? secondary : '#37474F';
+        ctx.fillRect(x, y, 3, 3);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Green-tinted water channel in center
+    const channelW = s * 0.35;
+    const cx = (s - channelW) / 2;
+    const waterGrad = ctx.createLinearGradient(cx, 0, cx + channelW, 0);
+    waterGrad.addColorStop(0, '#1B5E20');
+    waterGrad.addColorStop(0.5, accent);
+    waterGrad.addColorStop(1, '#1B5E20');
+    ctx.fillStyle = waterGrad;
+    ctx.globalAlpha = 0.8;
+    ctx.fillRect(cx, 0, channelW, s);
+
+    // Grate lines across water
+    ctx.strokeStyle = '#455A64';
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 5; i++) {
+      const gy = s * 0.1 + i * s * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(cx, gy);
+      ctx.lineTo(cx + channelW, gy);
+      ctx.stroke();
+    }
+
+    // Slime drip marks on walls
+    ctx.strokeStyle = '#4CAF50';
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 4; i++) {
+      const sx2 = rand() > 0.5 ? rand() * cx : cx + channelW + rand() * cx;
+      ctx.beginPath();
+      ctx.moveTo(sx2, rand() * s * 0.3);
+      ctx.lineTo(sx2 + (rand() - 0.5) * 2, s * 0.5 + rand() * s * 0.3);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+
+  /* ==== Session 6: Battlefield/Tactical (4 tiles) ==== */
+
+  _drawMudN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(100);
+
+    // Perlin mud base
+    ctx.globalAlpha = 0.3;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 88.0, y / s * 2 + 88.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? accent : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Wet gleam highlights
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 3 + rand() * 5, 1 + rand() * 2, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Boot prints
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 3; i++) {
+      const bx = rand() * s;
+      const by = rand() * s;
+      ctx.beginPath();
+      ctx.ellipse(bx, by, 2.5, 4, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Puddle areas
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.15;
+    for (let i = 0; i < 2; i++) {
+      ctx.beginPath();
+      ctx.ellipse(rand() * s, rand() * s, 5 + rand() * 6, 3 + rand() * 4, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawMoatN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(101);
+
+    // Stone walls on sides
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, 0, s, s);
+
+    // Stone block texture on walls
+    ctx.strokeStyle = '#616161';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.3;
+    const wallW = s * 0.2;
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 2; col++) {
+        ctx.strokeRect(col * wallW * 0.5 + 1, row * s * 0.25, wallW * 0.5 - 2, s * 0.25);
+        ctx.strokeRect(s - wallW + col * wallW * 0.5 + 1, row * s * 0.25, wallW * 0.5 - 2, s * 0.25);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Water in center
+    const waterGrad = ctx.createLinearGradient(wallW, 0, s - wallW, 0);
+    waterGrad.addColorStop(0, secondary);
+    waterGrad.addColorStop(0.3, primary);
+    waterGrad.addColorStop(0.7, primary);
+    waterGrad.addColorStop(1, secondary);
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(wallW, 0, s - wallW * 2, s);
+
+    // Depth gradient
+    ctx.fillStyle = '#0D47A1';
+    ctx.globalAlpha = 0.2;
+    ctx.fillRect(wallW + (s - wallW * 2) * 0.3, 0, (s - wallW * 2) * 0.4, s);
+
+    // Current lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 1;
+    for (let i = 0; i < 3; i++) {
+      const ly = s * 0.2 + i * s * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(wallW + 2, ly);
+      ctx.quadraticCurveTo(s / 2, ly - 1.5, s - wallW - 2, ly);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
+  }
+
+  _drawRockyGroundN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(102);
+
+    // Earth base
+    ctx.fillStyle = '#8D6E63';
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(0, 0, s, s);
+
+    // Perlin terrain variation
+    ctx.globalAlpha = 0.25;
+    for (let y = 0; y < s; y += 2) {
+      for (let x = 0; x < s; x += 2) {
+        const n = PerlinNoise.sampleNoise(x / s * 2 + 89.0, y / s * 2 + 89.0);
+        ctx.fillStyle = n > 0.55 ? secondary : (n < 0.3 ? '#795548' : primary);
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Scattered stones of varied sizes
+    const stoneCount = Math.max(8, Math.floor(s * 0.3));
+    for (let i = 0; i < stoneCount; i++) {
+      const cx = rand() * s;
+      const cy = rand() * s;
+      const rx = 2 + rand() * 4;
+      const ry = 1.5 + rand() * 3;
+      const shade = rand();
+      ctx.fillStyle = shade > 0.6 ? secondary : (shade < 0.3 ? accent : primary);
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, rand() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Highlight
+      ctx.fillStyle = '#BDBDBD';
+      ctx.globalAlpha = 0.1;
+      ctx.beginPath();
+      ctx.ellipse(cx - rx * 0.2, cy - ry * 0.3, rx * 0.4, ry * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  _drawDamN64(ctx, s, colors, neighbors) {
+    ctx.save();
+    const { primary, secondary, accent } = colors;
+    const rand = this._seededRand(103);
+
+    // Water below
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, s * 0.7, s, s * 0.3);
+
+    // Water texture
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 2; i++) {
+      const wy = s * 0.78 + i * s * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(0, wy);
+      ctx.quadraticCurveTo(s * 0.5, wy - 1, s, wy);
+      ctx.stroke();
+    }
+
+    // Dam wall structure
+    ctx.fillStyle = primary;
+    ctx.fillRect(0, s * 0.3, s, s * 0.4);
+
+    // Stone block texture on wall
+    ctx.strokeStyle = '#616161';
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.3;
+    const blockW = s / 5;
+    const blockH = s * 0.4 / 3;
+    for (let row = 0; row < 3; row++) {
+      const offset = (row % 2) * blockW * 0.5;
+      for (let col = -1; col < 6; col++) {
+        ctx.strokeRect(col * blockW + offset, s * 0.3 + row * blockH, blockW, blockH);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Buttresses
+    ctx.fillStyle = secondary;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 3; i++) {
+      const bx = s * 0.15 + i * s * 0.35;
+      ctx.fillRect(bx, s * 0.3, s * 0.04, s * 0.4);
+    }
+
+    // Top surface (road/walkway)
+    ctx.fillStyle = '#9E9E9E';
+    ctx.globalAlpha = 0.4;
+    ctx.fillRect(0, s * 0.25, s, s * 0.08);
+
+    ctx.globalAlpha = 1;
+    this._drawShorelines(ctx, s, neighbors);
+    ctx.restore();
   }
 
 
