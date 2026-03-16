@@ -1,0 +1,322 @@
+[
+  {
+    "id": "castle",
+    "name": "Castle",
+    "category": "settlement",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-castle",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "village-cluster",
+    "name": "Village Cluster",
+    "category": "settlement",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-village-cluster",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "wizard-tower",
+    "name": "Wizard Tower",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-wizard-tower",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "stone-bridge",
+    "name": "Stone Bridge",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-stone-bridge",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ancient-ruins",
+    "name": "Ancient Ruins",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-ancient-ruins",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "cave-entrance",
+    "name": "Cave Entrance",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-cave-entrance",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "standing-stones",
+    "name": "Standing Stones",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-standing-stones",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "fairy-ring",
+    "name": "Fairy Ring",
+    "category": "nature",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-fairy-ring",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "dragon-lair",
+    "name": "Dragon Lair",
+    "category": "hazard",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-dragon-lair",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "harbor",
+    "name": "Harbor",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-harbor",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "lighthouse",
+    "name": "Lighthouse",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-lighthouse",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "windmill",
+    "name": "Windmill",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-windmill",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "shrine",
+    "name": "Shrine",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-shrine",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "market-town",
+    "name": "Market Town",
+    "category": "settlement",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-market-town",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "enchanted-well",
+    "name": "Enchanted Well",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-enchanted-well",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "giant-tree",
+    "name": "Giant Tree",
+    "category": "nature",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-giant-tree",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "crystal-spire",
+    "name": "Crystal Spire",
+    "category": "structure",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-crystal-spire",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "graveyard",
+    "name": "Graveyard",
+    "category": "hazard",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-graveyard",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "battlefield-marker",
+    "name": "Battlefield Marker",
+    "category": "marker",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-battlefield-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "royal-road",
+    "name": "Royal Road",
+    "category": "navigation",
+    "themes": ["fantasy-overworld"],
+    "svgSymbolId": "overlay-royal-road",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "village",
+    "name": "Village",
+    "category": "settlement",
+    "themes": [],
+    "svgSymbolId": "overlay-village",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ruins",
+    "name": "Ruins",
+    "category": "structure",
+    "themes": [],
+    "svgSymbolId": "overlay-ruins",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "tribe-camp",
+    "name": "Tribe Camp",
+    "category": "settlement",
+    "themes": [],
+    "svgSymbolId": "overlay-tribe-camp",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "campfire",
+    "name": "Campfire",
+    "category": "atmosphere",
+    "themes": [],
+    "svgSymbolId": "overlay-campfire",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "deer",
+    "name": "Deer",
+    "category": "wildlife",
+    "themes": [],
+    "svgSymbolId": "overlay-deer",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "wolf",
+    "name": "Wolf",
+    "category": "wildlife",
+    "themes": [],
+    "svgSymbolId": "overlay-wolf",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "bird-flock",
+    "name": "Bird Flock",
+    "category": "wildlife",
+    "themes": [],
+    "svgSymbolId": "overlay-bird-flock",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "bear",
+    "name": "Bear",
+    "category": "wildlife",
+    "themes": [],
+    "svgSymbolId": "overlay-bear",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "treasure",
+    "name": "Treasure",
+    "category": "marker",
+    "themes": [],
+    "svgSymbolId": "overlay-treasure",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "danger-sign",
+    "name": "Danger Sign",
+    "category": "hazard",
+    "themes": [],
+    "svgSymbolId": "overlay-danger-sign",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "question-mark",
+    "name": "Question Mark",
+    "category": "marker",
+    "themes": [],
+    "svgSymbolId": "overlay-question-mark",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "star-marker",
+    "name": "Star Marker",
+    "category": "marker",
+    "themes": [],
+    "svgSymbolId": "overlay-star-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "compass-rose",
+    "name": "Compass Rose",
+    "category": "navigation",
+    "themes": [],
+    "svgSymbolId": "overlay-compass-rose",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "arrow-north",
+    "name": "Arrow North",
+    "category": "navigation",
+    "themes": [],
+    "svgSymbolId": "overlay-arrow-north",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "arrow-south",
+    "name": "Arrow South",
+    "category": "navigation",
+    "themes": [],
+    "svgSymbolId": "overlay-arrow-south",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "arrow-east",
+    "name": "Arrow East",
+    "category": "navigation",
+    "themes": [],
+    "svgSymbolId": "overlay-arrow-east",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "arrow-west",
+    "name": "Arrow West",
+    "category": "navigation",
+    "themes": [],
+    "svgSymbolId": "overlay-arrow-west",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "tree-single",
+    "name": "Single Tree",
+    "category": "nature",
+    "themes": [],
+    "svgSymbolId": "overlay-tree-single",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "fire",
+    "name": "Fire",
+    "category": "hazard",
+    "themes": [],
+    "svgSymbolId": "overlay-fire",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "text-label",
+    "name": "Text Label",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-text-label",
+    "sizeRatio": 0.6
+  }
+]

@@ -27,6 +27,11 @@
       "paved-road", "fortification", "trench", "camp-ground", "harbor", "town",
       "lowland", "highland", "mountain-range", "rainforest"
     ],
-    "overlays": []
+    "overlays": [
+      "castle", "village-cluster", "wizard-tower", "stone-bridge", "ancient-ruins",
+      "cave-entrance", "standing-stones", "fairy-ring", "dragon-lair", "harbor",
+      "lighthouse", "windmill", "shrine", "market-town", "enchanted-well",
+      "giant-tree", "crystal-spire", "graveyard", "battlefield-marker", "royal-road"
+    ]
   }
 ]

@@ -20,6 +20,7 @@
   <script src="js/camera.js" defer></script>
   <script src="js/grid.js" defer></script>
   <script src="js/tiles.js" defer></script>
+  <script src="js/overlays.js" defer></script>
   <script src="js/animation.js" defer></script>
   <script src="js/themes.js" defer></script>
   <script src="js/palette.js" defer></script>
@@ -152,7 +153,7 @@
       </div>
     </div>
 
-    <!-- Editor body: sidebar + canvas -->
+    <!-- Editor body: sidebar + canvas + overlay palette -->
     <div class="editor-body">
       <!-- Tile palette (left sidebar) -->
       <aside class="tile-palette" aria-label="Terrain tile palette">
@@ -160,10 +161,67 @@
         <div class="palette-list" role="listbox" aria-label="Available terrain tiles"></div>
       </aside>
 
-      <!-- Map canvas -->
-      <div class="canvas-container">
-        <canvas id="map-canvas" role="application" aria-label="Map editor grid. Select a tile from the palette, then tap or drag to paint."></canvas>
+      <!-- Map canvas + properties panel -->
+      <div class="editor-main">
+        <div class="canvas-container">
+          <canvas id="map-canvas" role="application" aria-label="Map editor grid. Select a tile from the palette, then tap or drag to paint."></canvas>
+        </div>
+
+        <!-- Properties Panel (bottom) -->
+        <div class="properties-panel" id="properties-panel" aria-label="Cell properties">
+          <button class="properties-toggle" id="btn-properties-toggle" aria-label="Toggle properties panel" aria-expanded="false">Properties &#9650;</button>
+          <div class="properties-content hidden" id="properties-content">
+            <div class="properties-info">
+              <span class="properties-coords" id="properties-coords"></span>
+              <span class="properties-base" id="properties-base"></span>
+            </div>
+            <div class="properties-overlays" id="properties-overlays">
+              <span class="properties-label">Overlays:</span>
+              <div class="overlay-list" id="overlay-list" role="list" aria-label="Overlays on this cell"></div>
+            </div>
+            <div class="properties-controls" id="properties-controls">
+              <div class="overlay-rotation" role="group" aria-label="Overlay rotation">
+                <span class="control-label">Rotate:</span>
+                <button class="rot-btn" data-rotation="0" aria-label="Rotation 0 degrees" aria-pressed="true">0&deg;</button>
+                <button class="rot-btn" data-rotation="90" aria-label="Rotation 90 degrees" aria-pressed="false">90&deg;</button>
+                <button class="rot-btn" data-rotation="180" aria-label="Rotation 180 degrees" aria-pressed="false">180&deg;</button>
+                <button class="rot-btn" data-rotation="270" aria-label="Rotation 270 degrees" aria-pressed="false">270&deg;</button>
+              </div>
+              <div class="overlay-opacity" role="group" aria-label="Overlay opacity">
+                <label class="control-label" for="opacity-slider">Opacity:</label>
+                <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="1" aria-label="Overlay opacity">
+                <span id="opacity-value">1.0</span>
+              </div>
+              <div class="overlay-size" role="group" aria-label="Overlay size">
+                <span class="control-label">Size:</span>
+                <button class="size-sel-btn" data-size="small" aria-label="Small overlay" aria-pressed="false">S</button>
+                <button class="size-sel-btn" data-size="medium" aria-label="Medium overlay" aria-pressed="true">M</button>
+                <button class="size-sel-btn" data-size="large" aria-label="Large overlay" aria-pressed="false">L</button>
+              </div>
+              <button id="btn-clear-overlays" aria-label="Clear all overlays from this cell">Clear Overlays</button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Overlay palette (right sidebar) -->
+      <aside class="overlay-palette" aria-label="Overlay palette">
+        <div class="palette-header">Overlays</div>
+        <div class="overlay-search">
+          <input type="text" id="overlay-search-input" placeholder="Search overlays..." aria-label="Search overlays" maxlength="50">
+          <button id="btn-overlay-search-clear" class="search-clear-btn hidden" aria-label="Clear search">&#10005;</button>
+        </div>
+        <div class="overlay-tabs" role="tablist" aria-label="Overlay categories">
+          <button role="tab" id="tab-theme-overlays" class="overlay-tab active" aria-selected="true" aria-controls="panel-theme-overlays">Theme</button>
+          <button role="tab" id="tab-universal-overlays" class="overlay-tab" aria-selected="false" aria-controls="panel-universal-overlays">Universal</button>
+        </div>
+        <div id="panel-theme-overlays" role="tabpanel" aria-labelledby="tab-theme-overlays">
+          <div class="overlay-list-palette" role="listbox" id="theme-overlay-list" aria-label="Theme overlays"></div>
+        </div>
+        <div id="panel-universal-overlays" role="tabpanel" aria-labelledby="tab-universal-overlays" class="hidden">
+          <div class="overlay-list-palette" role="listbox" id="universal-overlay-list" aria-label="Universal overlays"></div>
+        </div>
+      </aside>
     </div>
   </div>
 </body>

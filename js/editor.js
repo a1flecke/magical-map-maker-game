@@ -3,7 +3,9 @@
 const EditorState = {
   IDLE: 'IDLE',
   TILE_SELECTED: 'TILE_SELECTED',
-  FILL_MODE: 'FILL_MODE'
+  FILL_MODE: 'FILL_MODE',
+  OVERLAY_SELECTED: 'OVERLAY_SELECTED',
+  CELL_SELECTED: 'CELL_SELECTED'
 };
 
 class Editor {
@@ -37,10 +39,15 @@ class Editor {
     this._fillHighlightTimer = null;
     this._hoveredCell = null;
 
+    // Overlay state
+    this._selectedOverlay = null; // overlay ID to place
+    this._selectedCellOverlayIndex = -1; // which overlay in cell is selected for editing
+
     // Sub-systems
     this._grid = null;
     this._camera = null;
     this._tileRenderer = null;
+    this._overlayRenderer = null;
     this._themeManager = null;
     this._palette = null;
     this._input = null;
@@ -53,9 +60,11 @@ class Editor {
     // Load data
     this._themeManager = new ThemeManager();
     this._tileRenderer = new TileRenderer();
+    this._overlayRenderer = new OverlayRenderer();
     await Promise.all([
       this._themeManager.load(),
-      this._tileRenderer.load()
+      this._tileRenderer.load(),
+      this._overlayRenderer.load()
     ]);
 
     // Apply theme
@@ -81,10 +90,18 @@ class Editor {
     const tileIds = this._themeManager.getAvailableTiles(this._themeId);
     this._palette = new Palette(this._paletteEl, this._tileRenderer, (tileId) => {
       this._selectedTile = tileId;
+      this._selectedOverlay = null;
+      this._selectedCell = null;
+      this._selectedCellOverlayIndex = -1;
+      this._clearOverlaySelection();
+      this._updatePropertiesPanel();
       this._state = this._fillMode ? EditorState.FILL_MODE : EditorState.TILE_SELECTED;
       this._dirty = true;
     }, this._shape);
     this._palette.populate(tileIds);
+
+    // Overlay palette
+    this._initOverlayPalette();
 
     // Size canvas & fit grid
     this._resizeCanvas();
@@ -137,7 +154,9 @@ class Editor {
     }
     if (this._input) { this._input.destroy(); this._input = null; }
     if (this._palette) { this._palette.destroy(); this._palette = null; }
+    if (this._overlayRenderer) { this._overlayRenderer.destroy(); this._overlayRenderer = null; }
     if (this._animation) { this._animation.destroy(); this._animation = null; }
+    if (this._overlaySearchTimer) { clearTimeout(this._overlaySearchTimer); this._overlaySearchTimer = null; }
     if (this._boundResize) window.removeEventListener('resize', this._boundResize);
     if (this._dprMql) this._dprMql.removeEventListener('change', this._boundDprChange);
     if (this._fillHighlightTimer) {
@@ -252,6 +271,9 @@ class Editor {
     if (this._animation.showAnyAnimation) {
       this._renderAnimationLayer(ctx);
     }
+
+    // Layer 2.5: Overlays (icons placed on cells)
+    this._renderOverlays(ctx);
 
     // Layer 3: Grid lines
     if (this._showGrid) {
@@ -1603,13 +1625,35 @@ class Editor {
       return;
     }
 
-    // No tile selected — select cell for inspection
+    // Overlay placement
+    if (this._state === EditorState.OVERLAY_SELECTED && this._selectedOverlay) {
+      this._placeOverlay(col, row, cellType);
+      return;
+    }
+
+    // No tile/overlay selected — select cell for inspection
     const cell = this._grid.getCell(col, row, cellType);
+    this._selectedCell = { col, row, cellType };
+    this._selectedCellOverlayIndex = -1;
+    this._state = EditorState.CELL_SELECTED;
+
+    // Open properties panel
+    const content = document.getElementById('properties-content');
+    const toggleBtn = document.getElementById('btn-properties-toggle');
+    if (content && content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        toggleBtn.innerHTML = 'Properties &#9660;';
+      }
+      this._resizeCanvas();
+    }
+    this._updatePropertiesPanel();
+
     if (cell && cell.base) {
-      this._selectedCell = { col, row, cellType };
       this._app.announce('Selected cell at column ' + (col + 1) + ', row ' + (row + 1) + ': ' + cell.base);
     } else {
-      this._selectedCell = null;
+      this._app.announce('Selected empty cell at column ' + (col + 1) + ', row ' + (row + 1));
     }
     this._dirty = true;
   }
@@ -1696,8 +1740,12 @@ class Editor {
       case 'escape':
         this._selectedTile = null;
         this._selectedCell = null;
+        this._selectedOverlay = null;
+        this._selectedCellOverlayIndex = -1;
         this._state = EditorState.IDLE;
         this._palette.clearSelection();
+        this._clearOverlaySelection();
+        this._updatePropertiesPanel();
         if (this._panMode) this._togglePanMode();
         this._dirty = true;
         this._app.announce('Selection cleared');
@@ -1721,6 +1769,413 @@ class Editor {
         this._dirty = true;
         break;
       case 'map-life': this._cycleMapLife(); break;
+      case 'delete':
+        this._deleteLastOverlay();
+        break;
     }
+  }
+
+  /* ---- Overlay Rendering ---- */
+  _renderOverlays(ctx) {
+    const grid = this._grid;
+    const cellSize = grid.cellSize;
+    const shape = grid.shape;
+    const viewport = this._getViewportBounds();
+
+    grid.forEachCell((col, row, cell, cellType) => {
+      if (!cell.overlays || cell.overlays.length === 0) return;
+
+      // Viewport culling
+      let cx, cy;
+      if (shape === 'square') {
+        cx = col * cellSize + cellSize / 2;
+        cy = row * cellSize + cellSize / 2;
+      } else {
+        const center = grid.gridToPixel(col, row, cellType);
+        cx = center.x;
+        cy = center.y;
+      }
+      if (cx + cellSize < viewport.minX || cx - cellSize > viewport.maxX ||
+          cy + cellSize < viewport.minY || cy - cellSize > viewport.maxY) {
+        return;
+      }
+
+      // Draw each overlay, stacked with slight offset
+      for (let i = 0; i < cell.overlays.length; i++) {
+        const ov = cell.overlays[i];
+        const jitterX = (i - (cell.overlays.length - 1) / 2) * 3;
+        const jitterY = (i - (cell.overlays.length - 1) / 2) * 2;
+        this._overlayRenderer.drawOverlay(
+          ctx, ov.id, cx + jitterX, cy + jitterY, cellSize,
+          { rotation: ov.rotation || 0, opacity: ov.opacity != null ? ov.opacity : 1.0, size: ov.size || 'medium' }
+        );
+      }
+    });
+  }
+
+  /* ---- Overlay Palette Setup ---- */
+  _initOverlayPalette() {
+    const theme = this._themeManager.getTheme(this._themeId);
+    const themeOverlays = this._overlayRenderer.getThemeOverlays(this._themeId);
+    const universalOverlays = this._overlayRenderer.getUniversalOverlays();
+
+    this._populateOverlayList('theme-overlay-list', themeOverlays);
+    this._populateOverlayList('universal-overlay-list', universalOverlays);
+
+    // Tab switching
+    const tabTheme = document.getElementById('tab-theme-overlays');
+    const tabUniversal = document.getElementById('tab-universal-overlays');
+    const panelTheme = document.getElementById('panel-theme-overlays');
+    const panelUniversal = document.getElementById('panel-universal-overlays');
+
+    if (tabTheme) tabTheme.addEventListener('click', () => {
+      tabTheme.classList.add('active');
+      tabTheme.setAttribute('aria-selected', 'true');
+      tabUniversal.classList.remove('active');
+      tabUniversal.setAttribute('aria-selected', 'false');
+      panelTheme.classList.remove('hidden');
+      panelUniversal.classList.add('hidden');
+    });
+
+    if (tabUniversal) tabUniversal.addEventListener('click', () => {
+      tabUniversal.classList.add('active');
+      tabUniversal.setAttribute('aria-selected', 'true');
+      tabTheme.classList.remove('active');
+      tabTheme.setAttribute('aria-selected', 'false');
+      panelUniversal.classList.remove('hidden');
+      panelTheme.classList.add('hidden');
+    });
+
+    // Search/filter
+    const searchInput = document.getElementById('overlay-search-input');
+    const clearBtn = document.getElementById('btn-overlay-search-clear');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        if (this._overlaySearchTimer) clearTimeout(this._overlaySearchTimer);
+        this._overlaySearchTimer = setTimeout(() => {
+          this._filterOverlays(searchInput.value.trim().toLowerCase());
+        }, 200);
+        if (clearBtn) clearBtn.classList.toggle('hidden', !searchInput.value);
+      });
+    }
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearBtn.classList.add('hidden');
+        this._filterOverlays('');
+      });
+    }
+
+    // Properties panel toggle
+    const toggleBtn = document.getElementById('btn-properties-toggle');
+    const content = document.getElementById('properties-content');
+    if (toggleBtn && content) {
+      toggleBtn.addEventListener('click', () => {
+        const isHidden = content.classList.toggle('hidden');
+        toggleBtn.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+        toggleBtn.innerHTML = 'Properties ' + (isHidden ? '&#9650;' : '&#9660;');
+        // Resize canvas since properties panel changed height
+        this._resizeCanvas();
+        this._dirty = true;
+      });
+    }
+
+    // Properties controls
+    this._bindPropertiesControls();
+  }
+
+  _populateOverlayList(listId, overlays) {
+    const listEl = document.getElementById(listId);
+    if (!listEl) return;
+    listEl.replaceChildren();
+
+    for (const ov of overlays) {
+      const option = document.createElement('div');
+      option.className = 'overlay-option';
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', 'false');
+      option.setAttribute('aria-label', ov.name);
+      option.setAttribute('tabindex', '0');
+      option.dataset.overlayId = ov.id;
+
+      // Preview canvas
+      const previewSize = 44;
+      const previewCanvas = document.createElement('canvas');
+      previewCanvas.width = previewSize;
+      previewCanvas.height = previewSize;
+      previewCanvas.setAttribute('aria-hidden', 'true');
+      option.appendChild(previewCanvas);
+
+      // Render preview async
+      this._overlayRenderer.renderPreview(ov.id, previewSize, (img) => {
+        const ctx = previewCanvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, previewSize, previewSize);
+      });
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'overlay-name';
+      nameEl.textContent = ov.name;
+      option.appendChild(nameEl);
+
+      option.addEventListener('click', () => this._selectOverlay(ov.id));
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._selectOverlay(ov.id);
+        }
+      });
+
+      listEl.appendChild(option);
+    }
+  }
+
+  _selectOverlay(overlayId) {
+    // Clear tile selection
+    this._selectedTile = null;
+    this._palette.clearSelection();
+    this._selectedCell = null;
+    this._selectedCellOverlayIndex = -1;
+
+    this._selectedOverlay = overlayId;
+    this._state = EditorState.OVERLAY_SELECTED;
+
+    // Update overlay palette UI
+    document.querySelectorAll('.overlay-option').forEach(opt => {
+      opt.setAttribute('aria-selected', opt.dataset.overlayId === overlayId ? 'true' : 'false');
+    });
+
+    this._app.announce('Overlay selected: ' + (this._overlayRenderer.getOverlay(overlayId)?.name || overlayId));
+    this._dirty = true;
+  }
+
+  _clearOverlaySelection() {
+    this._selectedOverlay = null;
+    document.querySelectorAll('.overlay-option').forEach(opt => {
+      opt.setAttribute('aria-selected', 'false');
+    });
+  }
+
+  _filterOverlays(query) {
+    document.querySelectorAll('.overlay-option').forEach(opt => {
+      const name = opt.getAttribute('aria-label') || '';
+      const match = !query || name.toLowerCase().includes(query);
+      if (match) {
+        opt.removeAttribute('aria-hidden');
+        opt.style.display = '';
+      } else {
+        opt.setAttribute('aria-hidden', 'true');
+        opt.style.display = 'none';
+      }
+    });
+  }
+
+  /* ---- Overlay Placement ---- */
+  _placeOverlay(col, row, cellType) {
+    const cell = this._grid.getCell(col, row, cellType);
+    if (!cell) return;
+    if (!cell.overlays) cell.overlays = [];
+    if (cell.overlays.length >= 5) {
+      this._app.announce('Maximum 5 overlays per cell');
+      return;
+    }
+
+    cell.overlays.push({
+      id: this._selectedOverlay,
+      rotation: 0,
+      opacity: 1.0,
+      size: 'medium'
+    });
+    this._dirty = true;
+    this._app.announce('Placed ' + (this._overlayRenderer.getOverlay(this._selectedOverlay)?.name || this._selectedOverlay));
+  }
+
+  _deleteLastOverlay() {
+    if (this._state !== EditorState.CELL_SELECTED || !this._selectedCell) return;
+    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
+    if (!cell || !cell.overlays || cell.overlays.length === 0) return;
+
+    // Remove selected overlay or last one
+    if (this._selectedCellOverlayIndex >= 0 && this._selectedCellOverlayIndex < cell.overlays.length) {
+      cell.overlays.splice(this._selectedCellOverlayIndex, 1);
+      this._selectedCellOverlayIndex = -1;
+    } else {
+      cell.overlays.pop();
+    }
+    this._dirty = true;
+    this._updatePropertiesPanel();
+    this._app.announce('Overlay removed');
+  }
+
+  /* ---- Properties Panel ---- */
+  _bindPropertiesControls() {
+    // Rotation buttons
+    document.querySelectorAll('.rot-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rot = parseInt(btn.dataset.rotation, 10);
+        this._setOverlayRotation(rot);
+      });
+    });
+
+    // Opacity slider
+    const slider = document.getElementById('opacity-slider');
+    if (slider) {
+      slider.addEventListener('input', () => {
+        this._setOverlayOpacity(parseFloat(slider.value));
+      });
+    }
+
+    // Size buttons
+    document.querySelectorAll('.size-sel-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._setOverlaySize(btn.dataset.size);
+      });
+    });
+
+    // Clear overlays button
+    const clearBtn = document.getElementById('btn-clear-overlays');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => this._clearCellOverlays());
+    }
+  }
+
+  _updatePropertiesPanel() {
+    const coordsEl = document.getElementById('properties-coords');
+    const baseEl = document.getElementById('properties-base');
+    const overlayListEl = document.getElementById('overlay-list');
+    const controlsEl = document.getElementById('properties-controls');
+
+    if (!this._selectedCell) {
+      if (coordsEl) coordsEl.textContent = '';
+      if (baseEl) baseEl.textContent = '';
+      if (overlayListEl) overlayListEl.replaceChildren();
+      if (controlsEl) controlsEl.classList.add('hidden');
+      return;
+    }
+
+    const { col, row, cellType } = this._selectedCell;
+    const cell = this._grid.getCell(col, row, cellType);
+
+    if (coordsEl) {
+      let label = `(${col}, ${row})`;
+      if (cellType === 'sq') label += ' sq';
+      coordsEl.textContent = label;
+    }
+
+    if (baseEl) {
+      const baseName = cell && cell.base ? (this._tileRenderer.getType(cell.base)?.name || cell.base) : 'Empty';
+      baseEl.textContent = baseName;
+    }
+
+    if (overlayListEl) {
+      overlayListEl.replaceChildren();
+      const overlays = cell?.overlays || [];
+      for (let i = 0; i < overlays.length; i++) {
+        const ov = overlays[i];
+        const chip = document.createElement('div');
+        chip.className = 'overlay-chip' + (i === this._selectedCellOverlayIndex ? ' selected' : '');
+        chip.setAttribute('role', 'listitem');
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = this._overlayRenderer.getOverlay(ov.id)?.name || ov.id;
+        chip.appendChild(nameSpan);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'chip-remove';
+        removeBtn.textContent = '\u2715';
+        removeBtn.setAttribute('aria-label', 'Remove ' + (this._overlayRenderer.getOverlay(ov.id)?.name || ov.id));
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          cell.overlays.splice(i, 1);
+          this._selectedCellOverlayIndex = -1;
+          this._dirty = true;
+          this._updatePropertiesPanel();
+          this._app.announce('Overlay removed');
+        });
+        chip.appendChild(removeBtn);
+
+        chip.addEventListener('click', () => {
+          this._selectedCellOverlayIndex = i;
+          this._updatePropertiesPanel();
+          this._updatePropertyControlValues();
+        });
+
+        overlayListEl.appendChild(chip);
+      }
+    }
+
+    if (controlsEl) {
+      const hasOverlays = cell?.overlays?.length > 0;
+      controlsEl.classList.toggle('hidden', !hasOverlays);
+    }
+
+    this._updatePropertyControlValues();
+  }
+
+  _updatePropertyControlValues() {
+    if (!this._selectedCell || this._selectedCellOverlayIndex < 0) return;
+    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
+    if (!cell || !cell.overlays || this._selectedCellOverlayIndex >= cell.overlays.length) return;
+    const ov = cell.overlays[this._selectedCellOverlayIndex];
+
+    // Update rotation buttons
+    document.querySelectorAll('.rot-btn').forEach(btn => {
+      btn.setAttribute('aria-pressed', parseInt(btn.dataset.rotation, 10) === (ov.rotation || 0) ? 'true' : 'false');
+    });
+
+    // Update opacity slider
+    const slider = document.getElementById('opacity-slider');
+    if (slider) slider.value = ov.opacity != null ? ov.opacity : 1.0;
+    const valEl = document.getElementById('opacity-value');
+    if (valEl) valEl.textContent = (ov.opacity != null ? ov.opacity : 1.0).toFixed(1);
+
+    // Update size buttons
+    document.querySelectorAll('.size-sel-btn').forEach(btn => {
+      btn.setAttribute('aria-pressed', btn.dataset.size === (ov.size || 'medium') ? 'true' : 'false');
+    });
+  }
+
+  _setOverlayRotation(rotation) {
+    const ov = this._getSelectedCellOverlay();
+    if (!ov) return;
+    ov.rotation = rotation;
+    this._overlayRenderer.clearCache();
+    this._dirty = true;
+    this._updatePropertyControlValues();
+  }
+
+  _setOverlayOpacity(opacity) {
+    const ov = this._getSelectedCellOverlay();
+    if (!ov) return;
+    ov.opacity = Math.round(opacity * 10) / 10;
+    this._dirty = true;
+    const valEl = document.getElementById('opacity-value');
+    if (valEl) valEl.textContent = ov.opacity.toFixed(1);
+  }
+
+  _setOverlaySize(size) {
+    const ov = this._getSelectedCellOverlay();
+    if (!ov) return;
+    ov.size = size;
+    this._overlayRenderer.clearCache();
+    this._dirty = true;
+    this._updatePropertyControlValues();
+  }
+
+  _getSelectedCellOverlay() {
+    if (!this._selectedCell || this._selectedCellOverlayIndex < 0) return null;
+    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
+    if (!cell || !cell.overlays || this._selectedCellOverlayIndex >= cell.overlays.length) return null;
+    return cell.overlays[this._selectedCellOverlayIndex];
+  }
+
+  _clearCellOverlays() {
+    if (!this._selectedCell) return;
+    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
+    if (!cell || !cell.overlays) return;
+    cell.overlays = [];
+    this._selectedCellOverlayIndex = -1;
+    this._dirty = true;
+    this._updatePropertiesPanel();
+    this._app.announce('All overlays cleared');
   }
 }

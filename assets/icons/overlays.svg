@@ -1,0 +1,434 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+
+  <!-- ===== FANTASY OVERWORLD OVERLAYS (20) ===== -->
+
+  <!-- Castle: turreted fortress -->
+  <symbol id="overlay-castle" viewBox="0 0 64 64">
+    <rect x="16" y="28" width="32" height="24" fill="#8B7355" stroke="#5C4A32" stroke-width="2"/>
+    <rect x="12" y="20" width="8" height="32" fill="#8B7355" stroke="#5C4A32" stroke-width="2"/>
+    <rect x="44" y="20" width="8" height="32" fill="#8B7355" stroke="#5C4A32" stroke-width="2"/>
+    <rect x="10" y="16" width="4" height="6" fill="#8B7355" stroke="#5C4A32" stroke-width="1.5"/>
+    <rect x="18" y="16" width="4" height="6" fill="#8B7355" stroke="#5C4A32" stroke-width="1.5"/>
+    <rect x="42" y="16" width="4" height="6" fill="#8B7355" stroke="#5C4A32" stroke-width="1.5"/>
+    <rect x="50" y="16" width="4" height="6" fill="#8B7355" stroke="#5C4A32" stroke-width="1.5"/>
+    <rect x="28" y="38" width="8" height="14" fill="#5C4A32"/>
+    <polygon points="32,8 26,22 38,22" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1.5"/>
+  </symbol>
+
+  <!-- Village Cluster: group of small houses -->
+  <symbol id="overlay-village-cluster" viewBox="0 0 64 64">
+    <rect x="10" y="34" width="14" height="12" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="17,26 8,34 26,34" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1.5"/>
+    <rect x="26" y="30" width="16" height="16" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="34,20 24,30 44,30" fill="#8B4513" stroke="#5C2D0E" stroke-width="1.5"/>
+    <rect x="42" y="36" width="12" height="10" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="48,28 40,36 56,36" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1.5"/>
+    <rect x="30" y="40" width="4" height="6" fill="#5C4A32"/>
+  </symbol>
+
+  <!-- Wizard Tower: tall pointed tower -->
+  <symbol id="overlay-wizard-tower" viewBox="0 0 64 64">
+    <rect x="24" y="22" width="16" height="30" fill="#6A5ACD" stroke="#483D8B" stroke-width="2"/>
+    <polygon points="32,6 22,22 42,22" fill="#483D8B" stroke="#2E2566" stroke-width="1.5"/>
+    <circle cx="32" cy="8" r="3" fill="#FFD700"/>
+    <rect x="28" y="32" width="8" height="8" fill="#87CEEB" stroke="#483D8B" stroke-width="1.5"/>
+    <line x1="32" y1="32" x2="32" y2="40" stroke="#483D8B" stroke-width="1"/>
+    <line x1="28" y1="36" x2="36" y2="36" stroke="#483D8B" stroke-width="1"/>
+    <rect x="29" y="44" width="6" height="8" fill="#483D8B"/>
+  </symbol>
+
+  <!-- Stone Bridge: arched bridge -->
+  <symbol id="overlay-stone-bridge" viewBox="0 0 64 64">
+    <path d="M8,44 Q32,20 56,44" fill="none" stroke="#8B8682" stroke-width="4"/>
+    <rect x="6" y="42" width="52" height="8" fill="#A0978E" stroke="#8B8682" stroke-width="2"/>
+    <rect x="6" y="42" width="6" height="12" fill="#8B8682" stroke="#6B6460" stroke-width="1.5"/>
+    <rect x="52" y="42" width="6" height="12" fill="#8B8682" stroke="#6B6460" stroke-width="1.5"/>
+    <line x1="18" y1="42" x2="18" y2="50" stroke="#6B6460" stroke-width="1"/>
+    <line x1="32" y1="42" x2="32" y2="50" stroke="#6B6460" stroke-width="1"/>
+    <line x1="46" y1="42" x2="46" y2="50" stroke="#6B6460" stroke-width="1"/>
+  </symbol>
+
+  <!-- Ancient Ruins: broken columns -->
+  <symbol id="overlay-ancient-ruins" viewBox="0 0 64 64">
+    <rect x="12" y="22" width="6" height="30" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="10" y="18" width="10" height="4" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="28" y="28" width="6" height="24" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <line x1="28" y1="28" x2="34" y2="24" stroke="#A0978E" stroke-width="2"/>
+    <rect x="46" y="32" width="6" height="20" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="44" y="28" width="10" height="4" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="18" y="48" width="12" height="4" fill="#C8BFA9" stroke="#A0978E" stroke-width="1"/>
+    <circle cx="40" cy="48" r="3" fill="none" stroke="#A0978E" stroke-width="1.5"/>
+  </symbol>
+
+  <!-- Cave Entrance: dark opening in rock -->
+  <symbol id="overlay-cave-entrance" viewBox="0 0 64 64">
+    <path d="M12,52 Q12,20 32,18 Q52,20 52,52 Z" fill="#8B8682" stroke="#6B6460" stroke-width="2"/>
+    <path d="M18,52 Q18,28 32,26 Q46,28 46,52 Z" fill="#2C2416"/>
+    <circle cx="28" cy="38" r="2" fill="#FFD700" opacity="0.6"/>
+    <circle cx="36" cy="40" r="1.5" fill="#FFD700" opacity="0.4"/>
+    <path d="M16,52 L12,52 L14,48" fill="#8B8682"/>
+    <path d="M48,52 L52,52 L50,48" fill="#8B8682"/>
+  </symbol>
+
+  <!-- Standing Stones: stone circle -->
+  <symbol id="overlay-standing-stones" viewBox="0 0 64 64">
+    <rect x="14" y="24" width="5" height="20" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <rect x="30" y="20" width="5" height="24" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <rect x="46" y="26" width="5" height="18" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <rect x="22" y="36" width="5" height="14" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <rect x="38" y="34" width="5" height="16" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <ellipse cx="32" cy="50" rx="22" ry="3" fill="none" stroke="#8B8682" stroke-width="1" stroke-dasharray="3,3"/>
+  </symbol>
+
+  <!-- Fairy Ring: mushroom circle -->
+  <symbol id="overlay-fairy-ring" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="40" rx="20" ry="12" fill="none" stroke="#90EE90" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <circle cx="14" cy="38" r="3" fill="#FF6B9D"/>
+    <circle cx="14" cy="38" r="3" fill="#FF6B9D"/>
+    <rect x="13" y="38" width="2" height="5" fill="#F5F5DC"/>
+    <circle cx="22" cy="30" r="2.5" fill="#DDA0DD"/>
+    <rect x="21" y="30" width="2" height="4" fill="#F5F5DC"/>
+    <circle cx="42" cy="30" r="2.5" fill="#FF6B9D"/>
+    <rect x="41" y="30" width="2" height="4" fill="#F5F5DC"/>
+    <circle cx="50" cy="38" r="3" fill="#DDA0DD"/>
+    <rect x="49" y="38" width="2" height="5" fill="#F5F5DC"/>
+    <circle cx="32" cy="48" r="2.5" fill="#FF6B9D"/>
+    <rect x="31" y="48" width="2" height="4" fill="#F5F5DC"/>
+    <circle cx="32" cy="36" r="4" fill="#FFD700" opacity="0.3"/>
+  </symbol>
+
+  <!-- Dragon Lair: skull with wings -->
+  <symbol id="overlay-dragon-lair" viewBox="0 0 64 64">
+    <path d="M8,24 Q12,10 22,18 L26,22" fill="none" stroke="#8B0000" stroke-width="2.5"/>
+    <path d="M56,24 Q52,10 42,18 L38,22" fill="none" stroke="#8B0000" stroke-width="2.5"/>
+    <ellipse cx="32" cy="32" rx="12" ry="10" fill="#F5F5DC" stroke="#8B8682" stroke-width="2"/>
+    <circle cx="27" cy="30" r="3" fill="#2C2416"/>
+    <circle cx="37" cy="30" r="3" fill="#2C2416"/>
+    <circle cx="27" cy="29" r="1" fill="#FF4500"/>
+    <circle cx="37" cy="29" r="1" fill="#FF4500"/>
+    <path d="M28,38 L30,36 L32,38 L34,36 L36,38" fill="none" stroke="#2C2416" stroke-width="1.5"/>
+    <path d="M20,46 Q26,44 32,48 Q38,44 44,46" fill="none" stroke="#FFD700" stroke-width="2"/>
+  </symbol>
+
+  <!-- Harbor: anchor and dock -->
+  <symbol id="overlay-harbor" viewBox="0 0 64 64">
+    <rect x="8" y="38" width="48" height="6" fill="#8B7355" stroke="#5C4A32" stroke-width="1.5"/>
+    <rect x="12" y="38" width="4" height="14" fill="#8B7355" stroke="#5C4A32" stroke-width="1"/>
+    <rect x="48" y="38" width="4" height="14" fill="#8B7355" stroke="#5C4A32" stroke-width="1"/>
+    <circle cx="32" cy="24" r="3" fill="none" stroke="#4A6B8A" stroke-width="2.5"/>
+    <line x1="32" y1="27" x2="32" y2="42" stroke="#4A6B8A" stroke-width="2.5"/>
+    <path d="M24,38 Q28,34 32,38 Q36,34 40,38" fill="none" stroke="#4A6B8A" stroke-width="2"/>
+    <line x1="24" y1="38" x2="24" y2="36" stroke="#4A6B8A" stroke-width="2"/>
+    <line x1="40" y1="38" x2="40" y2="36" stroke="#4A6B8A" stroke-width="2"/>
+  </symbol>
+
+  <!-- Lighthouse: tall striped tower with light -->
+  <symbol id="overlay-lighthouse" viewBox="0 0 64 64">
+    <polygon points="26,52 22,52 28,18 36,18 42,52 38,52" fill="#F5F5DC" stroke="#8B8682" stroke-width="1.5"/>
+    <rect x="28" y="24" width="8" height="4" fill="#C41E3A"/>
+    <rect x="27" y="32" width="10" height="4" fill="#C41E3A"/>
+    <rect x="25" y="40" width="14" height="4" fill="#C41E3A"/>
+    <rect x="28" y="14" width="8" height="6" fill="#87CEEB" stroke="#8B8682" stroke-width="1.5"/>
+    <polygon points="32,8 26,14 38,14" fill="#C41E3A"/>
+    <line x1="18" y1="12" x2="26" y2="14" stroke="#FFD700" stroke-width="1.5"/>
+    <line x1="46" y1="12" x2="38" y2="14" stroke="#FFD700" stroke-width="1.5"/>
+    <line x1="16" y1="16" x2="26" y2="16" stroke="#FFD700" stroke-width="1"/>
+    <line x1="48" y1="16" x2="38" y2="16" stroke="#FFD700" stroke-width="1"/>
+  </symbol>
+
+  <!-- Windmill: building with rotating blades -->
+  <symbol id="overlay-windmill" viewBox="0 0 64 64">
+    <polygon points="24,52 20,52 26,26 38,26 44,52 40,52" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <rect x="29" y="42" width="6" height="10" fill="#5C4A32"/>
+    <rect x="28" y="22" width="8" height="6" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <line x1="32" y1="25" x2="32" y2="8" stroke="#8B7355" stroke-width="2"/>
+    <line x1="32" y1="25" x2="48" y2="16" stroke="#8B7355" stroke-width="2"/>
+    <line x1="32" y1="25" x2="48" y2="34" stroke="#8B7355" stroke-width="2"/>
+    <line x1="32" y1="25" x2="16" y2="34" stroke="#8B7355" stroke-width="2"/>
+    <circle cx="32" cy="25" r="2" fill="#8B7355"/>
+  </symbol>
+
+  <!-- Shrine: small temple with torii-like gate -->
+  <symbol id="overlay-shrine" viewBox="0 0 64 64">
+    <rect x="22" y="32" width="20" height="18" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="32,18 18,32 46,32" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1.5"/>
+    <rect x="30" y="40" width="4" height="10" fill="#5C4A32"/>
+    <line x1="14" y1="22" x2="50" y2="22" stroke="#C41E3A" stroke-width="3"/>
+    <rect x="16" y="22" width="4" height="28" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1"/>
+    <rect x="44" y="22" width="4" height="28" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1"/>
+    <circle cx="32" cy="26" r="2" fill="#FFD700"/>
+  </symbol>
+
+  <!-- Market Town: buildings with market stall -->
+  <symbol id="overlay-market-town" viewBox="0 0 64 64">
+    <rect x="8" y="32" width="18" height="16" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="17,24 6,32 28,32" fill="#8B4513" stroke="#5C2D0E" stroke-width="1.5"/>
+    <rect x="38" y="28" width="18" height="20" fill="#D2B48C" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="47,20 36,28 58,28" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1.5"/>
+    <rect x="22" y="36" width="20" height="4" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <rect x="20" y="32" width="2" height="16" fill="#8B7355"/>
+    <rect x="42" y="32" width="2" height="16" fill="#8B7355"/>
+    <line x1="22" y1="32" x2="42" y2="32" stroke="#DAA520" stroke-width="1.5"/>
+  </symbol>
+
+  <!-- Enchanted Well: glowing well -->
+  <symbol id="overlay-enchanted-well" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="36" rx="14" ry="8" fill="#4A6B8A" stroke="#8B8682" stroke-width="2"/>
+    <ellipse cx="32" cy="36" rx="10" ry="6" fill="#1A3A5A"/>
+    <ellipse cx="32" cy="34" rx="14" ry="8" fill="none" stroke="#A0978E" stroke-width="3"/>
+    <circle cx="32" cy="34" r="4" fill="#87CEEB" opacity="0.5"/>
+    <circle cx="32" cy="34" r="2" fill="#E0FFFF" opacity="0.7"/>
+    <rect x="30" y="18" width="4" height="16" fill="#8B7355" stroke="#5C4A32" stroke-width="1"/>
+    <line x1="24" y1="20" x2="40" y2="20" stroke="#8B7355" stroke-width="2"/>
+    <rect x="24" y="18" width="2" height="18" fill="#8B7355"/>
+    <rect x="38" y="18" width="2" height="18" fill="#8B7355"/>
+  </symbol>
+
+  <!-- Giant Tree: massive tree -->
+  <symbol id="overlay-giant-tree" viewBox="0 0 64 64">
+    <rect x="28" y="36" width="8" height="18" fill="#8B4513" stroke="#5C2D0E" stroke-width="1.5"/>
+    <ellipse cx="32" cy="26" rx="20" ry="18" fill="#228B22" stroke="#006400" stroke-width="2"/>
+    <ellipse cx="24" cy="22" rx="10" ry="10" fill="#2E8B2E"/>
+    <ellipse cx="40" cy="22" rx="10" ry="10" fill="#2E8B2E"/>
+    <ellipse cx="32" cy="18" rx="10" ry="10" fill="#32CD32" opacity="0.6"/>
+    <path d="M24,36 Q20,40 18,36" stroke="#8B4513" stroke-width="2" fill="none"/>
+    <path d="M40,36 Q44,40 46,36" stroke="#8B4513" stroke-width="2" fill="none"/>
+  </symbol>
+
+  <!-- Crystal Spire: tall crystal formation -->
+  <symbol id="overlay-crystal-spire" viewBox="0 0 64 64">
+    <polygon points="32,6 26,36 38,36" fill="#87CEEB" stroke="#4A90D9" stroke-width="1.5" opacity="0.8"/>
+    <polygon points="24,18 18,42 30,42" fill="#B0E0E6" stroke="#4A90D9" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="40,16 34,40 46,40" fill="#ADD8E6" stroke="#4A90D9" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="32,6 28,20 36,20" fill="#E0FFFF" opacity="0.6"/>
+    <line x1="32" y1="10" x2="32" y2="6" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>
+    <ellipse cx="32" cy="48" rx="18" ry="4" fill="#4A90D9" opacity="0.2"/>
+  </symbol>
+
+  <!-- Graveyard: headstones and cross -->
+  <symbol id="overlay-graveyard" viewBox="0 0 64 64">
+    <rect x="10" y="30" width="8" height="12" rx="3" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <line x1="30" y1="18" x2="30" y2="42" stroke="#A0978E" stroke-width="3"/>
+    <line x1="22" y1="26" x2="38" y2="26" stroke="#A0978E" stroke-width="3"/>
+    <rect x="46" y="32" width="8" height="10" rx="3" fill="#A0978E" stroke="#8B8682" stroke-width="1.5"/>
+    <rect x="22" y="38" width="6" height="8" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1"/>
+    <rect x="38" y="40" width="5" height="6" rx="2" fill="#A0978E" stroke="#8B8682" stroke-width="1"/>
+    <path d="M8,50 L56,50" stroke="#6B6460" stroke-width="1" stroke-dasharray="2,2"/>
+  </symbol>
+
+  <!-- Battlefield Marker: crossed swords -->
+  <symbol id="overlay-battlefield-marker" viewBox="0 0 64 64">
+    <line x1="16" y1="12" x2="48" y2="48" stroke="#8B8682" stroke-width="3"/>
+    <line x1="48" y1="12" x2="16" y2="48" stroke="#8B8682" stroke-width="3"/>
+    <line x1="14" y1="14" x2="20" y2="8" stroke="#8B8682" stroke-width="2.5"/>
+    <line x1="14" y1="14" x2="8" y2="20" stroke="#8B8682" stroke-width="2.5"/>
+    <line x1="50" y1="14" x2="56" y2="8" stroke="#8B8682" stroke-width="2.5"/>
+    <line x1="50" y1="14" x2="44" y2="8" stroke="#8B8682" stroke-width="2.5"/>
+    <rect x="28" y="24" width="8" height="16" rx="2" fill="#C41E3A" stroke="#8B1A2B" stroke-width="1.5"/>
+    <circle cx="32" cy="30" r="2" fill="#FFD700"/>
+  </symbol>
+
+  <!-- Royal Road: decorated path marker -->
+  <symbol id="overlay-royal-road" viewBox="0 0 64 64">
+    <rect x="24" y="8" width="16" height="48" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/>
+    <line x1="24" y1="16" x2="40" y2="16" stroke="#8B7355" stroke-width="1.5"/>
+    <line x1="24" y1="32" x2="40" y2="32" stroke="#8B7355" stroke-width="1.5"/>
+    <line x1="24" y1="48" x2="40" y2="48" stroke="#8B7355" stroke-width="1.5"/>
+    <circle cx="32" cy="24" r="4" fill="#FFD700" stroke="#DAA520" stroke-width="1.5"/>
+    <circle cx="32" cy="40" r="4" fill="#FFD700" stroke="#DAA520" stroke-width="1.5"/>
+    <polygon points="32,12 29,16 35,16" fill="#C41E3A"/>
+  </symbol>
+
+  <!-- ===== UNIVERSAL OVERLAYS (20) ===== -->
+
+  <!-- Village: simple house -->
+  <symbol id="overlay-village" viewBox="0 0 64 64">
+    <rect x="18" y="32" width="28" height="18" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/>
+    <polygon points="32,16 14,32 50,32" fill="#8B4513" stroke="#5C2D0E" stroke-width="2"/>
+    <rect x="28" y="38" width="8" height="12" fill="#5C4A32"/>
+    <rect x="20" y="36" width="6" height="6" fill="#87CEEB" stroke="#5C4A32" stroke-width="1"/>
+    <rect x="38" y="36" width="6" height="6" fill="#87CEEB" stroke="#5C4A32" stroke-width="1"/>
+  </symbol>
+
+  <!-- Ruins: crumbling walls -->
+  <symbol id="overlay-ruins" viewBox="0 0 64 64">
+    <rect x="12" y="28" width="6" height="22" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="12" y="24" width="20" height="4" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="26" y="32" width="6" height="18" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="40" y="34" width="6" height="16" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="40" y="30" width="14" height="4" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+    <rect x="48" y="38" width="6" height="12" fill="#C8BFA9" stroke="#A0978E" stroke-width="1.5"/>
+  </symbol>
+
+  <!-- Tribe Camp: teepee -->
+  <symbol id="overlay-tribe-camp" viewBox="0 0 64 64">
+    <polygon points="32,12 16,50 48,50" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/>
+    <line x1="32" y1="8" x2="28" y2="14" stroke="#8B7355" stroke-width="2"/>
+    <line x1="32" y1="8" x2="36" y2="14" stroke="#8B7355" stroke-width="2"/>
+    <polygon points="32,30 26,50 38,50" fill="#8B4513" opacity="0.3"/>
+    <line x1="24" y1="34" x2="28" y2="30" stroke="#C41E3A" stroke-width="1.5"/>
+    <line x1="28" y1="30" x2="32" y2="34" stroke="#C41E3A" stroke-width="1.5"/>
+    <line x1="32" y1="34" x2="36" y2="30" stroke="#C41E3A" stroke-width="1.5"/>
+    <line x1="36" y1="30" x2="40" y2="34" stroke="#C41E3A" stroke-width="1.5"/>
+  </symbol>
+
+  <!-- Campfire: flame with logs -->
+  <symbol id="overlay-campfire" viewBox="0 0 64 64">
+    <line x1="16" y1="44" x2="48" y2="48" stroke="#8B4513" stroke-width="3" stroke-linecap="round"/>
+    <line x1="48" y1="44" x2="16" y2="48" stroke="#8B4513" stroke-width="3" stroke-linecap="round"/>
+    <path d="M32,40 Q28,28 32,18 Q36,28 32,40" fill="#FF6600"/>
+    <path d="M32,40 Q30,32 32,24 Q34,32 32,40" fill="#FFD700"/>
+    <path d="M26,42 Q24,36 28,32 Q30,36 26,42" fill="#FF4500" opacity="0.8"/>
+    <path d="M38,42 Q40,36 36,32 Q34,36 38,42" fill="#FF4500" opacity="0.8"/>
+    <circle cx="32" cy="22" r="2" fill="#FFFFFF" opacity="0.4"/>
+  </symbol>
+
+  <!-- Deer: standing deer silhouette -->
+  <symbol id="overlay-deer" viewBox="0 0 64 64">
+    <ellipse cx="30" cy="34" rx="12" ry="8" fill="#CD853F" stroke="#8B6914" stroke-width="1.5"/>
+    <circle cx="18" cy="26" r="5" fill="#CD853F" stroke="#8B6914" stroke-width="1.5"/>
+    <circle cx="17" cy="25" r="1.5" fill="#2C2416"/>
+    <line x1="16" y1="20" x2="12" y2="10" stroke="#8B6914" stroke-width="2"/>
+    <line x1="12" y1="10" x2="10" y2="8" stroke="#8B6914" stroke-width="1.5"/>
+    <line x1="12" y1="10" x2="14" y2="6" stroke="#8B6914" stroke-width="1.5"/>
+    <line x1="20" y1="20" x2="18" y2="12" stroke="#8B6914" stroke-width="2"/>
+    <line x1="18" y1="12" x2="16" y2="10" stroke="#8B6914" stroke-width="1.5"/>
+    <line x1="18" y1="12" x2="22" y2="8" stroke="#8B6914" stroke-width="1.5"/>
+    <line x1="24" y1="42" x2="22" y2="54" stroke="#8B6914" stroke-width="2"/>
+    <line x1="30" y1="42" x2="28" y2="54" stroke="#8B6914" stroke-width="2"/>
+    <line x1="36" y1="42" x2="38" y2="54" stroke="#8B6914" stroke-width="2"/>
+    <line x1="40" y1="40" x2="42" y2="54" stroke="#8B6914" stroke-width="2"/>
+  </symbol>
+
+  <!-- Wolf: wolf silhouette -->
+  <symbol id="overlay-wolf" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="34" rx="14" ry="8" fill="#808080" stroke="#5A5A5A" stroke-width="1.5"/>
+    <circle cx="18" cy="28" r="6" fill="#808080" stroke="#5A5A5A" stroke-width="1.5"/>
+    <circle cx="16" cy="27" r="1.5" fill="#FFD700"/>
+    <polygon points="14,22 12,14 18,20" fill="#808080" stroke="#5A5A5A" stroke-width="1"/>
+    <polygon points="22,22 20,14 26,20" fill="#808080" stroke="#5A5A5A" stroke-width="1"/>
+    <path d="M14,32 L12,34" stroke="#5A5A5A" stroke-width="1.5"/>
+    <path d="M46,34 Q50,32 54,36" stroke="#808080" stroke-width="3"/>
+    <line x1="24" y1="42" x2="22" y2="52" stroke="#5A5A5A" stroke-width="2"/>
+    <line x1="30" y1="42" x2="28" y2="52" stroke="#5A5A5A" stroke-width="2"/>
+    <line x1="36" y1="42" x2="38" y2="52" stroke="#5A5A5A" stroke-width="2"/>
+    <line x1="40" y1="40" x2="42" y2="52" stroke="#5A5A5A" stroke-width="2"/>
+  </symbol>
+
+  <!-- Bird Flock: group of flying birds -->
+  <symbol id="overlay-bird-flock" viewBox="0 0 64 64">
+    <path d="M20,28 Q24,22 28,28" fill="none" stroke="#2C2416" stroke-width="2" stroke-linecap="round"/>
+    <path d="M28,28 Q32,22 36,28" fill="none" stroke="#2C2416" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30,20 Q33,15 36,20" fill="none" stroke="#2C2416" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M36,20 Q39,15 42,20" fill="none" stroke="#2C2416" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M14,36 Q17,32 20,36" fill="none" stroke="#2C2416" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M20,36 Q23,32 26,36" fill="none" stroke="#2C2416" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M38,34 Q40,31 42,34" fill="none" stroke="#2C2416" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M42,34 Q44,31 46,34" fill="none" stroke="#2C2416" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M24,42 Q26,39 28,42" fill="none" stroke="#2C2416" stroke-width="1" stroke-linecap="round"/>
+    <path d="M28,42 Q30,39 32,42" fill="none" stroke="#2C2416" stroke-width="1" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Bear: bear silhouette -->
+  <symbol id="overlay-bear" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="36" rx="16" ry="10" fill="#8B4513" stroke="#5C2D0E" stroke-width="1.5"/>
+    <circle cx="20" cy="28" r="7" fill="#8B4513" stroke="#5C2D0E" stroke-width="1.5"/>
+    <circle cx="15" cy="22" r="4" fill="#8B4513" stroke="#5C2D0E" stroke-width="1"/>
+    <circle cx="25" cy="22" r="4" fill="#8B4513" stroke="#5C2D0E" stroke-width="1"/>
+    <circle cx="18" cy="27" r="1.5" fill="#2C2416"/>
+    <circle cx="22" cy="27" r="1.5" fill="#2C2416"/>
+    <ellipse cx="20" cy="31" rx="2" ry="1.5" fill="#D2691E"/>
+    <line x1="24" y1="46" x2="22" y2="54" stroke="#5C2D0E" stroke-width="3"/>
+    <line x1="30" y1="46" x2="28" y2="54" stroke="#5C2D0E" stroke-width="3"/>
+    <line x1="36" y1="46" x2="38" y2="54" stroke="#5C2D0E" stroke-width="3"/>
+    <line x1="42" y1="44" x2="44" y2="54" stroke="#5C2D0E" stroke-width="3"/>
+  </symbol>
+
+  <!-- Treasure: treasure chest -->
+  <symbol id="overlay-treasure" viewBox="0 0 64 64">
+    <rect x="14" y="28" width="36" height="22" rx="2" fill="#DAA520" stroke="#8B6914" stroke-width="2"/>
+    <path d="M14,28 Q32,18 50,28" fill="#B8860B" stroke="#8B6914" stroke-width="2"/>
+    <rect x="28" y="26" width="8" height="8" rx="2" fill="#FFD700" stroke="#8B6914" stroke-width="1.5"/>
+    <circle cx="32" cy="30" r="2" fill="#FF6600"/>
+    <line x1="14" y1="38" x2="50" y2="38" stroke="#8B6914" stroke-width="1.5"/>
+    <circle cx="20" cy="44" r="2" fill="#FFD700"/>
+    <circle cx="44" cy="44" r="2" fill="#FFD700"/>
+  </symbol>
+
+  <!-- Danger Sign: exclamation triangle -->
+  <symbol id="overlay-danger-sign" viewBox="0 0 64 64">
+    <polygon points="32,8 6,54 58,54" fill="#FFD700" stroke="#FF6600" stroke-width="2.5"/>
+    <rect x="29" y="20" width="6" height="18" rx="2" fill="#2C2416"/>
+    <circle cx="32" cy="46" r="3.5" fill="#2C2416"/>
+  </symbol>
+
+  <!-- Question Mark: mystery marker -->
+  <symbol id="overlay-question-mark" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="22" fill="#6A5ACD" stroke="#483D8B" stroke-width="2.5"/>
+    <path d="M24,24 Q24,14 32,14 Q40,14 40,24 Q40,30 32,32 L32,36" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="32" cy="44" r="3" fill="#FFFFFF"/>
+  </symbol>
+
+  <!-- Star Marker: 5-point star -->
+  <symbol id="overlay-star-marker" viewBox="0 0 64 64">
+    <polygon points="32,6 38,24 58,24 42,36 48,54 32,44 16,54 22,36 6,24 26,24" fill="#FFD700" stroke="#DAA520" stroke-width="2"/>
+    <polygon points="32,14 36,24 46,24 38,32 40,42 32,36 24,42 26,32 18,24 28,24" fill="#FFEC8B" opacity="0.5"/>
+  </symbol>
+
+  <!-- Compass Rose: N/S/E/W directional -->
+  <symbol id="overlay-compass-rose" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="22" fill="none" stroke="#8B7355" stroke-width="1.5"/>
+    <polygon points="32,10 36,28 32,32 28,28" fill="#C41E3A"/>
+    <polygon points="32,54 36,36 32,32 28,36" fill="#FFFFFF" stroke="#8B7355" stroke-width="0.5"/>
+    <polygon points="10,32 28,28 32,32 28,36" fill="#FFFFFF" stroke="#8B7355" stroke-width="0.5"/>
+    <polygon points="54,32 36,28 32,32 36,36" fill="#FFFFFF" stroke="#8B7355" stroke-width="0.5"/>
+    <text x="32" y="8" text-anchor="middle" font-size="8" font-weight="bold" fill="#C41E3A">N</text>
+    <text x="32" y="60" text-anchor="middle" font-size="7" fill="#8B7355">S</text>
+    <text x="7" y="35" text-anchor="middle" font-size="7" fill="#8B7355">W</text>
+    <text x="57" y="35" text-anchor="middle" font-size="7" fill="#8B7355">E</text>
+  </symbol>
+
+  <!-- Arrow North -->
+  <symbol id="overlay-arrow-north" viewBox="0 0 64 64">
+    <polygon points="32,8 48,40 40,40 40,56 24,56 24,40 16,40" fill="#4A7C59" stroke="#2E5339" stroke-width="2"/>
+  </symbol>
+
+  <!-- Arrow South -->
+  <symbol id="overlay-arrow-south" viewBox="0 0 64 64">
+    <polygon points="32,56 48,24 40,24 40,8 24,8 24,24 16,24" fill="#4A7C59" stroke="#2E5339" stroke-width="2"/>
+  </symbol>
+
+  <!-- Arrow East -->
+  <symbol id="overlay-arrow-east" viewBox="0 0 64 64">
+    <polygon points="56,32 24,16 24,24 8,24 8,40 24,40 24,48" fill="#4A7C59" stroke="#2E5339" stroke-width="2"/>
+  </symbol>
+
+  <!-- Arrow West -->
+  <symbol id="overlay-arrow-west" viewBox="0 0 64 64">
+    <polygon points="8,32 40,16 40,24 56,24 56,40 40,40 40,48" fill="#4A7C59" stroke="#2E5339" stroke-width="2"/>
+  </symbol>
+
+  <!-- Single Tree -->
+  <symbol id="overlay-tree-single" viewBox="0 0 64 64">
+    <rect x="28" y="38" width="8" height="16" fill="#8B4513" stroke="#5C2D0E" stroke-width="1.5"/>
+    <ellipse cx="32" cy="28" rx="16" ry="18" fill="#228B22" stroke="#006400" stroke-width="2"/>
+    <ellipse cx="26" cy="24" rx="8" ry="10" fill="#2E8B2E" opacity="0.7"/>
+    <ellipse cx="38" cy="26" rx="8" ry="8" fill="#32CD32" opacity="0.5"/>
+  </symbol>
+
+  <!-- Fire: burning flames -->
+  <symbol id="overlay-fire" viewBox="0 0 64 64">
+    <path d="M32,52 Q16,42 20,26 Q24,18 28,24 Q28,16 32,8 Q36,16 36,24 Q40,18 44,26 Q48,42 32,52" fill="#FF6600" stroke="#CC3300" stroke-width="1.5"/>
+    <path d="M32,52 Q22,44 24,32 Q28,24 32,14 Q36,24 40,32 Q42,44 32,52" fill="#FFD700"/>
+    <path d="M32,52 Q26,46 28,38 Q30,32 32,26 Q34,32 36,38 Q38,46 32,52" fill="#FFFF00" opacity="0.7"/>
+    <circle cx="32" cy="20" r="3" fill="#FFFFFF" opacity="0.4"/>
+  </symbol>
+
+  <!-- Text Label: letter A marker -->
+  <symbol id="overlay-text-label" viewBox="0 0 64 64">
+    <rect x="10" y="14" width="44" height="36" rx="4" fill="#FFFFFF" stroke="#8B7355" stroke-width="2.5"/>
+    <text x="32" y="42" text-anchor="middle" font-size="28" font-weight="bold" fill="#2C2416">A</text>
+    <line x1="16" y1="20" x2="48" y2="20" stroke="#C8BFA9" stroke-width="1"/>
+  </symbol>
+
+</svg>

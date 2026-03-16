@@ -262,6 +262,7 @@ class InputHandler {
       case '+': case '=': this._onKeyAction('zoom-in'); break;
       case '-': case '_': this._onKeyAction('zoom-out'); break;
       case '0': this._onKeyAction('zoom-fit'); break;
+      case 'Delete': case 'Backspace': this._onKeyAction('delete'); break;
     }
   }
 }
