@@ -94,6 +94,9 @@ class App {
       backBtn.addEventListener('click', () => this.showScreen('title'));
     }
 
+    // Theme radio cards — update map name placeholder on theme change
+    this._bindRadioGroup('theme-selector', () => this._updateMapNamePlaceholder());
+
     // Shape radio cards
     this._bindRadioGroup('shape-selector', () => this._updateSizeLabels());
 
@@ -161,9 +164,29 @@ class App {
     return checked ? checked.dataset.size : 'medium';
   }
 
+  _getSelectedTheme() {
+    const checked = document.querySelector('#theme-selector [aria-checked="true"]');
+    return checked ? checked.dataset.theme : 'fantasy-overworld';
+  }
+
+  _getThemeDisplayName() {
+    const checked = document.querySelector('#theme-selector [aria-checked="true"]');
+    if (!checked) return 'Fantasy';
+    const nameEl = checked.querySelector('.theme-name');
+    return nameEl ? nameEl.textContent.trim() : 'Fantasy';
+  }
+
   _getMapName() {
     const input = document.getElementById('map-name-input');
-    return (input && input.value.trim()) || 'My Fantasy Map';
+    if (input && input.value.trim()) return input.value.trim();
+    return 'My ' + this._getThemeDisplayName() + ' Map';
+  }
+
+  _updateMapNamePlaceholder() {
+    const input = document.getElementById('map-name-input');
+    if (input) {
+      input.placeholder = 'My ' + this._getThemeDisplayName() + ' Map';
+    }
   }
 
   /** Update size detail labels when shape changes */
@@ -192,7 +215,7 @@ class App {
       containerEl: document.querySelector('.canvas-container'),
       toolbarEl: document.querySelector('.editor-toolbar'),
       paletteEl: document.querySelector('.tile-palette'),
-      themeId: 'fantasy-overworld',
+      themeId: this._getSelectedTheme(),
       shape: shape,
       size: size,
       mapName: name,

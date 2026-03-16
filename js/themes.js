@@ -18,6 +18,15 @@ class ThemeManager {
     return this._themes.find(t => t.id === id) || null;
   }
 
+  getThemeList() {
+    return this._themes.map(t => ({
+      id: t.id,
+      name: t.name,
+      description: t.description,
+      colors: t.colors
+    }));
+  }
+
   getAvailableTiles(themeId) {
     const theme = this.getTheme(themeId);
     return theme ? theme.baseTiles : [];

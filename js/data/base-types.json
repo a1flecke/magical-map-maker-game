@@ -3,1019 +3,2408 @@
     "id": "grassland",
     "name": "Grassland",
     "category": "grassland-plains",
-    "colors": { "primary": "#7CB342", "secondary": "#8BC34A", "accent": "#558B2F" },
+    "colors": {
+      "primary": "#7CB342",
+      "secondary": "#8BC34A",
+      "accent": "#558B2F"
+    },
     "pattern": "grass",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.5, "density": 0.3, "temperature": 0.5, "organic": 0.6 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "historical-battlefields",
+      "prairie-grasslands",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.5,
+      "density": 0.3,
+      "temperature": 0.5,
+      "organic": 0.6
+    }
   },
   {
     "id": "tall-grass",
     "name": "Tall Grass",
     "category": "grassland-plains",
-    "colors": { "primary": "#689F38", "secondary": "#7CB342", "accent": "#33691E" },
+    "colors": {
+      "primary": "#689F38",
+      "secondary": "#7CB342",
+      "accent": "#33691E"
+    },
     "pattern": "tall-grass",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.6, "density": 0.5, "temperature": 0.5, "organic": 0.7 }
+    "themes": [
+      "fantasy-overworld",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.6,
+      "density": 0.5,
+      "temperature": 0.5,
+      "organic": 0.7
+    }
   },
   {
     "id": "wildflower-field",
     "name": "Wildflower Field",
     "category": "grassland-plains",
-    "colors": { "primary": "#7CB342", "secondary": "#E91E63", "accent": "#FFC107" },
+    "colors": {
+      "primary": "#7CB342",
+      "secondary": "#E91E63",
+      "accent": "#FFC107"
+    },
     "pattern": "wildflowers",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.5, "density": 0.4, "temperature": 0.5, "organic": 0.8 }
+    "themes": [
+      "fantasy-overworld",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.5,
+      "density": 0.4,
+      "temperature": 0.5,
+      "organic": 0.8
+    }
   },
   {
     "id": "wheat-field",
     "name": "Wheat Field",
     "category": "grassland-plains",
-    "colors": { "primary": "#F9A825", "secondary": "#FBC02D", "accent": "#F57F17" },
+    "colors": {
+      "primary": "#F9A825",
+      "secondary": "#FBC02D",
+      "accent": "#F57F17"
+    },
     "pattern": "wheat",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.4, "density": 0.6, "temperature": 0.6, "organic": 0.7 }
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.4,
+      "density": 0.6,
+      "temperature": 0.6,
+      "organic": 0.7
+    }
   },
   {
     "id": "savanna",
     "name": "Savanna",
     "category": "grassland-plains",
-    "colors": { "primary": "#C6A953", "secondary": "#D4B96A", "accent": "#8D7B3E" },
+    "colors": {
+      "primary": "#C6A953",
+      "secondary": "#D4B96A",
+      "accent": "#8D7B3E"
+    },
     "pattern": "savanna",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.2, "density": 0.2, "temperature": 0.7, "organic": 0.3 }
+    "themes": [
+      "continents-world",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.2,
+      "density": 0.2,
+      "temperature": 0.7,
+      "organic": 0.3
+    }
   },
   {
     "id": "farmland",
     "name": "Farmland",
     "category": "grassland-plains",
-    "colors": { "primary": "#795548", "secondary": "#8D6E63", "accent": "#4E342E" },
+    "colors": {
+      "primary": "#795548",
+      "secondary": "#8D6E63",
+      "accent": "#4E342E"
+    },
     "pattern": "farmland",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.6, "density": 0.5, "temperature": 0.5, "organic": 0.6 }
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.6,
+      "density": 0.5,
+      "temperature": 0.5,
+      "organic": 0.6
+    }
   },
   {
     "id": "forest",
     "name": "Dense Forest",
     "category": "forest-vegetation",
-    "colors": { "primary": "#2E7D32", "secondary": "#388E3C", "accent": "#1B5E20" },
+    "colors": {
+      "primary": "#2E7D32",
+      "secondary": "#388E3C",
+      "accent": "#1B5E20"
+    },
     "pattern": "dense-forest",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.4, "moisture": 0.7, "density": 0.9, "temperature": 0.4, "organic": 0.9 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "historical-battlefields",
+      "mountains",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.4,
+      "moisture": 0.7,
+      "density": 0.9,
+      "temperature": 0.4,
+      "organic": 0.9
+    }
   },
   {
     "id": "light-woods",
     "name": "Light Woods",
     "category": "forest-vegetation",
-    "colors": { "primary": "#43A047", "secondary": "#66BB6A", "accent": "#2E7D32" },
+    "colors": {
+      "primary": "#43A047",
+      "secondary": "#66BB6A",
+      "accent": "#2E7D32"
+    },
     "pattern": "light-woods",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.6, "density": 0.5, "temperature": 0.5, "organic": 0.7 }
+    "themes": [
+      "fantasy-overworld"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.6,
+      "density": 0.5,
+      "temperature": 0.5,
+      "organic": 0.7
+    }
   },
   {
     "id": "pine-forest",
     "name": "Pine Forest",
     "category": "forest-vegetation",
-    "colors": { "primary": "#1B5E20", "secondary": "#2E7D32", "accent": "#0D3B0F" },
+    "colors": {
+      "primary": "#1B5E20",
+      "secondary": "#2E7D32",
+      "accent": "#0D3B0F"
+    },
     "pattern": "pine-forest",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.5, "moisture": 0.5, "density": 0.8, "temperature": 0.3, "organic": 0.8 }
+    "themes": [
+      "fantasy-overworld",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.5,
+      "moisture": 0.5,
+      "density": 0.8,
+      "temperature": 0.3,
+      "organic": 0.8
+    }
   },
   {
     "id": "clearing",
     "name": "Clearing",
     "category": "forest-vegetation",
-    "colors": { "primary": "#9CCC65", "secondary": "#AED581", "accent": "#7CB342" },
+    "colors": {
+      "primary": "#9CCC65",
+      "secondary": "#AED581",
+      "accent": "#7CB342"
+    },
     "pattern": "clearing",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.5, "density": 0.2, "temperature": 0.5, "organic": 0.5 }
+    "themes": [
+      "fantasy-overworld",
+      "jungle",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.5,
+      "density": 0.2,
+      "temperature": 0.5,
+      "organic": 0.5
+    }
   },
   {
     "id": "ocean",
     "name": "Ocean",
     "category": "water",
-    "colors": { "primary": "#1565C0", "secondary": "#1976D2", "accent": "#0D47A1" },
+    "colors": {
+      "primary": "#1565C0",
+      "secondary": "#1976D2",
+      "accent": "#0D47A1"
+    },
     "pattern": "ocean",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 1.0, "density": 0.8, "temperature": 0.4, "organic": 0.3 },
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 1.0,
+      "density": 0.8,
+      "temperature": 0.4,
+      "organic": 0.3
+    },
     "waterContent": true
   },
   {
     "id": "shallow-water",
     "name": "Shallow Water",
     "category": "water",
-    "colors": { "primary": "#29B6F6", "secondary": "#4FC3F7", "accent": "#0288D1" },
+    "colors": {
+      "primary": "#29B6F6",
+      "secondary": "#4FC3F7",
+      "accent": "#0288D1"
+    },
     "pattern": "shallow-water",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 1.0, "density": 0.6, "temperature": 0.5, "organic": 0.4 },
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 1.0,
+      "density": 0.6,
+      "temperature": 0.5,
+      "organic": 0.4
+    },
     "waterContent": true
   },
   {
     "id": "river",
     "name": "River",
     "category": "water",
-    "colors": { "primary": "#1E88E5", "secondary": "#42A5F5", "accent": "#1565C0" },
+    "colors": {
+      "primary": "#1E88E5",
+      "secondary": "#42A5F5",
+      "accent": "#1565C0"
+    },
     "pattern": "river",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 1.0, "density": 0.5, "temperature": 0.4, "organic": 0.3 },
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "historical-battlefields",
+      "jungle",
+      "mountains",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 1.0,
+      "density": 0.5,
+      "temperature": 0.4,
+      "organic": 0.3
+    },
     "waterContent": true
   },
   {
     "id": "lake",
     "name": "Lake",
     "category": "water",
-    "colors": { "primary": "#2196F3", "secondary": "#64B5F6", "accent": "#1976D2" },
+    "colors": {
+      "primary": "#2196F3",
+      "secondary": "#64B5F6",
+      "accent": "#1976D2"
+    },
     "pattern": "lake",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 1.0, "density": 0.7, "temperature": 0.4, "organic": 0.4 },
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 1.0,
+      "density": 0.7,
+      "temperature": 0.4,
+      "organic": 0.4
+    },
     "waterContent": true
   },
   {
     "id": "swamp",
     "name": "Swamp",
     "category": "water",
-    "colors": { "primary": "#4E6B3A", "secondary": "#6D8B4E", "accent": "#33472A" },
+    "colors": {
+      "primary": "#4E6B3A",
+      "secondary": "#6D8B4E",
+      "accent": "#33472A"
+    },
     "pattern": "swamp",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.9, "density": 0.7, "temperature": 0.5, "organic": 0.8 },
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields",
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.9,
+      "density": 0.7,
+      "temperature": 0.5,
+      "organic": 0.8
+    },
     "waterContent": true
   },
   {
     "id": "hills",
     "name": "Hills",
     "category": "elevation",
-    "colors": { "primary": "#8BC34A", "secondary": "#9CCC65", "accent": "#689F38" },
+    "colors": {
+      "primary": "#8BC34A",
+      "secondary": "#9CCC65",
+      "accent": "#689F38"
+    },
     "pattern": "hills",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.6, "moisture": 0.4, "density": 0.5, "temperature": 0.4, "organic": 0.5 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "historical-battlefields",
+      "jungle",
+      "mountains",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.6,
+      "moisture": 0.4,
+      "density": 0.5,
+      "temperature": 0.4,
+      "organic": 0.5
+    }
   },
   {
     "id": "mountain",
     "name": "Mountain",
     "category": "elevation",
-    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#546E7A" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#90A4AE",
+      "accent": "#546E7A"
+    },
     "pattern": "mountain",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.9, "moisture": 0.2, "density": 0.9, "temperature": 0.2, "organic": 0.1 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.9,
+      "moisture": 0.2,
+      "density": 0.9,
+      "temperature": 0.2,
+      "organic": 0.1
+    }
   },
   {
     "id": "desert-sand",
     "name": "Desert Sand",
     "category": "desert-arid",
-    "colors": { "primary": "#E8C96A", "secondary": "#F0D78A", "accent": "#C9A83C" },
+    "colors": {
+      "primary": "#E8C96A",
+      "secondary": "#F0D78A",
+      "accent": "#C9A83C"
+    },
     "pattern": "desert",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.05, "density": 0.3, "temperature": 0.9, "organic": 0.05 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.05,
+      "density": 0.3,
+      "temperature": 0.9,
+      "organic": 0.05
+    }
   },
   {
     "id": "road",
     "name": "Road",
     "category": "constructed",
-    "colors": { "primary": "#A1887F", "secondary": "#BCAAA4", "accent": "#795548" },
+    "colors": {
+      "primary": "#A1887F",
+      "secondary": "#BCAAA4",
+      "accent": "#795548"
+    },
     "pattern": "road",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.1, "density": 0.8, "temperature": 0.5, "organic": 0.0 }
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.1,
+      "density": 0.8,
+      "temperature": 0.5,
+      "organic": 0.0
+    }
   },
   {
     "id": "bridge",
     "name": "Bridge",
     "category": "constructed",
-    "colors": { "primary": "#8D6E63", "secondary": "#A1887F", "accent": "#5D4037" },
+    "colors": {
+      "primary": "#8D6E63",
+      "secondary": "#A1887F",
+      "accent": "#5D4037"
+    },
     "pattern": "bridge",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.2, "density": 0.9, "temperature": 0.5, "organic": 0.0 }
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.2,
+      "density": 0.9,
+      "temperature": 0.5,
+      "organic": 0.0
+    }
   },
   {
     "id": "short-grass",
     "name": "Short Grass",
     "category": "grassland-plains",
-    "colors": { "primary": "#8DB360", "secondary": "#A4C474", "accent": "#6B8C42" },
+    "colors": {
+      "primary": "#8DB360",
+      "secondary": "#A4C474",
+      "accent": "#6B8C42"
+    },
     "pattern": "short-grass",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.4, "density": 0.2, "temperature": 0.5, "organic": 0.5 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.4,
+      "density": 0.2,
+      "temperature": 0.5,
+      "organic": 0.5
+    }
   },
   {
     "id": "steppe",
     "name": "Steppe",
     "category": "grassland-plains",
-    "colors": { "primary": "#B8A472", "secondary": "#C8B888", "accent": "#8C7A4E" },
+    "colors": {
+      "primary": "#B8A472",
+      "secondary": "#C8B888",
+      "accent": "#8C7A4E"
+    },
     "pattern": "steppe",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.2, "density": 0.2, "temperature": 0.6, "organic": 0.3 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.2,
+      "density": 0.2,
+      "temperature": 0.6,
+      "organic": 0.3
+    }
   },
   {
     "id": "brush",
     "name": "Brush",
     "category": "grassland-plains",
-    "colors": { "primary": "#6D7B3A", "secondary": "#808E4A", "accent": "#4A5528" },
+    "colors": {
+      "primary": "#6D7B3A",
+      "secondary": "#808E4A",
+      "accent": "#4A5528"
+    },
     "pattern": "brush",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.3, "density": 0.6, "temperature": 0.6, "organic": 0.5 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.3,
+      "density": 0.6,
+      "temperature": 0.6,
+      "organic": 0.5
+    }
   },
   {
     "id": "dust-patch",
     "name": "Dust Patch",
     "category": "grassland-plains",
-    "colors": { "primary": "#B8A88C", "secondary": "#C8BAA2", "accent": "#96886C" },
+    "colors": {
+      "primary": "#B8A88C",
+      "secondary": "#C8BAA2",
+      "accent": "#96886C"
+    },
     "pattern": "dust-patch",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.1, "density": 0.1, "temperature": 0.6, "organic": 0.1 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.1,
+      "density": 0.1,
+      "temperature": 0.6,
+      "organic": 0.1
+    }
   },
   {
     "id": "red-clay",
     "name": "Red Clay",
     "category": "grassland-plains",
-    "colors": { "primary": "#B85C3A", "secondary": "#CC7050", "accent": "#8E4428" },
+    "colors": {
+      "primary": "#B85C3A",
+      "secondary": "#CC7050",
+      "accent": "#8E4428"
+    },
     "pattern": "red-clay",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.2, "density": 0.4, "temperature": 0.6, "organic": 0.1 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.2,
+      "density": 0.4,
+      "temperature": 0.6,
+      "organic": 0.1
+    }
   },
   {
     "id": "salt-flat",
     "name": "Salt Flat",
     "category": "grassland-plains",
-    "colors": { "primary": "#E8E4D8", "secondary": "#F0EDE4", "accent": "#C8C2B0" },
+    "colors": {
+      "primary": "#E8E4D8",
+      "secondary": "#F0EDE4",
+      "accent": "#C8C2B0"
+    },
     "pattern": "salt-flat",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.05, "density": 0.1, "temperature": 0.8, "organic": 0.0 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.05,
+      "density": 0.1,
+      "temperature": 0.8,
+      "organic": 0.0
+    }
   },
   {
     "id": "jungle-canopy",
     "name": "Jungle Canopy",
     "category": "forest-vegetation",
-    "colors": { "primary": "#1B6B1B", "secondary": "#2E8B2E", "accent": "#0D4F0D" },
+    "colors": {
+      "primary": "#1B6B1B",
+      "secondary": "#2E8B2E",
+      "accent": "#0D4F0D"
+    },
     "pattern": "jungle-canopy",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.4, "moisture": 0.8, "density": 0.95, "temperature": 0.7, "organic": 0.95 }
+    "themes": [
+      "continents-world",
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.4,
+      "moisture": 0.8,
+      "density": 0.95,
+      "temperature": 0.7,
+      "organic": 0.95
+    }
   },
   {
     "id": "jungle-floor",
     "name": "Jungle Floor",
     "category": "forest-vegetation",
-    "colors": { "primary": "#3E5E2A", "secondary": "#4E7038", "accent": "#2A4018" },
+    "colors": {
+      "primary": "#3E5E2A",
+      "secondary": "#4E7038",
+      "accent": "#2A4018"
+    },
     "pattern": "jungle-floor",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.8, "density": 0.7, "temperature": 0.7, "organic": 0.8 }
+    "themes": [
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.8,
+      "density": 0.7,
+      "temperature": 0.7,
+      "organic": 0.8
+    }
   },
   {
     "id": "bamboo-grove",
     "name": "Bamboo Grove",
     "category": "forest-vegetation",
-    "colors": { "primary": "#8FAD5C", "secondary": "#A8C272", "accent": "#6B8840" },
+    "colors": {
+      "primary": "#8FAD5C",
+      "secondary": "#A8C272",
+      "accent": "#6B8840"
+    },
     "pattern": "bamboo-grove",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.6, "density": 0.7, "temperature": 0.6, "organic": 0.8 }
+    "themes": [
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.6,
+      "density": 0.7,
+      "temperature": 0.6,
+      "organic": 0.8
+    }
   },
   {
     "id": "mangrove",
     "name": "Mangrove",
     "category": "forest-vegetation",
-    "colors": { "primary": "#4A6B3A", "secondary": "#5C8048", "accent": "#2E4A22" },
+    "colors": {
+      "primary": "#4A6B3A",
+      "secondary": "#5C8048",
+      "accent": "#2E4A22"
+    },
     "pattern": "mangrove",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.9, "density": 0.8, "temperature": 0.7, "organic": 0.8 },
+    "themes": [
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.9,
+      "density": 0.8,
+      "temperature": 0.7,
+      "organic": 0.8
+    },
     "waterContent": true
   },
   {
     "id": "fern-gully",
     "name": "Fern Gully",
     "category": "forest-vegetation",
-    "colors": { "primary": "#4CAF50", "secondary": "#66BB6A", "accent": "#2E7D32" },
+    "colors": {
+      "primary": "#4CAF50",
+      "secondary": "#66BB6A",
+      "accent": "#2E7D32"
+    },
     "pattern": "fern-gully",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.7, "density": 0.6, "temperature": 0.5, "organic": 0.8 }
+    "themes": [
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.7,
+      "density": 0.6,
+      "temperature": 0.5,
+      "organic": 0.8
+    }
   },
   {
     "id": "vine-wall",
     "name": "Vine Wall",
     "category": "forest-vegetation",
-    "colors": { "primary": "#3B7A3B", "secondary": "#4E9A4E", "accent": "#1E5E1E" },
+    "colors": {
+      "primary": "#3B7A3B",
+      "secondary": "#4E9A4E",
+      "accent": "#1E5E1E"
+    },
     "pattern": "vine-wall",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.4, "moisture": 0.6, "density": 0.8, "temperature": 0.5, "organic": 0.9 }
+    "themes": [
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.4,
+      "moisture": 0.6,
+      "density": 0.8,
+      "temperature": 0.5,
+      "organic": 0.9
+    }
   },
   {
     "id": "wide-river",
     "name": "Wide River",
     "category": "water",
-    "colors": { "primary": "#1976D2", "secondary": "#42A5F5", "accent": "#0D47A1" },
+    "colors": {
+      "primary": "#1976D2",
+      "secondary": "#42A5F5",
+      "accent": "#0D47A1"
+    },
     "pattern": "wide-river",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.05, "moisture": 1.0, "density": 0.6, "temperature": 0.4, "organic": 0.3 },
+    "themes": [
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.05,
+      "moisture": 1.0,
+      "density": 0.6,
+      "temperature": 0.4,
+      "organic": 0.3
+    },
     "waterContent": true
   },
   {
     "id": "stream",
     "name": "Stream",
     "category": "water",
-    "colors": { "primary": "#4FC3F7", "secondary": "#81D4FA", "accent": "#039BE5" },
+    "colors": {
+      "primary": "#4FC3F7",
+      "secondary": "#81D4FA",
+      "accent": "#039BE5"
+    },
     "pattern": "stream",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.15, "moisture": 0.9, "density": 0.3, "temperature": 0.4, "organic": 0.4 },
+    "themes": [
+      "mountains",
+      "prairie-grasslands",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.15,
+      "moisture": 0.9,
+      "density": 0.3,
+      "temperature": 0.4,
+      "organic": 0.4
+    },
     "waterContent": true
   },
   {
     "id": "pond",
     "name": "Pond",
     "category": "water",
-    "colors": { "primary": "#4DB6AC", "secondary": "#80CBC4", "accent": "#00897B" },
+    "colors": {
+      "primary": "#4DB6AC",
+      "secondary": "#80CBC4",
+      "accent": "#00897B"
+    },
     "pattern": "pond",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 1.0, "density": 0.5, "temperature": 0.5, "organic": 0.6 },
+    "themes": [
+      "fantasy-overworld",
+      "prairie-grasslands",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 1.0,
+      "density": 0.5,
+      "temperature": 0.5,
+      "organic": 0.6
+    },
     "waterContent": true
   },
   {
     "id": "rapids",
     "name": "Rapids",
     "category": "water",
-    "colors": { "primary": "#2196F3", "secondary": "#90CAF9", "accent": "#1565C0" },
+    "colors": {
+      "primary": "#2196F3",
+      "secondary": "#90CAF9",
+      "accent": "#1565C0"
+    },
     "pattern": "rapids",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 1.0, "density": 0.7, "temperature": 0.3, "organic": 0.2 },
+    "themes": [
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 1.0,
+      "density": 0.7,
+      "temperature": 0.3,
+      "organic": 0.2
+    },
     "waterContent": true
   },
   {
     "id": "waterfall",
     "name": "Waterfall",
     "category": "water",
-    "colors": { "primary": "#1E88E5", "secondary": "#E3F2FD", "accent": "#0D47A1" },
+    "colors": {
+      "primary": "#1E88E5",
+      "secondary": "#E3F2FD",
+      "accent": "#0D47A1"
+    },
     "pattern": "waterfall",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.5, "moisture": 1.0, "density": 0.9, "temperature": 0.3, "organic": 0.2 },
+    "themes": [
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.5,
+      "moisture": 1.0,
+      "density": 0.9,
+      "temperature": 0.3,
+      "organic": 0.2
+    },
     "waterContent": true
   },
   {
     "id": "hot-spring",
     "name": "Hot Spring",
     "category": "water",
-    "colors": { "primary": "#80DEEA", "secondary": "#B2EBF2", "accent": "#00ACC1" },
+    "colors": {
+      "primary": "#80DEEA",
+      "secondary": "#B2EBF2",
+      "accent": "#00ACC1"
+    },
     "pattern": "hot-spring",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.15, "moisture": 1.0, "density": 0.6, "temperature": 0.9, "organic": 0.3 },
+    "themes": [
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.15,
+      "moisture": 1.0,
+      "density": 0.6,
+      "temperature": 0.9,
+      "organic": 0.3
+    },
     "waterContent": true
   },
   {
     "id": "delta",
     "name": "Delta",
     "category": "water",
-    "colors": { "primary": "#5C9BC8", "secondary": "#C8B87C", "accent": "#1565C0" },
+    "colors": {
+      "primary": "#5C9BC8",
+      "secondary": "#C8B87C",
+      "accent": "#1565C0"
+    },
     "pattern": "delta",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.05, "moisture": 0.9, "density": 0.5, "temperature": 0.5, "organic": 0.5 },
+    "themes": [
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.05,
+      "moisture": 0.9,
+      "density": 0.5,
+      "temperature": 0.5,
+      "organic": 0.5
+    },
     "waterContent": true
   },
   {
     "id": "desert-rock",
     "name": "Desert Rock",
     "category": "desert-arid",
-    "colors": { "primary": "#A0896C", "secondary": "#B89E82", "accent": "#7A6A52" },
+    "colors": {
+      "primary": "#A0896C",
+      "secondary": "#B89E82",
+      "accent": "#7A6A52"
+    },
     "pattern": "desert-rock",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.5, "moisture": 0.05, "density": 0.6, "temperature": 0.85, "organic": 0.05 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld"
+    ],
+    "materialProperties": {
+      "elevation": 0.5,
+      "moisture": 0.05,
+      "density": 0.6,
+      "temperature": 0.85,
+      "organic": 0.05
+    }
   },
   {
     "id": "oasis",
     "name": "Oasis",
     "category": "desert-arid",
-    "colors": { "primary": "#2196F3", "secondary": "#4CAF50", "accent": "#E8C96A" },
+    "colors": {
+      "primary": "#2196F3",
+      "secondary": "#4CAF50",
+      "accent": "#E8C96A"
+    },
     "pattern": "oasis",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.8, "density": 0.5, "temperature": 0.8, "organic": 0.6 },
+    "themes": [
+      "fantasy-overworld",
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.8,
+      "density": 0.5,
+      "temperature": 0.8,
+      "organic": 0.6
+    },
     "waterContent": true
   },
   {
     "id": "sand-dunes",
     "name": "Sand Dunes",
     "category": "desert-arid",
-    "colors": { "primary": "#E8C96A", "secondary": "#F0D78A", "accent": "#C9A83C" },
+    "colors": {
+      "primary": "#E8C96A",
+      "secondary": "#F0D78A",
+      "accent": "#C9A83C"
+    },
     "pattern": "sand-dunes",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.4, "moisture": 0.05, "density": 0.3, "temperature": 0.9, "organic": 0.05 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.4,
+      "moisture": 0.05,
+      "density": 0.3,
+      "temperature": 0.9,
+      "organic": 0.05
+    }
   },
   {
     "id": "badlands",
     "name": "Badlands",
     "category": "desert-arid",
-    "colors": { "primary": "#C85A3A", "secondary": "#D87858", "accent": "#A04020" },
+    "colors": {
+      "primary": "#C85A3A",
+      "secondary": "#D87858",
+      "accent": "#A04020"
+    },
     "pattern": "badlands",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.6, "moisture": 0.05, "density": 0.5, "temperature": 0.85, "organic": 0.05 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.6,
+      "moisture": 0.05,
+      "density": 0.5,
+      "temperature": 0.85,
+      "organic": 0.05
+    }
   },
   {
     "id": "dry-creek",
     "name": "Dry Creek",
     "category": "desert-arid",
-    "colors": { "primary": "#C8B07C", "secondary": "#D8C494", "accent": "#A89060" },
+    "colors": {
+      "primary": "#C8B07C",
+      "secondary": "#D8C494",
+      "accent": "#A89060"
+    },
     "pattern": "dry-creek",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.15, "moisture": 0.1, "density": 0.2, "temperature": 0.8, "organic": 0.1 }
+    "themes": [
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.15,
+      "moisture": 0.1,
+      "density": 0.2,
+      "temperature": 0.8,
+      "organic": 0.1
+    }
   },
   {
     "id": "beach",
     "name": "Beach",
     "category": "coastal-ocean",
-    "colors": { "primary": "#E8D8A0", "secondary": "#F0E4B8", "accent": "#C8B87C" },
+    "colors": {
+      "primary": "#E8D8A0",
+      "secondary": "#F0E4B8",
+      "accent": "#C8B87C"
+    },
     "pattern": "beach",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.4, "density": 0.2, "temperature": 0.6, "organic": 0.2 }
+    "themes": [
+      "continents-world",
+      "fantasy-overworld",
+      "jungle",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.4,
+      "density": 0.2,
+      "temperature": 0.6,
+      "organic": 0.2
+    }
   },
   {
     "id": "reef",
     "name": "Reef",
     "category": "coastal-ocean",
-    "colors": { "primary": "#00ACC1", "secondary": "#FF7043", "accent": "#7B1FA2" },
+    "colors": {
+      "primary": "#00ACC1",
+      "secondary": "#FF7043",
+      "accent": "#7B1FA2"
+    },
     "pattern": "reef",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.05, "moisture": 1.0, "density": 0.7, "temperature": 0.5, "organic": 0.7 },
+    "themes": [
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.05,
+      "moisture": 1.0,
+      "density": 0.7,
+      "temperature": 0.5,
+      "organic": 0.7
+    },
     "waterContent": true
   },
   {
     "id": "tidal-pool",
     "name": "Tidal Pool",
     "category": "coastal-ocean",
-    "colors": { "primary": "#A0896C", "secondary": "#4DB6AC", "accent": "#00897B" },
+    "colors": {
+      "primary": "#A0896C",
+      "secondary": "#4DB6AC",
+      "accent": "#00897B"
+    },
     "pattern": "tidal-pool",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.05, "moisture": 0.8, "density": 0.4, "temperature": 0.5, "organic": 0.6 },
+    "themes": [
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.05,
+      "moisture": 0.8,
+      "density": 0.4,
+      "temperature": 0.5,
+      "organic": 0.6
+    },
     "waterContent": true
   },
   {
     "id": "ocean-inlet",
     "name": "Ocean Inlet",
     "category": "coastal-ocean",
-    "colors": { "primary": "#1565C0", "secondary": "#78909C", "accent": "#0D47A1" },
+    "colors": {
+      "primary": "#1565C0",
+      "secondary": "#78909C",
+      "accent": "#0D47A1"
+    },
     "pattern": "ocean-inlet",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.05, "moisture": 1.0, "density": 0.7, "temperature": 0.4, "organic": 0.3 },
+    "themes": [
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.05,
+      "moisture": 1.0,
+      "density": 0.7,
+      "temperature": 0.4,
+      "organic": 0.3
+    },
     "waterContent": true
   },
   {
     "id": "coastal-bluffs",
     "name": "Coastal Bluffs",
     "category": "coastal-ocean",
-    "colors": { "primary": "#6D8B4E", "secondary": "#90A4AE", "accent": "#4E6B3A" },
+    "colors": {
+      "primary": "#6D8B4E",
+      "secondary": "#90A4AE",
+      "accent": "#4E6B3A"
+    },
     "pattern": "coastal-bluffs",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.6, "moisture": 0.5, "density": 0.5, "temperature": 0.4, "organic": 0.5 }
+    "themes": [
+      "continents-world",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.6,
+      "moisture": 0.5,
+      "density": 0.5,
+      "temperature": 0.4,
+      "organic": 0.5
+    }
   },
   {
     "id": "continental-shelf",
     "name": "Continental Shelf",
     "category": "coastal-ocean",
-    "colors": { "primary": "#4DD0E1", "secondary": "#80DEEA", "accent": "#0097A7" },
+    "colors": {
+      "primary": "#4DD0E1",
+      "secondary": "#80DEEA",
+      "accent": "#0097A7"
+    },
     "pattern": "continental-shelf",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 1.0, "density": 0.6, "temperature": 0.4, "organic": 0.4 },
+    "themes": [
+      "continents-world",
+      "rivers-waterways"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 1.0,
+      "density": 0.6,
+      "temperature": 0.4,
+      "organic": 0.4
+    },
     "waterContent": true
   },
   {
     "id": "foothill",
     "name": "Foothill",
     "category": "elevation",
-    "colors": { "primary": "#8DB360", "secondary": "#A4C474", "accent": "#6B8C42" },
+    "colors": {
+      "primary": "#8DB360",
+      "secondary": "#A4C474",
+      "accent": "#6B8C42"
+    },
     "pattern": "foothill",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.5, "moisture": 0.4, "density": 0.4, "temperature": 0.5, "organic": 0.5 }
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields",
+      "mountains",
+      "prairie-grasslands"
+    ],
+    "materialProperties": {
+      "elevation": 0.5,
+      "moisture": 0.4,
+      "density": 0.4,
+      "temperature": 0.5,
+      "organic": 0.5
+    }
   },
   {
     "id": "high-peak",
     "name": "High Peak",
     "category": "elevation",
-    "colors": { "primary": "#607D8B", "secondary": "#78909C", "accent": "#455A64" },
+    "colors": {
+      "primary": "#607D8B",
+      "secondary": "#78909C",
+      "accent": "#455A64"
+    },
     "pattern": "high-peak",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.95, "moisture": 0.15, "density": 0.9, "temperature": 0.15, "organic": 0.05 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.95,
+      "moisture": 0.15,
+      "density": 0.9,
+      "temperature": 0.15,
+      "organic": 0.05
+    }
   },
   {
     "id": "snow-peak",
     "name": "Snow Peak",
     "category": "elevation",
-    "colors": { "primary": "#ECEFF1", "secondary": "#CFD8DC", "accent": "#B0BEC5" },
+    "colors": {
+      "primary": "#ECEFF1",
+      "secondary": "#CFD8DC",
+      "accent": "#B0BEC5"
+    },
     "pattern": "snow-peak",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.95, "moisture": 0.3, "density": 0.9, "temperature": 0.05, "organic": 0.02 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.95,
+      "moisture": 0.3,
+      "density": 0.9,
+      "temperature": 0.05,
+      "organic": 0.02
+    }
   },
   {
     "id": "cliff",
     "name": "Cliff",
     "category": "elevation",
-    "colors": { "primary": "#8D6E63", "secondary": "#A1887F", "accent": "#5D4037" },
+    "colors": {
+      "primary": "#8D6E63",
+      "secondary": "#A1887F",
+      "accent": "#5D4037"
+    },
     "pattern": "cliff",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.8, "moisture": 0.1, "density": 0.9, "temperature": 0.3, "organic": 0.05 }
+    "themes": [
+      "fantasy-overworld",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.8,
+      "moisture": 0.1,
+      "density": 0.9,
+      "temperature": 0.3,
+      "organic": 0.05
+    }
   },
   {
     "id": "canyon",
     "name": "Canyon",
     "category": "elevation",
-    "colors": { "primary": "#C85A3A", "secondary": "#D87858", "accent": "#8B3A1A" },
+    "colors": {
+      "primary": "#C85A3A",
+      "secondary": "#D87858",
+      "accent": "#8B3A1A"
+    },
     "pattern": "canyon",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.7, "moisture": 0.1, "density": 0.7, "temperature": 0.6, "organic": 0.05 }
+    "themes": [
+      "dungeon",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.7,
+      "moisture": 0.1,
+      "density": 0.7,
+      "temperature": 0.6,
+      "organic": 0.05
+    }
   },
   {
     "id": "plateau",
     "name": "Plateau",
     "category": "elevation",
-    "colors": { "primary": "#A89060", "secondary": "#C8B07C", "accent": "#886E40" },
+    "colors": {
+      "primary": "#A89060",
+      "secondary": "#C8B07C",
+      "accent": "#886E40"
+    },
     "pattern": "plateau",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.7, "moisture": 0.3, "density": 0.6, "temperature": 0.5, "organic": 0.3 }
+    "themes": [
+      "fantasy-overworld",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.7,
+      "moisture": 0.3,
+      "density": 0.6,
+      "temperature": 0.5,
+      "organic": 0.3
+    }
   },
   {
     "id": "ridge",
     "name": "Ridge",
     "category": "elevation",
-    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#546E7A" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#90A4AE",
+      "accent": "#546E7A"
+    },
     "pattern": "ridge",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.85, "moisture": 0.15, "density": 0.8, "temperature": 0.25, "organic": 0.05 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.85,
+      "moisture": 0.15,
+      "density": 0.8,
+      "temperature": 0.25,
+      "organic": 0.05
+    }
   },
   {
     "id": "scree",
     "name": "Scree",
     "category": "elevation",
-    "colors": { "primary": "#9E9E9E", "secondary": "#BDBDBD", "accent": "#757575" },
+    "colors": {
+      "primary": "#9E9E9E",
+      "secondary": "#BDBDBD",
+      "accent": "#757575"
+    },
     "pattern": "scree",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.65, "moisture": 0.1, "density": 0.4, "temperature": 0.3, "organic": 0.02 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.65,
+      "moisture": 0.1,
+      "density": 0.4,
+      "temperature": 0.3,
+      "organic": 0.02
+    }
   },
   {
     "id": "tundra",
     "name": "Tundra",
     "category": "arctic-cold",
-    "colors": { "primary": "#B0BEC5", "secondary": "#CFD8DC", "accent": "#78909C" },
+    "colors": {
+      "primary": "#B0BEC5",
+      "secondary": "#CFD8DC",
+      "accent": "#78909C"
+    },
     "pattern": "tundra",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.3, "density": 0.2, "temperature": 0.1, "organic": 0.2 }
+    "themes": [
+      "continents-world",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.3,
+      "density": 0.2,
+      "temperature": 0.1,
+      "organic": 0.2
+    }
   },
   {
     "id": "frozen-water",
     "name": "Frozen Water",
     "category": "arctic-cold",
-    "colors": { "primary": "#B3E5FC", "secondary": "#E1F5FE", "accent": "#81D4FA" },
+    "colors": {
+      "primary": "#B3E5FC",
+      "secondary": "#E1F5FE",
+      "accent": "#81D4FA"
+    },
     "pattern": "frozen-water",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.8, "density": 0.7, "temperature": 0.05, "organic": 0.1 },
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.8,
+      "density": 0.7,
+      "temperature": 0.05,
+      "organic": 0.1
+    },
     "waterContent": true
   },
   {
     "id": "ice-plain",
     "name": "Ice Plain",
     "category": "arctic-cold",
-    "colors": { "primary": "#E1F5FE", "secondary": "#ECEFF1", "accent": "#B3E5FC" },
+    "colors": {
+      "primary": "#E1F5FE",
+      "secondary": "#ECEFF1",
+      "accent": "#B3E5FC"
+    },
     "pattern": "ice-plain",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.2, "density": 0.3, "temperature": 0.05, "organic": 0.02 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.2,
+      "density": 0.3,
+      "temperature": 0.05,
+      "organic": 0.02
+    }
   },
   {
     "id": "glacier",
     "name": "Glacier",
     "category": "arctic-cold",
-    "colors": { "primary": "#80DEEA", "secondary": "#B2EBF2", "accent": "#4DD0E1" },
+    "colors": {
+      "primary": "#80DEEA",
+      "secondary": "#B2EBF2",
+      "accent": "#4DD0E1"
+    },
     "pattern": "glacier",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.6, "moisture": 0.5, "density": 0.9, "temperature": 0.02, "organic": 0.01 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.6,
+      "moisture": 0.5,
+      "density": 0.9,
+      "temperature": 0.02,
+      "organic": 0.01
+    }
   },
   {
     "id": "ice-cave",
     "name": "Ice Cave",
     "category": "arctic-cold",
-    "colors": { "primary": "#263238", "secondary": "#37474F", "accent": "#1A237E" },
+    "colors": {
+      "primary": "#263238",
+      "secondary": "#37474F",
+      "accent": "#1A237E"
+    },
     "pattern": "ice-cave",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.4, "density": 0.8, "temperature": 0.02, "organic": 0.01 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.4,
+      "density": 0.8,
+      "temperature": 0.02,
+      "organic": 0.01
+    }
   },
   {
     "id": "snow-field",
     "name": "Snow Field",
     "category": "arctic-cold",
-    "colors": { "primary": "#FAFAFA", "secondary": "#F5F5F5", "accent": "#E0E0E0" },
+    "colors": {
+      "primary": "#FAFAFA",
+      "secondary": "#F5F5F5",
+      "accent": "#E0E0E0"
+    },
     "pattern": "snow-field",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.4, "moisture": 0.4, "density": 0.3, "temperature": 0.05, "organic": 0.02 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.4,
+      "moisture": 0.4,
+      "density": 0.3,
+      "temperature": 0.05,
+      "organic": 0.02
+    }
   },
   {
     "id": "permafrost",
     "name": "Permafrost",
     "category": "arctic-cold",
-    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#546E7A" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#90A4AE",
+      "accent": "#546E7A"
+    },
     "pattern": "permafrost",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.3, "density": 0.6, "temperature": 0.05, "organic": 0.1 }
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.3,
+      "density": 0.6,
+      "temperature": 0.05,
+      "organic": 0.1
+    }
   },
   {
     "id": "ice-shelf",
     "name": "Ice Shelf",
     "category": "arctic-cold",
-    "colors": { "primary": "#E1F5FE", "secondary": "#B3E5FC", "accent": "#4FC3F7" },
+    "colors": {
+      "primary": "#E1F5FE",
+      "secondary": "#B3E5FC",
+      "accent": "#4FC3F7"
+    },
     "pattern": "ice-shelf",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.6, "density": 0.7, "temperature": 0.03, "organic": 0.05 },
+    "themes": [
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.6,
+      "density": 0.7,
+      "temperature": 0.03,
+      "organic": 0.05
+    },
     "waterContent": true
   },
   {
     "id": "stone-floor",
     "name": "Stone Floor",
     "category": "dungeon",
-    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#546E7A" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#90A4AE",
+      "accent": "#546E7A"
+    },
     "pattern": "stone-floor",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.1, "density": 0.9, "temperature": 0.3, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.1,
+      "density": 0.9,
+      "temperature": 0.3,
+      "organic": 0.0
+    }
   },
   {
     "id": "cobblestone",
     "name": "Cobblestone",
     "category": "dungeon",
-    "colors": { "primary": "#757575", "secondary": "#9E9E9E", "accent": "#616161" },
+    "colors": {
+      "primary": "#757575",
+      "secondary": "#9E9E9E",
+      "accent": "#616161"
+    },
     "pattern": "cobblestone",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.2, "density": 0.8, "temperature": 0.3, "organic": 0.1 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.2,
+      "density": 0.8,
+      "temperature": 0.3,
+      "organic": 0.1
+    }
   },
   {
     "id": "corridor",
     "name": "Corridor",
     "category": "dungeon",
-    "colors": { "primary": "#455A64", "secondary": "#546E7A", "accent": "#37474F" },
+    "colors": {
+      "primary": "#455A64",
+      "secondary": "#546E7A",
+      "accent": "#37474F"
+    },
     "pattern": "corridor",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.15, "density": 0.7, "temperature": 0.3, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.15,
+      "density": 0.7,
+      "temperature": 0.3,
+      "organic": 0.0
+    }
   },
   {
     "id": "cavern",
     "name": "Cavern",
     "category": "dungeon",
-    "colors": { "primary": "#3E2723", "secondary": "#5D4037", "accent": "#263238" },
+    "colors": {
+      "primary": "#3E2723",
+      "secondary": "#5D4037",
+      "accent": "#263238"
+    },
     "pattern": "cavern",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.4, "density": 0.6, "temperature": 0.3, "organic": 0.1 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.4,
+      "density": 0.6,
+      "temperature": 0.3,
+      "organic": 0.1
+    }
   },
   {
     "id": "underground-river",
     "name": "Underground River",
     "category": "dungeon",
-    "colors": { "primary": "#1A237E", "secondary": "#283593", "accent": "#0D47A1" },
+    "colors": {
+      "primary": "#1A237E",
+      "secondary": "#283593",
+      "accent": "#0D47A1"
+    },
     "pattern": "underground-river",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 1.0, "density": 0.6, "temperature": 0.25, "organic": 0.2 },
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 1.0,
+      "density": 0.6,
+      "temperature": 0.25,
+      "organic": 0.2
+    },
     "waterContent": true
   },
   {
     "id": "pit",
     "name": "Pit",
     "category": "dungeon",
-    "colors": { "primary": "#212121", "secondary": "#424242", "accent": "#0A0A0A" },
+    "colors": {
+      "primary": "#212121",
+      "secondary": "#424242",
+      "accent": "#0A0A0A"
+    },
     "pattern": "pit",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.1, "temperature": 0.2, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.1,
+      "temperature": 0.2,
+      "organic": 0.0
+    }
   },
   {
     "id": "dark-room",
     "name": "Dark Room",
     "category": "dungeon",
-    "colors": { "primary": "#1A1A1A", "secondary": "#2C2C2C", "accent": "#0D0D0D" },
+    "colors": {
+      "primary": "#1A1A1A",
+      "secondary": "#2C2C2C",
+      "accent": "#0D0D0D"
+    },
     "pattern": "dark-room",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.1, "density": 0.5, "temperature": 0.25, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.1,
+      "density": 0.5,
+      "temperature": 0.25,
+      "organic": 0.0
+    }
   },
   {
     "id": "crypt",
     "name": "Crypt",
     "category": "dungeon",
-    "colors": { "primary": "#546E7A", "secondary": "#78909C", "accent": "#37474F" },
+    "colors": {
+      "primary": "#546E7A",
+      "secondary": "#78909C",
+      "accent": "#37474F"
+    },
     "pattern": "crypt",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.2, "density": 0.9, "temperature": 0.2, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.2,
+      "density": 0.9,
+      "temperature": 0.2,
+      "organic": 0.0
+    }
   },
   {
     "id": "throne-room",
     "name": "Throne Room",
     "category": "dungeon",
-    "colors": { "primary": "#5D4037", "secondary": "#8D6E63", "accent": "#B71C1C" },
+    "colors": {
+      "primary": "#5D4037",
+      "secondary": "#8D6E63",
+      "accent": "#B71C1C"
+    },
     "pattern": "throne-room",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.1, "density": 0.9, "temperature": 0.35, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.1,
+      "density": 0.9,
+      "temperature": 0.35,
+      "organic": 0.0
+    }
   },
   {
     "id": "sewer",
     "name": "Sewer",
     "category": "dungeon",
-    "colors": { "primary": "#455A64", "secondary": "#78909C", "accent": "#2E7D32" },
+    "colors": {
+      "primary": "#455A64",
+      "secondary": "#78909C",
+      "accent": "#2E7D32"
+    },
     "pattern": "sewer",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.8, "density": 0.7, "temperature": 0.3, "organic": 0.3 },
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.8,
+      "density": 0.7,
+      "temperature": 0.3,
+      "organic": 0.3
+    },
     "waterContent": true
   },
   {
     "id": "mud",
     "name": "Mud",
     "category": "battlefield-tactical",
-    "colors": { "primary": "#5D4037", "secondary": "#6D4C41", "accent": "#3E2723" },
+    "colors": {
+      "primary": "#5D4037",
+      "secondary": "#6D4C41",
+      "accent": "#3E2723"
+    },
     "pattern": "mud",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.8, "density": 0.5, "temperature": 0.4, "organic": 0.3 }
+    "themes": [
+      "dungeon",
+      "historical-battlefields",
+      "jungle"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.8,
+      "density": 0.5,
+      "temperature": 0.4,
+      "organic": 0.3
+    }
   },
   {
     "id": "moat",
     "name": "Moat",
     "category": "battlefield-tactical",
-    "colors": { "primary": "#1565C0", "secondary": "#1976D2", "accent": "#78909C" },
+    "colors": {
+      "primary": "#1565C0",
+      "secondary": "#1976D2",
+      "accent": "#78909C"
+    },
     "pattern": "moat",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 1.0, "density": 0.7, "temperature": 0.4, "organic": 0.2 },
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 1.0,
+      "density": 0.7,
+      "temperature": 0.4,
+      "organic": 0.2
+    },
     "waterContent": true
   },
   {
     "id": "rocky-ground",
     "name": "Rocky Ground",
     "category": "battlefield-tactical",
-    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#546E7A" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#90A4AE",
+      "accent": "#546E7A"
+    },
     "pattern": "rocky-ground",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.4, "moisture": 0.15, "density": 0.6, "temperature": 0.4, "organic": 0.1 }
+    "themes": [
+      "dungeon",
+      "historical-battlefields",
+      "mountains"
+    ],
+    "materialProperties": {
+      "elevation": 0.4,
+      "moisture": 0.15,
+      "density": 0.6,
+      "temperature": 0.4,
+      "organic": 0.1
+    }
   },
   {
     "id": "dam",
     "name": "Dam",
     "category": "battlefield-tactical",
-    "colors": { "primary": "#757575", "secondary": "#9E9E9E", "accent": "#1565C0" },
+    "colors": {
+      "primary": "#757575",
+      "secondary": "#9E9E9E",
+      "accent": "#1565C0"
+    },
     "pattern": "dam",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.7, "density": 0.9, "temperature": 0.4, "organic": 0.05 },
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.7,
+      "density": 0.9,
+      "temperature": 0.4,
+      "organic": 0.05
+    },
     "waterContent": true
   },
-
   {
     "id": "deep-space",
     "name": "Deep Space",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#121228", "accent": "#1A1A3A" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#121228",
+      "accent": "#1A1A3A"
+    },
     "pattern": "deep-space",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.0, "temperature": 0.0, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.0,
+      "temperature": 0.0,
+      "organic": 0.0
+    }
   },
   {
     "id": "nebula-red",
     "name": "Red Nebula",
     "category": "space",
-    "colors": { "primary": "#1A0A0A", "secondary": "#8B1A2B", "accent": "#D4374B" },
+    "colors": {
+      "primary": "#1A0A0A",
+      "secondary": "#8B1A2B",
+      "accent": "#D4374B"
+    },
     "pattern": "nebula-red",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.1, "temperature": 0.3, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.1,
+      "temperature": 0.3,
+      "organic": 0.0
+    }
   },
   {
     "id": "nebula-blue",
     "name": "Blue Nebula",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#1A3B8B", "accent": "#3764D4" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#1A3B8B",
+      "accent": "#3764D4"
+    },
     "pattern": "nebula-blue",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.1, "temperature": 0.1, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.1,
+      "temperature": 0.1,
+      "organic": 0.0
+    }
   },
   {
     "id": "nebula-green",
     "name": "Green Nebula",
     "category": "space",
-    "colors": { "primary": "#0A1A0A", "secondary": "#1A8B3B", "accent": "#37D464" },
+    "colors": {
+      "primary": "#0A1A0A",
+      "secondary": "#1A8B3B",
+      "accent": "#37D464"
+    },
     "pattern": "nebula-green",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.1, "temperature": 0.2, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.1,
+      "temperature": 0.2,
+      "organic": 0.0
+    }
   },
   {
     "id": "asteroid-field",
     "name": "Asteroid Field",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#6E6E6E", "accent": "#9E9E9E" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#6E6E6E",
+      "accent": "#9E9E9E"
+    },
     "pattern": "asteroid-field",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.4, "temperature": 0.1, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.4,
+      "temperature": 0.1,
+      "organic": 0.0
+    }
   },
   {
     "id": "gas-cloud",
     "name": "Gas Cloud",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#4A3060", "accent": "#7B50A0" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#4A3060",
+      "accent": "#7B50A0"
+    },
     "pattern": "gas-cloud",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.05, "temperature": 0.15, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.05,
+      "temperature": 0.15,
+      "organic": 0.0
+    }
   },
   {
     "id": "star-yellow",
     "name": "Yellow Star",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#FFD54F", "accent": "#FFF176" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#FFD54F",
+      "accent": "#FFF176"
+    },
     "pattern": "star-yellow",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.9, "temperature": 1.0, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.9,
+      "temperature": 1.0,
+      "organic": 0.0
+    }
   },
   {
     "id": "star-blue",
     "name": "Blue Star",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#42A5F5", "accent": "#90CAF9" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#42A5F5",
+      "accent": "#90CAF9"
+    },
     "pattern": "star-blue",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.9, "temperature": 1.0, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.9,
+      "temperature": 1.0,
+      "organic": 0.0
+    }
   },
   {
     "id": "star-red",
     "name": "Red Star",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#EF5350", "accent": "#FF8A80" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#EF5350",
+      "accent": "#FF8A80"
+    },
     "pattern": "star-red",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.9, "temperature": 0.8, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.9,
+      "temperature": 0.8,
+      "organic": 0.0
+    }
   },
   {
     "id": "planet-rocky",
     "name": "Rocky Planet",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#8D6E63", "accent": "#A1887F" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#8D6E63",
+      "accent": "#A1887F"
+    },
     "pattern": "planet-rocky",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.8, "temperature": 0.3, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.8,
+      "temperature": 0.3,
+      "organic": 0.0
+    }
   },
   {
     "id": "planet-gas",
     "name": "Gas Planet",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#E8A04A", "accent": "#C87030" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#E8A04A",
+      "accent": "#C87030"
+    },
     "pattern": "planet-gas",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.6, "temperature": 0.2, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.6,
+      "temperature": 0.2,
+      "organic": 0.0
+    }
   },
   {
     "id": "planet-ice",
     "name": "Ice Planet",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#B3E5FC", "accent": "#E1F5FE" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#B3E5FC",
+      "accent": "#E1F5FE"
+    },
     "pattern": "planet-ice",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.3, "density": 0.7, "temperature": 0.02, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.3,
+      "density": 0.7,
+      "temperature": 0.02,
+      "organic": 0.0
+    }
   },
   {
     "id": "black-hole",
     "name": "Black Hole",
     "category": "space",
-    "colors": { "primary": "#000000", "secondary": "#FF6F00", "accent": "#FFFFFF" },
+    "colors": {
+      "primary": "#000000",
+      "secondary": "#FF6F00",
+      "accent": "#FFFFFF"
+    },
     "pattern": "black-hole",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 1.0, "temperature": 0.5, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 1.0,
+      "temperature": 0.5,
+      "organic": 0.0
+    }
   },
   {
     "id": "wormhole",
     "name": "Wormhole",
     "category": "space",
-    "colors": { "primary": "#0A0A1A", "secondary": "#7C4DFF", "accent": "#B388FF" },
+    "colors": {
+      "primary": "#0A0A1A",
+      "secondary": "#7C4DFF",
+      "accent": "#B388FF"
+    },
     "pattern": "wormhole",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.0, "density": 0.5, "temperature": 0.5, "organic": 0.0 }
+    "themes": [
+      "space"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.0,
+      "density": 0.5,
+      "temperature": 0.5,
+      "organic": 0.0
+    }
   },
-
   {
     "id": "volcanic",
     "name": "Volcanic Ground",
     "category": "volcanic-hazard",
-    "colors": { "primary": "#37474F", "secondary": "#455A64", "accent": "#FF5722" },
+    "colors": {
+      "primary": "#37474F",
+      "secondary": "#455A64",
+      "accent": "#FF5722"
+    },
     "pattern": "volcanic",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.5, "moisture": 0.05, "density": 0.8, "temperature": 0.9, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.5,
+      "moisture": 0.05,
+      "density": 0.8,
+      "temperature": 0.9,
+      "organic": 0.0
+    }
   },
   {
     "id": "lava-flow",
     "name": "Lava Flow",
     "category": "volcanic-hazard",
-    "colors": { "primary": "#BF360C", "secondary": "#FF6E40", "accent": "#FFD54F" },
+    "colors": {
+      "primary": "#BF360C",
+      "secondary": "#FF6E40",
+      "accent": "#FFD54F"
+    },
     "pattern": "lava-flow",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.0, "density": 0.9, "temperature": 1.0, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.0,
+      "density": 0.9,
+      "temperature": 1.0,
+      "organic": 0.0
+    }
   },
   {
     "id": "lava-field",
     "name": "Lava Field",
     "category": "volcanic-hazard",
-    "colors": { "primary": "#212121", "secondary": "#424242", "accent": "#D84315" },
+    "colors": {
+      "primary": "#212121",
+      "secondary": "#424242",
+      "accent": "#D84315"
+    },
     "pattern": "lava-field",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.0, "density": 0.85, "temperature": 0.8, "organic": 0.0 }
+    "themes": [
+      "dungeon"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.0,
+      "density": 0.85,
+      "temperature": 0.8,
+      "organic": 0.0
+    }
   },
   {
     "id": "scorched-earth",
     "name": "Scorched Earth",
     "category": "volcanic-hazard",
-    "colors": { "primary": "#263238", "secondary": "#37474F", "accent": "#FF6F00" },
+    "colors": {
+      "primary": "#263238",
+      "secondary": "#37474F",
+      "accent": "#FF6F00"
+    },
     "pattern": "scorched-earth",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.0, "density": 0.5, "temperature": 0.7, "organic": 0.05 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.0,
+      "density": 0.5,
+      "temperature": 0.7,
+      "organic": 0.05
+    }
   },
   {
     "id": "ruins-ground",
     "name": "Ruins",
     "category": "volcanic-hazard",
-    "colors": { "primary": "#6D4C41", "secondary": "#8D6E63", "accent": "#4E342E" },
+    "colors": {
+      "primary": "#6D4C41",
+      "secondary": "#8D6E63",
+      "accent": "#4E342E"
+    },
     "pattern": "ruins-ground",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.3, "density": 0.6, "temperature": 0.4, "organic": 0.3 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.3,
+      "density": 0.6,
+      "temperature": 0.4,
+      "organic": 0.3
+    }
   },
   {
     "id": "no-mans-land",
     "name": "No Man's Land",
     "category": "volcanic-hazard",
-    "colors": { "primary": "#5D4037", "secondary": "#795548", "accent": "#3E2723" },
+    "colors": {
+      "primary": "#5D4037",
+      "secondary": "#795548",
+      "accent": "#3E2723"
+    },
     "pattern": "no-mans-land",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.3, "density": 0.4, "temperature": 0.4, "organic": 0.1 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.3,
+      "density": 0.4,
+      "temperature": 0.4,
+      "organic": 0.1
+    }
   },
-
   {
     "id": "paved-road",
     "name": "Paved Road",
     "category": "constructed",
-    "colors": { "primary": "#78909C", "secondary": "#90A4AE", "accent": "#4CAF50" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#90A4AE",
+      "accent": "#4CAF50"
+    },
     "pattern": "paved-road",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.1, "density": 0.9, "temperature": 0.4, "organic": 0.05 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.1,
+      "density": 0.9,
+      "temperature": 0.4,
+      "organic": 0.05
+    }
   },
   {
     "id": "fortification",
     "name": "Fortification",
     "category": "constructed",
-    "colors": { "primary": "#607D8B", "secondary": "#78909C", "accent": "#455A64" },
+    "colors": {
+      "primary": "#607D8B",
+      "secondary": "#78909C",
+      "accent": "#455A64"
+    },
     "pattern": "fortification",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.5, "moisture": 0.05, "density": 1.0, "temperature": 0.4, "organic": 0.0 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.5,
+      "moisture": 0.05,
+      "density": 1.0,
+      "temperature": 0.4,
+      "organic": 0.0
+    }
   },
   {
     "id": "trench",
     "name": "Trench",
     "category": "constructed",
-    "colors": { "primary": "#5D4037", "secondary": "#795548", "accent": "#8D6E63" },
+    "colors": {
+      "primary": "#5D4037",
+      "secondary": "#795548",
+      "accent": "#8D6E63"
+    },
     "pattern": "trench",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.0, "moisture": 0.4, "density": 0.6, "temperature": 0.4, "organic": 0.1 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.0,
+      "moisture": 0.4,
+      "density": 0.6,
+      "temperature": 0.4,
+      "organic": 0.1
+    }
   },
   {
     "id": "camp-ground",
     "name": "Camp Ground",
     "category": "constructed",
-    "colors": { "primary": "#8D6E63", "secondary": "#A1887F", "accent": "#6D4C41" },
+    "colors": {
+      "primary": "#8D6E63",
+      "secondary": "#A1887F",
+      "accent": "#6D4C41"
+    },
     "pattern": "camp-ground",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.2, "moisture": 0.2, "density": 0.4, "temperature": 0.5, "organic": 0.3 }
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.2,
+      "moisture": 0.2,
+      "density": 0.4,
+      "temperature": 0.5,
+      "organic": 0.3
+    }
   },
   {
     "id": "harbor",
     "name": "Harbor",
     "category": "constructed",
-    "colors": { "primary": "#1565C0", "secondary": "#1976D2", "accent": "#8D6E63" },
+    "colors": {
+      "primary": "#1565C0",
+      "secondary": "#1976D2",
+      "accent": "#8D6E63"
+    },
     "pattern": "harbor",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.9, "density": 0.5, "temperature": 0.4, "organic": 0.1 },
+    "themes": [
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.9,
+      "density": 0.5,
+      "temperature": 0.4,
+      "organic": 0.1
+    },
     "waterContent": true
   },
   {
     "id": "town",
     "name": "Town",
     "category": "constructed",
-    "colors": { "primary": "#A1887F", "secondary": "#D7CCC8", "accent": "#8D6E63" },
+    "colors": {
+      "primary": "#A1887F",
+      "secondary": "#D7CCC8",
+      "accent": "#8D6E63"
+    },
     "pattern": "town",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.2, "density": 0.8, "temperature": 0.5, "organic": 0.1 }
+    "themes": [
+      "fantasy-overworld",
+      "historical-battlefields"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.2,
+      "density": 0.8,
+      "temperature": 0.5,
+      "organic": 0.1
+    }
   },
-
   {
     "id": "lowland",
     "name": "Lowland",
     "category": "continental-world",
-    "colors": { "primary": "#A5D6A7", "secondary": "#C8E6C9", "accent": "#81C784" },
+    "colors": {
+      "primary": "#A5D6A7",
+      "secondary": "#C8E6C9",
+      "accent": "#81C784"
+    },
     "pattern": "lowland",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.1, "moisture": 0.5, "density": 0.3, "temperature": 0.5, "organic": 0.6 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.1,
+      "moisture": 0.5,
+      "density": 0.3,
+      "temperature": 0.5,
+      "organic": 0.6
+    }
   },
   {
     "id": "highland",
     "name": "Highland",
     "category": "continental-world",
-    "colors": { "primary": "#6D8B4E", "secondary": "#8A7355", "accent": "#4E6B3E" },
+    "colors": {
+      "primary": "#6D8B4E",
+      "secondary": "#8A7355",
+      "accent": "#4E6B3E"
+    },
     "pattern": "highland",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.6, "moisture": 0.4, "density": 0.5, "temperature": 0.35, "organic": 0.4 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.6,
+      "moisture": 0.4,
+      "density": 0.5,
+      "temperature": 0.35,
+      "organic": 0.4
+    }
   },
   {
     "id": "mountain-range",
     "name": "Mountain Range",
     "category": "continental-world",
-    "colors": { "primary": "#78909C", "secondary": "#B0BEC5", "accent": "#ECEFF1" },
+    "colors": {
+      "primary": "#78909C",
+      "secondary": "#B0BEC5",
+      "accent": "#ECEFF1"
+    },
     "pattern": "mountain-range",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.9, "moisture": 0.3, "density": 0.8, "temperature": 0.2, "organic": 0.1 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.9,
+      "moisture": 0.3,
+      "density": 0.8,
+      "temperature": 0.2,
+      "organic": 0.1
+    }
   },
   {
     "id": "rainforest",
     "name": "Rainforest",
     "category": "continental-world",
-    "colors": { "primary": "#1B5E20", "secondary": "#2E7D32", "accent": "#004D40" },
+    "colors": {
+      "primary": "#1B5E20",
+      "secondary": "#2E7D32",
+      "accent": "#004D40"
+    },
     "pattern": "rainforest",
-    "themes": ["fantasy-overworld"],
-    "materialProperties": { "elevation": 0.3, "moisture": 0.9, "density": 0.9, "temperature": 0.7, "organic": 0.95 }
+    "themes": [
+      "continents-world"
+    ],
+    "materialProperties": {
+      "elevation": 0.3,
+      "moisture": 0.9,
+      "density": 0.9,
+      "temperature": 0.7,
+      "organic": 0.95
+    }
   }
 ]

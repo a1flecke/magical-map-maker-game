@@ -15,6 +15,7 @@
   --color-border: #C8BFA9;
   --color-surface: #FAF7F2;
   --color-surface-hover: #F0EBE1;
+  --color-muted: #7A7060;
   --font-primary: 'OpenDyslexic', 'Comic Sans MS', 'Comic Sans', cursive;
   --min-touch: 44px;
   --radius: 8px;
@@ -206,7 +207,7 @@ input[type="text"]:focus-visible {
 }
 
 .setup-container {
-  max-width: 520px;
+  max-width: 600px;
   width: 100%;
 }
 
@@ -232,29 +233,34 @@ input[type="text"]:focus-visible {
 
 /* Theme cards */
 #theme-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  #theme-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .theme-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
+  padding: 10px 8px;
   border: 2px solid var(--color-border);
   border-radius: var(--radius);
   cursor: pointer;
-  min-width: 120px;
   min-height: var(--min-touch);
   touch-action: manipulation;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), background var(--transition);
 }
 
 .theme-card[aria-checked="true"],
 .theme-card.selected {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.08);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
 }
 
 .theme-card:focus-visible {
@@ -263,15 +269,26 @@ input[type="text"]:focus-visible {
 }
 
 .theme-preview {
-  width: 100px;
-  height: 60px;
+  width: 100%;
+  max-width: 120px;
+  height: 48px;
   border-radius: 4px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .theme-name {
   font-size: 0.875rem;
   font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.theme-desc {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  text-align: center;
+  line-height: 1.3;
+  margin-top: 2px;
 }
 
 /* Shape cards */

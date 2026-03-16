@@ -6,3 +6,59 @@
   --theme-accent: #4A7C59;
   --theme-grid: #C8BFA9;
 }
+
+/* Dungeon */
+.theme-dungeon {
+  --theme-bg: #2C2416;
+  --theme-accent: #8B7355;
+  --theme-grid: #4A3F2F;
+}
+
+/* Historical Battlefields */
+.theme-historical-battlefields {
+  --theme-bg: #F0EBE0;
+  --theme-accent: #6B5B3E;
+  --theme-grid: #C4B99A;
+}
+
+/* Space */
+.theme-space {
+  --theme-bg: #0A0A1A;
+  --theme-accent: #6B3FA0;
+  --theme-grid: #1A1A3A;
+}
+
+/* Jungle */
+.theme-jungle {
+  --theme-bg: #F0EDE4;
+  --theme-accent: #2D6B30;
+  --theme-grid: #B8C4A0;
+}
+
+/* Rivers & Waterways */
+.theme-rivers-waterways {
+  --theme-bg: #EDF3F7;
+  --theme-accent: #2B6B8A;
+  --theme-grid: #B0C8D8;
+}
+
+/* Prairie & Grasslands */
+.theme-prairie-grasslands {
+  --theme-bg: #F7F2E4;
+  --theme-accent: #B8943E;
+  --theme-grid: #D8CCA8;
+}
+
+/* Mountains */
+.theme-mountains {
+  --theme-bg: #ECEEF0;
+  --theme-accent: #5A6B7A;
+  --theme-grid: #B8C0C8;
+}
+
+/* Continents & World */
+.theme-continents-world {
+  --theme-bg: #F5F0E0;
+  --theme-accent: #7B5B3A;
+  --theme-grid: #D0C4A8;
+}
