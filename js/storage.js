@@ -207,7 +207,8 @@ class StorageManager {
         offsetX: editor._camera.offsetX,
         offsetY: editor._camera.offsetY,
         zoom: editor._camera.zoom
-      }
+      },
+      rbSubTheme: editor._rbSubTheme || null
     };
   }
 

@@ -47,6 +47,11 @@ class Editor {
     this._selectedOverlay = null; // overlay ID to place
     this._selectedCellOverlayIndex = -1; // which overlay in cell is selected for editing
 
+    // Realm Brew
+    this._realmBrew = options.realmBrew || null;
+    this._rbSubTheme = options.rbSubTheme || null;
+    this._rbTilesLoaded = false;
+
     // Save state
     this._autoSaveTimer = null;
     this._saveDirty = false;
@@ -125,6 +130,16 @@ class Editor {
     // Overlay palette
     this._initOverlayPalette();
 
+    // Realm Brew tile loading (if dungeon + hex + available)
+    if (this._rbSubTheme && this._realmBrew && this._realmBrew.available && this._shape === 'hex') {
+      this._loadRealmBrewTiles(this._rbSubTheme);
+    }
+
+    // Realm Brew overlay packs
+    if (this._realmBrew && this._realmBrew.available && this._themeId === 'dungeon') {
+      this._initRealmBrewOverlays();
+    }
+
     // Size canvas & fit grid
     this._resizeCanvas();
     this._fitGrid();
@@ -195,6 +210,7 @@ class Editor {
     this._boundResize = () => {
       this._resizeCanvas();
       this._tileRenderer.clearCache();
+      if (this._realmBrew) this._realmBrew.clearResizeCache();
       this._dirty = true;
     };
     window.addEventListener('resize', this._boundResize);
@@ -217,6 +233,11 @@ class Editor {
     if (this._palette) { this._palette.destroy(); this._palette = null; }
     if (this._overlayRenderer) { this._overlayRenderer.destroy(); this._overlayRenderer = null; }
     if (this._animation) { this._animation.destroy(); this._animation = null; }
+    if (this._realmBrew) {
+      this._realmBrew.cancelTileLoad();
+      this._realmBrew.clearResizeCache();
+      if (this._rbSubTheme) this._realmBrew.unloadTileSet(this._rbSubTheme);
+    }
     if (this._exportRafId) { cancelAnimationFrame(this._exportRafId); this._exportRafId = null; }
     if (this._autoSaveTimer) { clearInterval(this._autoSaveTimer); this._autoSaveTimer = null; }
     if (this._boundKeyboardSave) { document.removeEventListener('keydown', this._boundKeyboardSave); this._boundKeyboardSave = null; }
@@ -284,6 +305,7 @@ class Editor {
     this._boundDprChange = () => {
       this._resizeCanvas();
       this._tileRenderer.clearCache();
+      if (this._realmBrew) this._realmBrew.clearResizeCache();
       this._dirty = true;
       this._dprMql.removeEventListener('change', this._boundDprChange);
       this._setupDprListener();
@@ -382,6 +404,24 @@ class Editor {
       }
       if (cx + cellSize < viewport.minX || cx - cellSize > viewport.maxX ||
           cy + cellSize < viewport.minY || cy - cellSize > viewport.maxY) {
+        return;
+      }
+
+      // Realm Brew tile rendering
+      if (Editor.isRealmBrewTile(cell.base) && this._realmBrew && this._rbTilesLoaded) {
+        const rbInfo = Editor.parseRealmBrewTileId(cell.base);
+        if (rbInfo && shape === 'hex') {
+          const origin = grid.cellOrigin(col, row);
+          const rbCanvas = this._realmBrew.getResizedTile(rbInfo.subTheme, rbInfo.filename, grid.hexW, grid.hexH);
+          if (rbCanvas) {
+            const path = grid.getCellPath(col, row, cellType);
+            ctx.save();
+            ctx.clip(path);
+            const bleed = 1;
+            ctx.drawImage(rbCanvas, origin.x - bleed, origin.y - bleed, grid.hexW + bleed * 2, grid.hexH + bleed * 2);
+            ctx.restore();
+          }
+        }
         return;
       }
 
@@ -2068,10 +2108,16 @@ class Editor {
         const ov = cell.overlays[i];
         const jitterX = (i - (cell.overlays.length - 1) / 2) * 3;
         const jitterY = (i - (cell.overlays.length - 1) / 2) * 2;
-        this._overlayRenderer.drawOverlay(
-          ctx, ov.id, cx + jitterX, cy + jitterY, cellSize,
-          { rotation: ov.rotation || 0, opacity: ov.opacity != null ? ov.opacity : 1.0, size: ov.size || 'medium' }
-        );
+
+        if (Editor.isRealmBrewOverlay(ov.id) && this._realmBrew) {
+          // Realm Brew PNG overlay
+          this._drawRbOverlay(ctx, ov, cx + jitterX, cy + jitterY, cellSize);
+        } else {
+          this._overlayRenderer.drawOverlay(
+            ctx, ov.id, cx + jitterX, cy + jitterY, cellSize,
+            { rotation: ov.rotation || 0, opacity: ov.opacity != null ? ov.opacity : 1.0, size: ov.size || 'medium' }
+          );
+        }
       }
     });
   }
@@ -2085,29 +2131,16 @@ class Editor {
     this._populateOverlayList('theme-overlay-list', themeOverlays);
     this._populateOverlayList('universal-overlay-list', universalOverlays);
 
-    // Tab switching
-    const tabTheme = document.getElementById('tab-theme-overlays');
-    const tabUniversal = document.getElementById('tab-universal-overlays');
-    const panelTheme = document.getElementById('panel-theme-overlays');
-    const panelUniversal = document.getElementById('panel-universal-overlays');
+    // Tab switching (supports Theme, Universal, and optional Realm Brew tabs)
+    this._overlayTabs = [
+      { tab: document.getElementById('tab-theme-overlays'), panel: document.getElementById('panel-theme-overlays') },
+      { tab: document.getElementById('tab-universal-overlays'), panel: document.getElementById('panel-universal-overlays') },
+      { tab: document.getElementById('tab-rb-overlays'), panel: document.getElementById('panel-rb-overlays') }
+    ].filter(t => t.tab && t.panel);
 
-    if (tabTheme) tabTheme.addEventListener('click', () => {
-      tabTheme.classList.add('active');
-      tabTheme.setAttribute('aria-selected', 'true');
-      tabUniversal.classList.remove('active');
-      tabUniversal.setAttribute('aria-selected', 'false');
-      panelTheme.classList.remove('hidden');
-      panelUniversal.classList.add('hidden');
-    });
-
-    if (tabUniversal) tabUniversal.addEventListener('click', () => {
-      tabUniversal.classList.add('active');
-      tabUniversal.setAttribute('aria-selected', 'true');
-      tabTheme.classList.remove('active');
-      tabTheme.setAttribute('aria-selected', 'false');
-      panelUniversal.classList.remove('hidden');
-      panelTheme.classList.add('hidden');
-    });
+    for (const entry of this._overlayTabs) {
+      entry.tab.addEventListener('click', () => this._switchOverlayTab(entry.tab));
+    }
 
     // Search/filter
     const searchInput = document.getElementById('overlay-search-input');
@@ -2202,18 +2235,26 @@ class Editor {
     this._selectedOverlay = overlayId;
     this._state = EditorState.OVERLAY_SELECTED;
 
-    // Update overlay palette UI
-    document.querySelectorAll('.overlay-option').forEach(opt => {
+    // Update overlay palette UI (both SVG and RB overlays)
+    document.querySelectorAll('.overlay-option, .rb-overlay-option').forEach(opt => {
       opt.setAttribute('aria-selected', opt.dataset.overlayId === overlayId ? 'true' : 'false');
     });
 
-    this._app.announce('Overlay selected: ' + (this._overlayRenderer.getOverlay(overlayId)?.name || overlayId));
+    // Determine display name
+    let displayName;
+    if (Editor.isRealmBrewOverlay(overlayId)) {
+      const rbInfo = Editor.parseRealmBrewOverlayId(overlayId);
+      displayName = rbInfo ? RealmBrewLoader.overlayDisplayName(rbInfo.filename) : overlayId;
+    } else {
+      displayName = this._overlayRenderer.getOverlay(overlayId)?.name || overlayId;
+    }
+    this._app.announce('Overlay selected: ' + displayName);
     this._dirty = true;
   }
 
   _clearOverlaySelection() {
     this._selectedOverlay = null;
-    document.querySelectorAll('.overlay-option').forEach(opt => {
+    document.querySelectorAll('.overlay-option, .rb-overlay-option').forEach(opt => {
       opt.setAttribute('aria-selected', 'false');
     });
   }
@@ -2230,6 +2271,294 @@ class Editor {
         opt.style.display = 'none';
       }
     });
+  }
+
+  _switchOverlayTab(activeTab) {
+    for (const entry of this._overlayTabs) {
+      const isActive = entry.tab === activeTab;
+      entry.tab.classList.toggle('active', isActive);
+      entry.tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      entry.panel.classList.toggle('hidden', !isActive);
+    }
+  }
+
+  /* ---- Realm Brew Integration ---- */
+
+  async _loadRealmBrewTiles(subThemeId) {
+    if (!this._realmBrew || !this._realmBrew.available) return;
+
+    // Show loading overlay
+    const loadingEl = document.getElementById('rb-loading-overlay');
+    const progressEl = document.getElementById('rb-loading-progress');
+    const cancelBtn = document.getElementById('btn-rb-cancel-load');
+
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (progressEl) progressEl.style.width = '0%';
+
+    let cancelled = false;
+    const cancelHandler = () => { cancelled = true; this._realmBrew.cancelTileLoad(); };
+    if (cancelBtn) cancelBtn.addEventListener('click', cancelHandler, { once: true });
+
+    const success = await this._realmBrew.loadTileSet(subThemeId, (loaded, total) => {
+      if (progressEl) {
+        progressEl.style.width = Math.round((loaded / total) * 100) + '%';
+      }
+    });
+
+    if (cancelBtn) cancelBtn.removeEventListener('click', cancelHandler);
+    if (loadingEl) loadingEl.classList.add('hidden');
+
+    if (success && !cancelled) {
+      this._rbTilesLoaded = true;
+      this._rbSubTheme = subThemeId;
+      // Replace palette with Realm Brew tiles
+      this._populateRealmBrewPalette(subThemeId);
+      this._dirty = true;
+    }
+  }
+
+  _populateRealmBrewPalette(subThemeId) {
+    if (!this._realmBrew || !this._realmBrew.manifest) return;
+
+    const files = this._realmBrew.manifest.tiles[subThemeId];
+    if (!files) return;
+
+    const listEl = this._paletteEl.querySelector('.palette-list');
+    if (!listEl) return;
+    listEl.replaceChildren();
+
+    for (const filename of files) {
+      const tileId = `rb:${subThemeId}:${filename}`;
+      const displayName = RealmBrewLoader.tileDisplayName(filename);
+
+      const option = document.createElement('div');
+      option.className = 'tile-option';
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', 'false');
+      option.setAttribute('aria-label', displayName);
+      option.setAttribute('tabindex', '0');
+      option.dataset.tileId = tileId;
+      option.dataset.rbFile = filename;
+      option.dataset.rbTheme = subThemeId;
+
+      // Render preview from loaded image
+      const previewSize = 60;
+      const img = this._realmBrew.getResizedTile(subThemeId, filename, previewSize, previewSize);
+      if (img) {
+        const displayCanvas = document.createElement('canvas');
+        displayCanvas.width = previewSize;
+        displayCanvas.height = previewSize;
+        displayCanvas.setAttribute('aria-hidden', 'true');
+        const dCtx = displayCanvas.getContext('2d');
+
+        // Clip to hex shape for preview
+        const cx = previewSize / 2;
+        const cy = previewSize / 2;
+        const r = previewSize / 2 - 2;
+        dCtx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = Math.PI / 180 * (60 * i - 30);
+          const vx = cx + r * Math.cos(angle);
+          const vy = cy + r * Math.sin(angle);
+          if (i === 0) dCtx.moveTo(vx, vy);
+          else dCtx.lineTo(vx, vy);
+        }
+        dCtx.closePath();
+        dCtx.clip();
+        dCtx.drawImage(img, 0, 0, previewSize, previewSize);
+        option.appendChild(displayCanvas);
+      }
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'tile-name';
+      nameEl.textContent = displayName;
+      option.appendChild(nameEl);
+
+      option.addEventListener('click', () => {
+        this._selectedTile = tileId;
+        this._selectedOverlay = null;
+        this._selectedCell = null;
+        this._selectedCellOverlayIndex = -1;
+        this._clearOverlaySelection();
+        this._updatePropertiesPanel();
+        this._state = this._fillMode ? EditorState.FILL_MODE : EditorState.TILE_SELECTED;
+
+        // Update palette selection UI
+        listEl.querySelectorAll('[role="option"]').forEach(opt => {
+          opt.setAttribute('aria-selected', opt.dataset.tileId === tileId ? 'true' : 'false');
+        });
+
+        this._dirty = true;
+      });
+
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          option.click();
+        }
+      });
+
+      listEl.appendChild(option);
+    }
+  }
+
+  _initRealmBrewOverlays() {
+    const rbTab = document.getElementById('tab-rb-overlays');
+    const rbPanel = document.getElementById('panel-rb-overlays');
+    const rbPacksEl = document.getElementById('rb-overlay-packs');
+    if (!rbTab || !rbPanel || !rbPacksEl) return;
+
+    // Show the Realm Brew tab (tab switching is already handled by _switchOverlayTab)
+    rbTab.classList.remove('hidden');
+
+    // Populate overlay packs as collapsible sections
+    const packs = this._realmBrew.getOverlayPacks();
+    rbPacksEl.replaceChildren();
+
+    for (const pack of packs) {
+      const section = document.createElement('div');
+      section.className = 'rb-pack-section';
+
+      const header = document.createElement('button');
+      header.className = 'rb-pack-header';
+      header.setAttribute('aria-expanded', 'false');
+      header.innerHTML = escHtml(pack.label) + ' <span class="pack-count">(' + escHtml(String(pack.fileCount)) + ')</span>';
+
+      const itemsEl = document.createElement('div');
+      itemsEl.className = 'rb-pack-items hidden';
+      itemsEl.setAttribute('role', 'listbox');
+      itemsEl.setAttribute('aria-label', pack.label + ' overlays');
+
+      header.addEventListener('click', async () => {
+        const isExpanded = header.getAttribute('aria-expanded') === 'true';
+        header.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        itemsEl.classList.toggle('hidden', isExpanded);
+
+        // Lazy-load overlay images on first expand
+        if (!isExpanded && !this._realmBrew.isOverlayPackLoaded(pack.id)) {
+          header.disabled = true;
+          await this._realmBrew.loadOverlayPack(pack.id);
+          header.disabled = false;
+          this._populateRbOverlayPack(itemsEl, pack.id);
+        }
+      });
+
+      section.appendChild(header);
+      section.appendChild(itemsEl);
+      rbPacksEl.appendChild(section);
+    }
+  }
+
+  _populateRbOverlayPack(itemsEl, packId) {
+    const packData = this._realmBrew.manifest.overlays[packId];
+    if (!packData) return;
+
+    itemsEl.replaceChildren();
+
+    for (const filename of packData.files) {
+      const displayName = RealmBrewLoader.overlayDisplayName(filename);
+      const overlayId = `rb-overlay:${packId}:${filename}`;
+
+      const option = document.createElement('div');
+      option.className = 'rb-overlay-option';
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', 'false');
+      option.setAttribute('aria-label', displayName);
+      option.setAttribute('tabindex', '0');
+      option.dataset.overlayId = overlayId;
+      option.dataset.rbPack = packId;
+      option.dataset.rbFile = filename;
+
+      const img = this._realmBrew.getOverlayImage(packId, filename);
+      if (img) {
+        const imgEl = document.createElement('img');
+        imgEl.src = img.src;
+        imgEl.alt = displayName;
+        imgEl.setAttribute('aria-hidden', 'true');
+        option.appendChild(imgEl);
+      }
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'rb-overlay-name';
+      nameEl.textContent = displayName;
+      option.appendChild(nameEl);
+
+      option.addEventListener('click', () => this._selectOverlay(overlayId));
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._selectOverlay(overlayId);
+        }
+      });
+
+      itemsEl.appendChild(option);
+    }
+  }
+
+  /**
+   * Check if a tile ID is a Realm Brew tile.
+   * RB tile IDs look like: "rb:man-hewn-dungeons:filename.png"
+   */
+  static isRealmBrewTile(tileId) {
+    return tileId && tileId.startsWith('rb:');
+  }
+
+  /**
+   * Parse a Realm Brew tile ID into its components.
+   * @returns {{ subTheme: string, filename: string }|null}
+   */
+  static parseRealmBrewTileId(tileId) {
+    if (!tileId || !tileId.startsWith('rb:')) return null;
+    const parts = tileId.split(':');
+    if (parts.length < 3) return null;
+    return { subTheme: parts[1], filename: parts.slice(2).join(':') };
+  }
+
+  /**
+   * Check if an overlay ID is a Realm Brew overlay.
+   * RB overlay IDs look like: "rb-overlay:pack-id:filename.png"
+   */
+  static isRealmBrewOverlay(overlayId) {
+    return overlayId && overlayId.startsWith('rb-overlay:');
+  }
+
+  /**
+   * Parse a Realm Brew overlay ID.
+   * @returns {{ packId: string, filename: string }|null}
+   */
+  static parseRealmBrewOverlayId(overlayId) {
+    if (!overlayId || !overlayId.startsWith('rb-overlay:')) return null;
+    const parts = overlayId.split(':');
+    if (parts.length < 3) return null;
+    return { packId: parts[1], filename: parts.slice(2).join(':') };
+  }
+
+  _drawRbOverlay(ctx, ov, cx, cy, cellSize) {
+    const rbInfo = Editor.parseRealmBrewOverlayId(ov.id);
+    if (!rbInfo) return;
+
+    const img = this._realmBrew.getOverlayImage(rbInfo.packId, rbInfo.filename);
+    if (!img || !img.complete || img.naturalWidth === 0) return;
+
+    const rotation = ov.rotation || 0;
+    const opacity = ov.opacity != null ? ov.opacity : 1.0;
+    const sizeKey = ov.size || 'medium';
+    const sizeRatios = { small: 0.3, medium: 0.6, large: 0.9 };
+    const ratio = sizeRatios[sizeKey] || 0.6;
+    const drawSize = Math.round(cellSize * ratio);
+
+    ctx.save();
+    if (opacity < 1.0) ctx.globalAlpha = opacity;
+
+    if (rotation !== 0) {
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation * Math.PI / 180);
+      ctx.drawImage(img, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
+    } else {
+      ctx.drawImage(img, cx - drawSize / 2, cy - drawSize / 2, drawSize, drawSize);
+    }
+
+    ctx.restore();
   }
 
   /* ---- Overlay Placement ---- */
@@ -2250,7 +2579,14 @@ class Editor {
     });
     this._dirty = true;
     this._markSaveDirty();
-    this._app.announce('Placed ' + (this._overlayRenderer.getOverlay(this._selectedOverlay)?.name || this._selectedOverlay));
+    let placedName;
+    if (Editor.isRealmBrewOverlay(this._selectedOverlay)) {
+      const rbInfo = Editor.parseRealmBrewOverlayId(this._selectedOverlay);
+      placedName = rbInfo ? RealmBrewLoader.overlayDisplayName(rbInfo.filename) : this._selectedOverlay;
+    } else {
+      placedName = this._overlayRenderer.getOverlay(this._selectedOverlay)?.name || this._selectedOverlay;
+    }
+    this._app.announce('Placed ' + placedName);
   }
 
   _deleteLastOverlay() {
@@ -2327,7 +2663,15 @@ class Editor {
     }
 
     if (baseEl) {
-      const baseName = cell && cell.base ? (this._tileRenderer.getType(cell.base)?.name || cell.base) : 'Empty';
+      let baseName = 'Empty';
+      if (cell && cell.base) {
+        if (Editor.isRealmBrewTile(cell.base)) {
+          const rbInfo = Editor.parseRealmBrewTileId(cell.base);
+          baseName = rbInfo ? RealmBrewLoader.tileDisplayName(rbInfo.filename) : cell.base;
+        } else {
+          baseName = this._tileRenderer.getType(cell.base)?.name || cell.base;
+        }
+      }
       baseEl.textContent = baseName;
     }
 
@@ -2340,14 +2684,22 @@ class Editor {
         chip.className = 'overlay-chip' + (i === this._selectedCellOverlayIndex ? ' selected' : '');
         chip.setAttribute('role', 'listitem');
 
+        let ovName;
+        if (Editor.isRealmBrewOverlay(ov.id)) {
+          const rbInfo = Editor.parseRealmBrewOverlayId(ov.id);
+          ovName = rbInfo ? RealmBrewLoader.overlayDisplayName(rbInfo.filename) : ov.id;
+        } else {
+          ovName = this._overlayRenderer.getOverlay(ov.id)?.name || ov.id;
+        }
+
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = this._overlayRenderer.getOverlay(ov.id)?.name || ov.id;
+        nameSpan.textContent = ovName;
         chip.appendChild(nameSpan);
 
         const removeBtn = document.createElement('button');
         removeBtn.className = 'chip-remove';
         removeBtn.textContent = '\u2715';
-        removeBtn.setAttribute('aria-label', 'Remove ' + (this._overlayRenderer.getOverlay(ov.id)?.name || ov.id));
+        removeBtn.setAttribute('aria-label', 'Remove ' + ovName);
         removeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           cell.overlays.splice(i, 1);

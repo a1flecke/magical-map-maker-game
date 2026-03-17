@@ -24,6 +24,7 @@ class ExportManager {
     const overlayRenderer = editor._overlayRenderer;
     const themeManager = editor._themeManager;
     const themeId = editor._themeId;
+    const realmBrew = editor._realmBrew;
 
     const includeGrid = options.includeGrid !== false;
     const scale = ExportManager._detectScale(grid);
@@ -47,10 +48,10 @@ class ExportManager {
     ctx.fillRect(0, 0, mapW, mapH);
 
     // Layer 1: Base tiles
-    ExportManager._renderTiles(ctx, grid, tileRenderer);
+    ExportManager._renderTiles(ctx, grid, tileRenderer, realmBrew);
 
     // Layer 2: Overlays
-    ExportManager._renderOverlays(ctx, grid, overlayRenderer);
+    ExportManager._renderOverlays(ctx, grid, overlayRenderer, realmBrew);
 
     // Layer 3: Grid lines (optional)
     if (includeGrid) {
@@ -61,12 +62,30 @@ class ExportManager {
     return { canvas, scale };
   }
 
-  static _renderTiles(ctx, grid, tileRenderer) {
+  static _renderTiles(ctx, grid, tileRenderer, realmBrew) {
     const cellSize = grid.cellSize;
     const shape = grid.shape;
 
     grid.forEachCell((col, row, cell, cellType) => {
       if (!cell.base) return;
+
+      // Realm Brew tile
+      if (Editor.isRealmBrewTile(cell.base) && realmBrew) {
+        const rbInfo = Editor.parseRealmBrewTileId(cell.base);
+        if (rbInfo && shape === 'hex') {
+          const rbCanvas = realmBrew.getResizedTile(rbInfo.subTheme, rbInfo.filename, grid.hexW, grid.hexH);
+          if (rbCanvas) {
+            const path = grid.getCellPath(col, row, cellType);
+            ctx.save();
+            ctx.clip(path);
+            const bleed = 1;
+            const origin = grid.cellOrigin(col, row);
+            ctx.drawImage(rbCanvas, origin.x - bleed, origin.y - bleed, grid.hexW + bleed * 2, grid.hexH + bleed * 2);
+            ctx.restore();
+          }
+        }
+        return;
+      }
 
       const img = tileRenderer.getTileImage(cell.base, shape, cellSize, grid, col, row, cellType);
       if (!img) return;
@@ -103,7 +122,7 @@ class ExportManager {
     });
   }
 
-  static _renderOverlays(ctx, grid, overlayRenderer) {
+  static _renderOverlays(ctx, grid, overlayRenderer, realmBrew) {
     const cellSize = grid.cellSize;
     const shape = grid.shape;
 
@@ -121,9 +140,41 @@ class ExportManager {
       }
 
       for (const ov of cell.overlays) {
-        overlayRenderer.renderOverlay(ctx, ov.id, cx, cy, cellSize, ov);
+        if (Editor.isRealmBrewOverlay(ov.id) && realmBrew) {
+          ExportManager._renderRbOverlay(ctx, ov, cx, cy, cellSize, realmBrew);
+        } else {
+          overlayRenderer.drawOverlay(ctx, ov.id, cx, cy, cellSize, ov);
+        }
       }
     });
+  }
+
+  static _renderRbOverlay(ctx, ov, cx, cy, cellSize, realmBrew) {
+    const rbInfo = Editor.parseRealmBrewOverlayId(ov.id);
+    if (!rbInfo) return;
+
+    const img = realmBrew.getOverlayImage(rbInfo.packId, rbInfo.filename);
+    if (!img || !img.complete || img.naturalWidth === 0) return;
+
+    const sizeKey = ov.size || 'medium';
+    const sizeRatios = { small: 0.3, medium: 0.6, large: 0.9 };
+    const ratio = sizeRatios[sizeKey] || 0.6;
+    const drawSize = Math.round(cellSize * ratio);
+    const rotation = ov.rotation || 0;
+    const opacity = ov.opacity != null ? ov.opacity : 1.0;
+
+    ctx.save();
+    if (opacity < 1.0) ctx.globalAlpha = opacity;
+
+    if (rotation !== 0) {
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation * Math.PI / 180);
+      ctx.drawImage(img, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
+    } else {
+      ctx.drawImage(img, cx - drawSize / 2, cy - drawSize / 2, drawSize, drawSize);
+    }
+
+    ctx.restore();
   }
 
   /**
@@ -187,9 +238,20 @@ class ExportManager {
     const used = new Map();
     grid.forEachCell((col, row, cell) => {
       if (cell.base && !used.has(cell.base)) {
-        const type = tileRenderer.getType(cell.base);
-        if (type) {
-          used.set(cell.base, { id: cell.base, name: type.name, color: type.colors.primary });
+        if (Editor.isRealmBrewTile(cell.base)) {
+          const rbInfo = Editor.parseRealmBrewTileId(cell.base);
+          if (rbInfo) {
+            used.set(cell.base, {
+              id: cell.base,
+              name: RealmBrewLoader.tileDisplayName(rbInfo.filename),
+              color: '#8B7355'
+            });
+          }
+        } else {
+          const type = tileRenderer.getType(cell.base);
+          if (type) {
+            used.set(cell.base, { id: cell.base, name: type.name, color: type.colors.primary });
+          }
         }
       }
     });

@@ -679,6 +679,149 @@ button.danger:hover {
   transition: width 200ms ease;
 }
 
+/* Realm Brew sub-theme selector */
+.subtheme-card {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.subtheme-card[aria-checked="true"] {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+
+.subtheme-card:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.subtheme-name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#subtheme-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.setup-note {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Realm Brew loading overlay */
+.rb-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 240, 232, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.rb-loading-content {
+  text-align: center;
+  padding: 24px;
+}
+
+.rb-loading-text {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Realm Brew overlay packs */
+.rb-pack-section {
+  margin-bottom: 4px;
+}
+
+.rb-pack-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  font-size: 0.875rem;
+  font-weight: 700;
+  width: 100%;
+  text-align: left;
+}
+
+.rb-pack-header:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.rb-pack-header .pack-count {
+  font-weight: 400;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.rb-pack-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 6px;
+  padding: 8px 4px;
+}
+
+.rb-overlay-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 4px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+  transition: border-color var(--transition);
+}
+
+.rb-overlay-option[aria-selected="true"] {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+
+.rb-overlay-option:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.rb-overlay-option img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.rb-overlay-option .rb-overlay-name {
+  font-size: 0.875rem;
+  text-align: center;
+  line-height: 1.2;
+  margin-top: 2px;
+  word-break: break-word;
+}
+
 /* Safe area insets for notch devices */
 @supports (padding: env(safe-area-inset-top)) {
   body {

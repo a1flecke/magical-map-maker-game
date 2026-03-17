@@ -28,6 +28,7 @@
   <script src="js/input.js" defer></script>
   <script src="js/storage.js" defer></script>
   <script src="js/export.js" defer></script>
+  <script src="js/realm-brew.js" defer></script>
   <script src="js/editor.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
@@ -150,6 +151,23 @@
         </div>
       </div>
 
+      <!-- Realm Brew sub-theme selector (shown only for Dungeon + Realm Brew available) -->
+      <div id="rb-subtheme-section" class="setup-section hidden">
+        <span class="setup-label" id="subtheme-label">Dungeon Style</span>
+        <div id="subtheme-selector" role="radiogroup" aria-labelledby="subtheme-label">
+          <div class="subtheme-card" role="radio" aria-checked="true" tabindex="0" data-subtheme="man-hewn-dungeons" aria-label="Man Hewn Dungeons: Hand-carved stone corridors">
+            <span class="subtheme-name">Man Hewn Dungeons</span>
+          </div>
+          <div class="subtheme-card" role="radio" aria-checked="false" tabindex="-1" data-subtheme="subterranean-rivers" aria-label="Subterranean Rivers: Underground waterways and caves">
+            <span class="subtheme-name">Subterranean Rivers</span>
+          </div>
+          <div class="subtheme-card" role="radio" aria-checked="false" tabindex="-1" data-subtheme="underdark-caverns" aria-label="Underdark Caverns: Deep underground caverns">
+            <span class="subtheme-name">Underdark Caverns</span>
+          </div>
+        </div>
+        <p id="rb-hex-note" class="setup-note hidden">Hand-drawn tiles are only available with the Hexagon grid shape.</p>
+      </div>
+
       <!-- Shape selector -->
       <div class="setup-section">
         <span class="setup-label" id="shape-label">Piece Shape</span>
@@ -251,6 +269,14 @@
       <div class="editor-main">
         <div class="canvas-container">
           <canvas id="map-canvas" role="application" aria-label="Map editor grid. Select a tile from the palette, then tap or drag to paint."></canvas>
+          <!-- Realm Brew loading overlay -->
+          <div id="rb-loading-overlay" class="rb-loading-overlay hidden" role="status" aria-label="Loading tiles">
+            <div class="rb-loading-content">
+              <div class="rb-loading-text">Loading hand-drawn tiles...</div>
+              <div class="progress-bar"><div class="progress-fill" id="rb-loading-progress"></div></div>
+              <button id="btn-rb-cancel-load" aria-label="Cancel loading and use procedural tiles">Cancel</button>
+            </div>
+          </div>
         </div>
 
         <!-- Properties Panel (bottom) -->
@@ -300,12 +326,16 @@
         <div class="overlay-tabs" role="tablist" aria-label="Overlay categories">
           <button role="tab" id="tab-theme-overlays" class="overlay-tab active" aria-selected="true" aria-controls="panel-theme-overlays">Theme</button>
           <button role="tab" id="tab-universal-overlays" class="overlay-tab" aria-selected="false" aria-controls="panel-universal-overlays">Universal</button>
+          <button role="tab" id="tab-rb-overlays" class="overlay-tab hidden" aria-selected="false" aria-controls="panel-rb-overlays">Realm Brew</button>
         </div>
         <div id="panel-theme-overlays" role="tabpanel" aria-labelledby="tab-theme-overlays">
           <div class="overlay-list-palette" role="listbox" id="theme-overlay-list" aria-label="Theme overlays"></div>
         </div>
         <div id="panel-universal-overlays" role="tabpanel" aria-labelledby="tab-universal-overlays" class="hidden">
           <div class="overlay-list-palette" role="listbox" id="universal-overlay-list" aria-label="Universal overlays"></div>
+        </div>
+        <div id="panel-rb-overlays" role="tabpanel" aria-labelledby="tab-rb-overlays" class="hidden">
+          <div id="rb-overlay-packs" aria-label="Realm Brew overlay packs"></div>
         </div>
       </aside>
     </div>

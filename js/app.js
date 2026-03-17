@@ -46,11 +46,12 @@ class App {
     this._editor = null;
     this._statusEl = null;
     this._storage = new StorageManager();
+    this._realmBrew = new RealmBrewLoader();
     this._pendingDeleteId = null;
     this._pendingRenameId = null;
   }
 
-  init() {
+  async init() {
     this._statusEl = document.getElementById('status-message');
     this._screens = {
       title: document.getElementById('title-screen'),
@@ -62,6 +63,9 @@ class App {
     this._bindTitleScreen();
     this._bindSetupScreen();
     this._bindMyMapsScreen();
+
+    // Detect Realm Brew assets (non-blocking)
+    this._realmBrew.detect().catch(e => console.warn('Realm Brew detect:', e));
 
     this.showScreen('title');
   }
@@ -117,14 +121,23 @@ class App {
       backBtn.addEventListener('click', () => this.showScreen('title'));
     }
 
-    // Theme radio cards — update map name placeholder on theme change
-    this._bindRadioGroup('theme-selector', () => this._updateMapNamePlaceholder());
+    // Theme radio cards — update map name placeholder on theme change + sub-theme visibility
+    this._bindRadioGroup('theme-selector', () => {
+      this._updateMapNamePlaceholder();
+      this._updateSubThemeVisibility();
+    });
 
     // Shape radio cards
-    this._bindRadioGroup('shape-selector', () => this._updateSizeLabels());
+    this._bindRadioGroup('shape-selector', () => {
+      this._updateSizeLabels();
+      this._updateSubThemeVisibility();
+    });
 
     // Size radio cards
     this._bindRadioGroup('size-selector');
+
+    // Sub-theme radio cards
+    this._bindRadioGroup('subtheme-selector');
 
     // Create map button
     const createBtn = document.getElementById('btn-create-map');
@@ -212,6 +225,31 @@ class App {
     }
   }
 
+  /** Show/hide sub-theme selector based on theme and Realm Brew availability */
+  _updateSubThemeVisibility() {
+    const section = document.getElementById('rb-subtheme-section');
+    const hexNote = document.getElementById('rb-hex-note');
+    if (!section) return;
+
+    const theme = this._getSelectedTheme();
+    const shape = this._getSelectedShape();
+
+    if (theme === 'dungeon' && this._realmBrew.available) {
+      section.classList.remove('hidden');
+      // Show note if non-hex shape selected
+      if (hexNote) {
+        hexNote.classList.toggle('hidden', shape === 'hex');
+      }
+    } else {
+      section.classList.add('hidden');
+    }
+  }
+
+  _getSelectedSubTheme() {
+    const checked = document.querySelector('#subtheme-selector [aria-checked="true"]');
+    return checked ? checked.dataset.subtheme : 'man-hewn-dungeons';
+  }
+
   /** Update size detail labels when shape changes */
   _updateSizeLabels() {
     const shape = this._getSelectedShape();
@@ -233,17 +271,23 @@ class App {
 
     this.showScreen('editor');
 
+    const themeId = this._getSelectedTheme();
+    const rbSubTheme = (themeId === 'dungeon' && this._realmBrew.available && shape === 'hex')
+      ? this._getSelectedSubTheme() : null;
+
     this._editor = new Editor({
       canvasEl: document.getElementById('map-canvas'),
       containerEl: document.querySelector('.canvas-container'),
       toolbarEl: document.querySelector('.editor-toolbar'),
       paletteEl: document.querySelector('.tile-palette'),
-      themeId: this._getSelectedTheme(),
+      themeId: themeId,
       shape: shape,
       size: size,
       mapName: name,
       app: this,
-      storage: this._storage
+      storage: this._storage,
+      realmBrew: this._realmBrew,
+      rbSubTheme: rbSubTheme
     });
 
     try {
@@ -279,7 +323,9 @@ class App {
       savedCells: mapData.cells,
       savedCamera: mapData.camera,
       app: this,
-      storage: this._storage
+      storage: this._storage,
+      realmBrew: this._realmBrew,
+      rbSubTheme: mapData.rbSubTheme || null
     });
 
     try {
