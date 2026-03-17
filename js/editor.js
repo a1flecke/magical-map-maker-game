@@ -20,6 +20,10 @@ class Editor {
     this._shape = options.shape;
     this._sizeKey = options.size;
     this._mapName = options.mapName;
+    this._mapId = options.mapId || null;
+    this._savedCells = options.savedCells || null;
+    this._savedCamera = options.savedCamera || null;
+    this._storage = options.storage || null;
 
     this._ctx = null;
     this._dpr = 1;
@@ -42,6 +46,10 @@ class Editor {
     // Overlay state
     this._selectedOverlay = null; // overlay ID to place
     this._selectedCellOverlayIndex = -1; // which overlay in cell is selected for editing
+
+    // Save state
+    this._autoSaveTimer = null;
+    this._saveDirty = false;
 
     // Sub-systems
     this._grid = null;
@@ -80,8 +88,22 @@ class Editor {
     const config = getGridConfig(this._shape, this._sizeKey);
     this._grid = Grid.create(this._shape, config.cols, config.rows, config.cellSize);
 
+    // Restore saved cell data if loading a saved map
+    if (this._savedCells) {
+      StorageManager.deserializeIntoGrid(this._grid, this._savedCells);
+      this._savedCells = null;
+    }
+
     // Camera
     this._camera = new Camera();
+
+    // Restore saved camera position
+    if (this._savedCamera) {
+      this._camera.offsetX = this._savedCamera.offsetX || 0;
+      this._camera.offsetY = this._savedCamera.offsetY || 0;
+      this._camera.zoom = this._savedCamera.zoom || 1.0;
+      this._savedCamera = null;
+    }
 
     // Animation manager
     this._animation = new AnimationManager();
@@ -124,8 +146,41 @@ class Editor {
     this._bindToolbar();
 
     // Map name display
-    const nameEl = this._toolbarEl.querySelector('.toolbar-center');
-    if (nameEl) nameEl.textContent = this._mapName;
+    const nameDisplay = document.getElementById('map-name-display');
+    if (nameDisplay) nameDisplay.textContent = this._mapName;
+
+    // Edit name button
+    const editNameBtn = document.getElementById('btn-edit-name');
+    if (editNameBtn) {
+      editNameBtn.addEventListener('click', () => this._promptRename());
+    }
+
+    // Save button
+    const saveBtn = document.getElementById('btn-save');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        this.saveMap();
+        this._app.announce('Map saved');
+      });
+    }
+
+    // Cmd/Ctrl+S keyboard shortcut
+    this._boundKeyboardSave = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        this.saveMap();
+        this._app.announce('Map saved');
+      }
+    };
+    document.addEventListener('keydown', this._boundKeyboardSave);
+
+    // Auto-save every 30 seconds (only if dirty)
+    this._autoSaveTimer = setInterval(() => {
+      if (this._saveDirty && this._storage) {
+        this.saveMap();
+        this._app.announce('Map saved');
+      }
+    }, 30000);
 
     // Map Life button initial state
     this._updateMapLifeUI();
@@ -156,6 +211,8 @@ class Editor {
     if (this._palette) { this._palette.destroy(); this._palette = null; }
     if (this._overlayRenderer) { this._overlayRenderer.destroy(); this._overlayRenderer = null; }
     if (this._animation) { this._animation.destroy(); this._animation = null; }
+    if (this._autoSaveTimer) { clearInterval(this._autoSaveTimer); this._autoSaveTimer = null; }
+    if (this._boundKeyboardSave) { document.removeEventListener('keydown', this._boundKeyboardSave); this._boundKeyboardSave = null; }
     if (this._overlaySearchTimer) { clearTimeout(this._overlaySearchTimer); this._overlaySearchTimer = null; }
     if (this._boundResize) window.removeEventListener('resize', this._boundResize);
     if (this._dprMql) this._dprMql.removeEventListener('change', this._boundDprChange);
@@ -1710,12 +1767,16 @@ class Editor {
         }
       }
     }
-    if (changed) this._dirty = true;
+    if (changed) {
+      this._dirty = true;
+      this._markSaveDirty();
+    }
   }
 
   _doFill(col, row, cellType) {
     const filledCells = this._grid.floodFill(col, row, this._selectedTile, 500, cellType);
     if (filledCells.length > 0) {
+      this._markSaveDirty();
       // Mark all filled cells + their neighbors dirty
       for (const c of filledCells) {
         this._tileRenderer.markDirty(this._grid, c.col, c.row, c.cellType);
@@ -1731,6 +1792,64 @@ class Editor {
         this._dirty = true;
       }, 400);
     }
+  }
+
+  /* ---- Save / Load ---- */
+
+  saveMap() {
+    if (!this._storage) return;
+    try {
+      const data = StorageManager.serializeMap(this);
+      // Generate thumbnail from the visible canvas
+      data.thumbnail = StorageManager.generateThumbnail(this._canvasEl);
+      this._mapId = this._storage.saveMap(data);
+      this._saveDirty = false;
+    } catch (e) {
+      console.error('Save failed:', e);
+      this._app.announce('Save failed. Storage may be full.');
+    }
+  }
+
+  /** Mark that the map has unsaved changes */
+  _markSaveDirty() {
+    this._saveDirty = true;
+  }
+
+  _promptRename() {
+    const nameDisplay = document.getElementById('map-name-display');
+    const editBtn = document.getElementById('btn-edit-name');
+    if (!nameDisplay) return;
+
+    // Replace display with an input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = this._mapName;
+    input.maxLength = 50;
+    input.className = 'map-name-edit-input';
+    input.setAttribute('aria-label', 'Edit map name');
+    nameDisplay.classList.add('hidden');
+    if (editBtn) editBtn.classList.add('hidden');
+    nameDisplay.parentNode.insertBefore(input, nameDisplay);
+    input.focus();
+    input.select();
+
+    const commit = () => {
+      const newName = input.value.trim();
+      if (newName) {
+        this._mapName = newName;
+        nameDisplay.textContent = this._mapName;
+        this._markSaveDirty();
+      }
+      input.remove();
+      nameDisplay.classList.remove('hidden');
+      if (editBtn) editBtn.classList.remove('hidden');
+    };
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { input.value = this._mapName; input.blur(); }
+    });
   }
 
   /* ---- Keyboard ---- */
@@ -1986,6 +2105,7 @@ class Editor {
       size: 'medium'
     });
     this._dirty = true;
+    this._markSaveDirty();
     this._app.announce('Placed ' + (this._overlayRenderer.getOverlay(this._selectedOverlay)?.name || this._selectedOverlay));
   }
 
@@ -2001,6 +2121,7 @@ class Editor {
     } else {
       cell.overlays.pop();
     }
+    this._markSaveDirty();
     this._dirty = true;
     this._updatePropertiesPanel();
     this._app.announce('Overlay removed');
@@ -2140,6 +2261,7 @@ class Editor {
     ov.rotation = rotation;
     this._overlayRenderer.clearCache();
     this._dirty = true;
+    this._markSaveDirty();
     this._updatePropertyControlValues();
   }
 
@@ -2148,6 +2270,7 @@ class Editor {
     if (!ov) return;
     ov.opacity = Math.round(opacity * 10) / 10;
     this._dirty = true;
+    this._markSaveDirty();
     const valEl = document.getElementById('opacity-value');
     if (valEl) valEl.textContent = ov.opacity.toFixed(1);
   }
@@ -2158,6 +2281,7 @@ class Editor {
     ov.size = size;
     this._overlayRenderer.clearCache();
     this._dirty = true;
+    this._markSaveDirty();
     this._updatePropertyControlValues();
   }
 
@@ -2175,6 +2299,7 @@ class Editor {
     cell.overlays = [];
     this._selectedCellOverlayIndex = -1;
     this._dirty = true;
+    this._markSaveDirty();
     this._updatePropertiesPanel();
     this._app.announce('All overlays cleared');
   }

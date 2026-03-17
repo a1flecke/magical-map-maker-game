@@ -31,30 +31,45 @@ const SIZE_LABELS = {
   }
 };
 
+/** Shape icons for display */
+const SHAPE_ICONS = {
+  square: '\u25A0',
+  hex: '\u2B23',
+  diamond: '\u25C6',
+  octagon: '\u2BC2'
+};
+
 class App {
   constructor() {
     this._screens = {};
     this._currentScreen = null;
     this._editor = null;
     this._statusEl = null;
+    this._storage = new StorageManager();
+    this._pendingDeleteId = null;
+    this._pendingRenameId = null;
   }
 
   init() {
     this._statusEl = document.getElementById('status-message');
     this._screens = {
       title: document.getElementById('title-screen'),
+      mymaps: document.getElementById('mymaps-screen'),
       setup: document.getElementById('setup-screen'),
       editor: document.getElementById('editor-screen')
     };
 
     this._bindTitleScreen();
     this._bindSetupScreen();
+    this._bindMyMapsScreen();
 
     this.showScreen('title');
   }
 
   showScreen(name) {
     if (this._currentScreen === 'editor' && name !== 'editor' && this._editor) {
+      // Auto-save before leaving editor
+      this._autoSaveEditor();
       this._editor.destroy();
       this._editor = null;
     }
@@ -71,6 +86,10 @@ class App {
 
     document.body.classList.toggle('editor-active', name === 'editor');
     this._currentScreen = name;
+
+    if (name === 'mymaps') {
+      this._renderMyMaps();
+    }
   }
 
   announce(message) {
@@ -84,6 +103,10 @@ class App {
     const newMapBtn = document.getElementById('btn-new-map');
     if (newMapBtn) {
       newMapBtn.addEventListener('click', () => this.showScreen('setup'));
+    }
+    const myMapsBtn = document.getElementById('btn-my-maps');
+    if (myMapsBtn) {
+      myMapsBtn.addEventListener('click', () => this.showScreen('mymaps'));
     }
   }
 
@@ -219,16 +242,286 @@ class App {
       shape: shape,
       size: size,
       mapName: name,
-      app: this
+      app: this,
+      storage: this._storage
     });
 
     try {
       await this._editor.init();
+      // Initial save to create the map record
+      this._editor.saveMap();
       this.announce('Map editor ready. Select a tile from the palette to begin painting.');
     } catch (err) {
       this.announce('Failed to load map editor. Please refresh and try again.');
       console.error('Editor init failed:', err);
     }
+  }
+
+  async _loadMap(mapId) {
+    const mapData = this._storage.loadMap(mapId);
+    if (!mapData) {
+      this.announce('Could not load map.');
+      return;
+    }
+
+    this.showScreen('editor');
+
+    this._editor = new Editor({
+      canvasEl: document.getElementById('map-canvas'),
+      containerEl: document.querySelector('.canvas-container'),
+      toolbarEl: document.querySelector('.editor-toolbar'),
+      paletteEl: document.querySelector('.tile-palette'),
+      themeId: mapData.themeId,
+      shape: mapData.shape,
+      size: mapData.sizeKey,
+      mapName: mapData.name,
+      mapId: mapData.id,
+      savedCells: mapData.cells,
+      savedCamera: mapData.camera,
+      app: this,
+      storage: this._storage
+    });
+
+    try {
+      await this._editor.init();
+      this.announce('Map loaded. Select a tile from the palette to continue editing.');
+    } catch (err) {
+      this.announce('Failed to load map. Please refresh and try again.');
+      console.error('Editor init (load) failed:', err);
+    }
+  }
+
+  _autoSaveEditor() {
+    if (this._editor && (this._editor._mapId || this._editor._saveDirty)) {
+      try {
+        this._editor.saveMap();
+      } catch (e) {
+        console.warn('Auto-save on exit failed', e);
+      }
+    }
+  }
+
+  /* ---- My Maps Screen ---- */
+  _bindMyMapsScreen() {
+    const backBtn = document.getElementById('btn-mymaps-back');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => this.showScreen('title'));
+    }
+
+    // Delete dialog
+    const deleteCancel = document.getElementById('btn-delete-cancel');
+    const deleteConfirm = document.getElementById('btn-delete-confirm');
+    if (deleteCancel) deleteCancel.addEventListener('click', () => this._closeDeleteDialog());
+    if (deleteConfirm) deleteConfirm.addEventListener('click', () => this._confirmDelete());
+
+    // Rename dialog
+    const renameCancel = document.getElementById('btn-rename-cancel');
+    const renameConfirm = document.getElementById('btn-rename-confirm');
+    if (renameCancel) renameCancel.addEventListener('click', () => this._closeRenameDialog());
+    if (renameConfirm) renameConfirm.addEventListener('click', () => this._confirmRename());
+
+    // Escape to close modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || this._currentScreen !== 'mymaps') return;
+      const deleteDialog = document.getElementById('delete-dialog');
+      const renameDialog = document.getElementById('rename-dialog');
+      if (deleteDialog && !deleteDialog.classList.contains('hidden')) {
+        this._closeDeleteDialog();
+      }
+      if (renameDialog && !renameDialog.classList.contains('hidden')) {
+        this._closeRenameDialog();
+      }
+    });
+
+    // Rename on Enter
+    const renameInput = document.getElementById('rename-input');
+    if (renameInput) {
+      renameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') this._confirmRename();
+      });
+    }
+  }
+
+  _renderMyMaps() {
+    const grid = document.getElementById('mymaps-grid');
+    const empty = document.getElementById('mymaps-empty');
+    const warning = document.getElementById('mymaps-warning');
+    if (!grid) return;
+
+    const maps = this._storage.listMaps();
+    const usage = this._storage.getStorageUsage();
+
+    // Quota warning
+    if (usage.warnCount || usage.warnSize) {
+      const msgs = [];
+      if (usage.warnCount) msgs.push('You have ' + usage.mapCount + ' maps. Consider deleting some to free space.');
+      if (usage.warnSize) msgs.push('Storage is getting full (' + Math.round(usage.bytes / 1024) + ' KB used).');
+      warning.textContent = msgs.join(' ');
+      warning.classList.remove('hidden');
+    } else {
+      warning.classList.add('hidden');
+    }
+
+    if (maps.length === 0) {
+      grid.classList.add('hidden');
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    grid.classList.remove('hidden');
+    empty.classList.add('hidden');
+
+    // Sort by most recently updated
+    maps.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+
+    grid.innerHTML = maps.map(map => {
+      const date = map.updatedAt ? new Date(map.updatedAt).toLocaleDateString() : '';
+      const shapeIcon = SHAPE_ICONS[map.shape] || '';
+      const thumbHtml = map.thumbnail
+        ? '<img class="map-card-thumb" src="' + escHtml(map.thumbnail) + '" alt="Map thumbnail" loading="lazy">'
+        : '<div class="map-card-thumb-empty" aria-hidden="true">\uD83D\uDDFA</div>';
+
+      return '<div class="map-card" tabindex="0" data-map-id="' + escHtml(map.id) + '" role="button" aria-label="Open ' + escHtml(map.name) + '">'
+        + thumbHtml
+        + '<div class="map-card-info">'
+        + '<div class="map-card-name">' + escHtml(map.name) + '</div>'
+        + '<div class="map-card-meta">'
+        + '<span>' + escHtml(shapeIcon) + '</span>'
+        + '<span>' + escHtml(map.cols + '\u00d7' + map.rows) + '</span>'
+        + '<span>' + escHtml(date) + '</span>'
+        + '</div></div>'
+        + '<div class="map-card-actions">'
+        + '<button class="action-rename" data-map-id="' + escHtml(map.id) + '" data-map-name="' + escHtml(map.name) + '" aria-label="Rename ' + escHtml(map.name) + '">Rename</button>'
+        + '<button class="action-duplicate" data-map-id="' + escHtml(map.id) + '" aria-label="Duplicate ' + escHtml(map.name) + '">Copy</button>'
+        + '<button class="action-delete" data-map-id="' + escHtml(map.id) + '" data-map-name="' + escHtml(map.name) + '" aria-label="Delete ' + escHtml(map.name) + '">Delete</button>'
+        + '</div></div>';
+    }).join('');
+
+    // Bind card clicks (open map)
+    grid.querySelectorAll('.map-card').forEach(card => {
+      const openHandler = (e) => {
+        // Don't open if clicking action buttons
+        if (e.target.closest('.map-card-actions')) return;
+        this._loadMap(card.dataset.mapId);
+      };
+      card.addEventListener('click', openHandler);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openHandler(e);
+        }
+      });
+    });
+
+    // Action buttons
+    grid.querySelectorAll('.action-rename').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._openRenameDialog(btn.dataset.mapId, btn.dataset.mapName);
+      });
+    });
+
+    grid.querySelectorAll('.action-duplicate').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._storage.duplicateMap(btn.dataset.mapId);
+        this._renderMyMaps();
+        this.announce('Map duplicated');
+      });
+    });
+
+    grid.querySelectorAll('.action-delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._openDeleteDialog(btn.dataset.mapId, btn.dataset.mapName);
+      });
+    });
+  }
+
+  /* ---- Modal Helpers ---- */
+
+  _openModal(dialogEl) {
+    dialogEl.classList.remove('hidden');
+    dialogEl.removeAttribute('aria-hidden');
+    this._trapFocusInModal(dialogEl);
+  }
+
+  _closeModal(dialogEl) {
+    dialogEl.classList.add('hidden');
+    dialogEl.setAttribute('aria-hidden', 'true');
+    if (this._modalFocusTrap) {
+      dialogEl.removeEventListener('keydown', this._modalFocusTrap);
+      this._modalFocusTrap = null;
+    }
+  }
+
+  _trapFocusInModal(dialogEl) {
+    this._modalFocusTrap = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = dialogEl.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    dialogEl.addEventListener('keydown', this._modalFocusTrap);
+  }
+
+  /* ---- Delete Dialog ---- */
+  _openDeleteDialog(mapId, mapName) {
+    this._pendingDeleteId = mapId;
+    const dialog = document.getElementById('delete-dialog');
+    const msg = document.getElementById('delete-dialog-message');
+    msg.textContent = 'Are you sure you want to delete "' + mapName + '"? This cannot be undone.';
+    this._openModal(dialog);
+    document.getElementById('btn-delete-cancel').focus();
+  }
+
+  _closeDeleteDialog() {
+    this._pendingDeleteId = null;
+    const dialog = document.getElementById('delete-dialog');
+    this._closeModal(dialog);
+  }
+
+  _confirmDelete() {
+    if (this._pendingDeleteId) {
+      this._storage.deleteMap(this._pendingDeleteId);
+      this.announce('Map deleted');
+    }
+    this._closeDeleteDialog();
+    this._renderMyMaps();
+  }
+
+  /* ---- Rename Dialog ---- */
+  _openRenameDialog(mapId, currentName) {
+    this._pendingRenameId = mapId;
+    const dialog = document.getElementById('rename-dialog');
+    const input = document.getElementById('rename-input');
+    input.value = currentName;
+    this._openModal(dialog);
+    input.focus();
+    input.select();
+  }
+
+  _closeRenameDialog() {
+    this._pendingRenameId = null;
+    const dialog = document.getElementById('rename-dialog');
+    this._closeModal(dialog);
+  }
+
+  _confirmRename() {
+    const input = document.getElementById('rename-input');
+    const newName = input.value.trim();
+    if (this._pendingRenameId && newName) {
+      this._storage.renameMap(this._pendingRenameId, newName);
+      this.announce('Map renamed to ' + newName);
+    }
+    this._closeRenameDialog();
+    this._renderMyMaps();
   }
 }
 

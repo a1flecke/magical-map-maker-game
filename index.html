@@ -25,6 +25,7 @@
   <script src="js/themes.js" defer></script>
   <script src="js/palette.js" defer></script>
   <script src="js/input.js" defer></script>
+  <script src="js/storage.js" defer></script>
   <script src="js/editor.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
@@ -39,15 +40,52 @@
       <p class="title-subtitle">Create your own fantasy worlds!</p>
       <div class="title-buttons">
         <button id="btn-new-map" class="primary" aria-label="Create a new map">New Map</button>
-        <div class="tooltip-wrapper">
-          <button disabled aria-label="My Maps — coming soon">My Maps</button>
-          <span class="tooltip-text" role="tooltip">Coming Soon</span>
-        </div>
+        <button id="btn-my-maps" aria-label="View my saved maps">My Maps</button>
         <div class="tooltip-wrapper">
           <button disabled aria-label="Settings — coming soon">
             <span aria-hidden="true">&#9881;</span> Settings
           </button>
           <span class="tooltip-text" role="tooltip">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MY MAPS SCREEN ==================== -->
+  <div id="mymaps-screen" class="screen">
+    <div class="mymaps-container">
+      <h2 class="mymaps-heading">My Maps</h2>
+      <div id="mymaps-warning" class="mymaps-warning hidden" role="status"></div>
+      <div id="mymaps-grid" class="mymaps-grid" aria-label="Saved maps"></div>
+      <div id="mymaps-empty" class="mymaps-empty hidden">
+        <p>No maps yet!</p>
+        <p>Create your first map to see it here.</p>
+      </div>
+      <div class="mymaps-buttons">
+        <button id="btn-mymaps-back" aria-label="Go back to title screen">Back</button>
+      </div>
+    </div>
+
+    <!-- Rename dialog -->
+    <div id="rename-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-dialog-title">
+        <h3 id="rename-dialog-title">Rename Map</h3>
+        <input type="text" id="rename-input" maxlength="50" aria-label="New map name">
+        <div class="modal-buttons">
+          <button id="btn-rename-cancel">Cancel</button>
+          <button id="btn-rename-confirm" class="primary">Rename</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete confirmation dialog -->
+    <div id="delete-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
+        <h3 id="delete-dialog-title">Delete Map</h3>
+        <p id="delete-dialog-message">Are you sure you want to delete this map? This cannot be undone.</p>
+        <div class="modal-buttons">
+          <button id="btn-delete-cancel">Cancel</button>
+          <button id="btn-delete-confirm" class="danger">Delete</button>
         </div>
       </div>
     </div>
@@ -173,8 +211,12 @@
       <div class="toolbar-left">
         <button id="btn-editor-back" aria-label="Back to title screen">&#8592; Back</button>
       </div>
-      <div class="toolbar-center"></div>
+      <div class="toolbar-center">
+        <span id="map-name-display" class="map-name-display"></span>
+        <button id="btn-edit-name" class="edit-name-btn" aria-label="Edit map name">&#9998;</button>
+      </div>
       <div class="toolbar-right">
+        <button id="btn-save" aria-label="Save map">Save</button>
         <button id="btn-pan-mode" aria-label="Toggle pan mode" aria-pressed="false">Pan</button>
         <button id="btn-grid-toggle" aria-label="Toggle grid lines" aria-pressed="true">Grid</button>
         <div class="brush-group" role="group" aria-label="Brush size">
