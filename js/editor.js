@@ -164,6 +164,12 @@ class Editor {
       });
     }
 
+    // Export button
+    const exportBtn = document.getElementById('btn-export');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => this._openExportDialog());
+    }
+
     // Cmd/Ctrl+S keyboard shortcut
     this._boundKeyboardSave = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
@@ -211,6 +217,7 @@ class Editor {
     if (this._palette) { this._palette.destroy(); this._palette = null; }
     if (this._overlayRenderer) { this._overlayRenderer.destroy(); this._overlayRenderer = null; }
     if (this._animation) { this._animation.destroy(); this._animation = null; }
+    if (this._exportRafId) { cancelAnimationFrame(this._exportRafId); this._exportRafId = null; }
     if (this._autoSaveTimer) { clearInterval(this._autoSaveTimer); this._autoSaveTimer = null; }
     if (this._boundKeyboardSave) { document.removeEventListener('keydown', this._boundKeyboardSave); this._boundKeyboardSave = null; }
     if (this._overlaySearchTimer) { clearTimeout(this._overlaySearchTimer); this._overlaySearchTimer = null; }
@@ -1792,6 +1799,143 @@ class Editor {
         this._dirty = true;
       }, 400);
     }
+  }
+
+  /* ---- Export Dialog ---- */
+
+  _openExportDialog() {
+    const dialog = document.getElementById('export-dialog');
+    if (!dialog) return;
+
+    dialog.classList.remove('hidden');
+    dialog.removeAttribute('aria-hidden');
+
+    // Save focus for restoration on close
+    this._exportPrevFocus = document.activeElement;
+
+    // Focus trap
+    this._exportFocusTrap = (e) => {
+      if (e.key === 'Escape') { this._closeExportDialog(); return; }
+      if (e.key !== 'Tab') return;
+      const focusable = dialog.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    dialog.addEventListener('keydown', this._exportFocusTrap);
+
+    // Format radio buttons
+    const formatBtns = dialog.querySelectorAll('.format-btn');
+    formatBtns.forEach(btn => {
+      btn.onclick = () => {
+        formatBtns.forEach(b => {
+          b.setAttribute('aria-checked', b === btn ? 'true' : 'false');
+          b.setAttribute('tabindex', b === btn ? '0' : '-1');
+        });
+        // Show/hide format-specific options
+        const jpegOpts = document.getElementById('export-jpeg-options');
+        const pdfOpts = document.getElementById('export-pdf-options');
+        if (jpegOpts) jpegOpts.classList.toggle('hidden', btn.dataset.format !== 'jpeg');
+        if (pdfOpts) pdfOpts.classList.toggle('hidden', btn.dataset.format !== 'pdf');
+      };
+    });
+
+    // JPEG quality slider
+    const qualitySlider = document.getElementById('jpeg-quality-slider');
+    const qualityVal = document.getElementById('jpeg-quality-value');
+    if (qualitySlider && qualityVal) {
+      qualitySlider.oninput = () => {
+        qualityVal.textContent = Math.round(parseFloat(qualitySlider.value) * 100) + '%';
+      };
+    }
+
+    // Cancel
+    const cancelBtn = document.getElementById('btn-export-cancel');
+    if (cancelBtn) cancelBtn.onclick = () => this._closeExportDialog();
+
+    // Confirm export
+    const confirmBtn = document.getElementById('btn-export-confirm');
+    if (confirmBtn) confirmBtn.onclick = () => this._doExport();
+
+    // Print
+    const printBtn = document.getElementById('btn-print');
+    if (printBtn) printBtn.onclick = () => {
+      this._closeExportDialog();
+      ExportManager.print();
+    };
+
+    // Focus first button
+    const firstFormat = dialog.querySelector('.format-btn[aria-checked="true"]');
+    if (firstFormat) firstFormat.focus();
+  }
+
+  _closeExportDialog() {
+    const dialog = document.getElementById('export-dialog');
+    if (!dialog) return;
+    dialog.classList.add('hidden');
+    dialog.setAttribute('aria-hidden', 'true');
+    if (this._exportFocusTrap) {
+      dialog.removeEventListener('keydown', this._exportFocusTrap);
+      this._exportFocusTrap = null;
+    }
+    // Hide progress
+    const progress = document.getElementById('export-progress');
+    if (progress) progress.classList.add('hidden');
+    // Restore focus
+    if (this._exportPrevFocus) {
+      this._exportPrevFocus.focus();
+      this._exportPrevFocus = null;
+    }
+  }
+
+  _doExport() {
+    const dialog = document.getElementById('export-dialog');
+    const formatBtn = dialog.querySelector('.format-btn[aria-checked="true"]');
+    const format = formatBtn ? formatBtn.dataset.format : 'pdf';
+    const includeGrid = document.getElementById('export-grid').checked;
+    const includeLegend = format === 'pdf' && document.getElementById('export-legend').checked;
+
+    // Show progress
+    const progress = document.getElementById('export-progress');
+    const fill = document.getElementById('export-progress-fill');
+    if (progress) progress.classList.remove('hidden');
+    if (fill) fill.style.width = '30%';
+
+    // Use requestAnimationFrame to let the progress bar render before the blocking export
+    this._exportRafId = requestAnimationFrame(() => {
+      this._exportRafId = requestAnimationFrame(() => {
+        this._exportRafId = null;
+        if (!this._running) return; // Editor was destroyed
+        try {
+          if (fill) fill.style.width = '70%';
+
+          const options = { includeGrid, includeLegend };
+
+          if (format === 'pdf') {
+            ExportManager.exportPDF(this, options);
+          } else if (format === 'png') {
+            ExportManager.exportPNG(this, options);
+          } else if (format === 'jpeg') {
+            const quality = parseFloat(document.getElementById('jpeg-quality-slider').value) || 0.85;
+            ExportManager.exportJPEG(this, { ...options, quality });
+          }
+
+          if (fill) fill.style.width = '100%';
+          this._app.announce('Map exported as ' + format.toUpperCase());
+
+          setTimeout(() => this._closeExportDialog(), 500);
+        } catch (err) {
+          console.error('Export failed:', err);
+          this._app.announce('Export failed. Try a smaller map or lower quality.');
+          if (progress) progress.classList.add('hidden');
+        }
+      });
+    });
   }
 
   /* ---- Save / Load ---- */

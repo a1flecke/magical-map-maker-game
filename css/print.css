@@ -1,0 +1,57 @@
+/* Magical Map Maker — Print Styles */
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+
+  /* Hide all UI except the map */
+  .editor-toolbar,
+  .tile-palette,
+  .overlay-palette,
+  .properties-panel,
+  #status-message,
+  #title-screen,
+  #setup-screen,
+  #mymaps-screen {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    position: static;
+    background: white;
+  }
+
+  .editor-body {
+    display: block;
+  }
+
+  .canvas-container {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  #map-canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 7.5in;
+    max-height: 10in;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Map title above canvas */
+  .toolbar-center {
+    display: block !important;
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 12pt;
+    color: #2C2416;
+  }
+}

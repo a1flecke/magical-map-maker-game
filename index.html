@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/print.css">
 
   <!-- jsPDF for future export (session 6) -->
   <script src="js/lib/jspdf.umd.min.js" defer></script>
@@ -26,6 +27,7 @@
   <script src="js/palette.js" defer></script>
   <script src="js/input.js" defer></script>
   <script src="js/storage.js" defer></script>
+  <script src="js/export.js" defer></script>
   <script src="js/editor.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
@@ -217,6 +219,7 @@
       </div>
       <div class="toolbar-right">
         <button id="btn-save" aria-label="Save map">Save</button>
+        <button id="btn-export" aria-label="Export map">Export</button>
         <button id="btn-pan-mode" aria-label="Toggle pan mode" aria-pressed="false">Pan</button>
         <button id="btn-grid-toggle" aria-label="Toggle grid lines" aria-pressed="true">Grid</button>
         <div class="brush-group" role="group" aria-label="Brush size">
@@ -305,6 +308,49 @@
           <div class="overlay-list-palette" role="listbox" id="universal-overlay-list" aria-label="Universal overlays"></div>
         </div>
       </aside>
+    </div>
+
+    <!-- Export dialog -->
+    <div id="export-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal export-modal" role="dialog" aria-modal="true" aria-labelledby="export-dialog-title">
+        <h3 id="export-dialog-title">Export Map</h3>
+
+        <div class="export-format" role="radiogroup" aria-label="Export format">
+          <span class="control-label">Format:</span>
+          <button class="format-btn" role="radio" aria-checked="true" tabindex="0" data-format="pdf">PDF</button>
+          <button class="format-btn" role="radio" aria-checked="false" tabindex="-1" data-format="png">PNG</button>
+          <button class="format-btn" role="radio" aria-checked="false" tabindex="-1" data-format="jpeg">JPEG</button>
+        </div>
+
+        <div id="export-jpeg-options" class="export-option hidden">
+          <label class="control-label" for="jpeg-quality-slider">Quality:</label>
+          <input type="range" id="jpeg-quality-slider" min="0.7" max="0.95" step="0.05" value="0.85" aria-label="JPEG quality">
+          <span id="jpeg-quality-value">85%</span>
+        </div>
+
+        <div id="export-pdf-options" class="export-option">
+          <label class="export-checkbox">
+            <input type="checkbox" id="export-legend" checked>
+            Include legend
+          </label>
+        </div>
+
+        <label class="export-checkbox">
+          <input type="checkbox" id="export-grid" checked>
+          Include grid lines
+        </label>
+
+        <div id="export-progress" class="export-progress hidden">
+          <div class="progress-bar"><div class="progress-fill" id="export-progress-fill"></div></div>
+          <span id="export-progress-text">Rendering...</span>
+        </div>
+
+        <div class="modal-buttons">
+          <button id="btn-export-cancel">Cancel</button>
+          <button id="btn-export-confirm" class="primary">Export</button>
+          <button id="btn-print" aria-label="Print map">Print</button>
+        </div>
+      </div>
     </div>
   </div>
 </body>
