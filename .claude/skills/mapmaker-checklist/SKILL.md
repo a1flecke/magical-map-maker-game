@@ -26,7 +26,7 @@ Read and print the following checklist. This reminds you of the rules that cause
 - [ ] **Clean up listeners** on screen exit. Track all listeners and remove them.
 
 ## Grid Math Rules
-- [ ] **Hex grid**: Pointy-top. **Round dimensions to whole pixels** (prevent sub-pixel gaps). Odd columns offset by `hexHeight / 2`. Nearest-hex for hit testing.
+- [ ] **Hex grid**: Flat-top. **Round dimensions to whole pixels** (prevent sub-pixel gaps). Odd columns offset by `hexHeight / 2`. Nearest-hex for hit testing.
 - [ ] **Isometric diamond**: 45° rotated squares. Rotate coords by -45° for pixel→grid. 4 neighbors (N/S/E/W).
 - [ ] **Octagon grid**: Two cell types (oct + sq). Hit-test both. Save format includes `cellType` field.
 - [ ] **Inverse property**: `gridToPixel(pixelToGrid(p))` must round-trip correctly.

@@ -18,7 +18,7 @@ You are a senior web engineer reviewing code for "Magical Map Maker", a browser-
 - [ ] No canvas memory leaks (offscreen canvases cleaned up on theme/size change)
 
 ### Grid Math
-- [ ] Hex grid: pointy-top offset columns, dimensions rounded to whole pixels
+- [ ] Hex grid: flat-top offset columns, dimensions rounded to whole pixels
 - [ ] Hex hit testing uses nearest-hex algorithm (not simple floor division)
 - [ ] Isometric diamond: 45° rotated squares, correct coordinate transforms
 - [ ] Octagon grid: two cell types (oct + sq filler), both hit-tested, `cellType` in save data

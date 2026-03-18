@@ -140,7 +140,7 @@ Each session's output passes through three reviewers before the next session beg
 **Goal:** Add hexagon, isometric diamond, octagon grids. Pan and zoom.
 
 **Deliverables:**
-1. Hex grid (pointy-top, offset columns, dimensions rounded to whole pixels)
+1. Hex grid (flat-top, offset columns, dimensions rounded to whole pixels)
 2. Isometric diamond grid (45° rotated squares, offset rows)
 3. Octagon grid (octagons + small square fillers, both interactive)
 4. Shape selector: `role="radiogroup"` with visual shape icons

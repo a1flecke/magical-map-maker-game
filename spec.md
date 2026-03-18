@@ -124,7 +124,7 @@ All shapes tile seamlessly. Each shape affects grid layout and piece count per p
 | Shape | Grid Type | Tiling Method |
 |-------|-----------|---------------|
 | **Square** | Orthogonal grid | Standard row/column |
-| **Hexagon** | Offset columns (pointy-top) | Odd columns offset down by half |
+| **Hexagon** | Offset columns (flat-top) | Odd columns offset down by half |
 | **Isometric Diamond** | Diamond/rhombus grid | 45° rotated squares, offset rows |
 | **Octagon** | Octagons + small squares | Octagon grid with square fill pieces |
 
