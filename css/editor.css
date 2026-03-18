@@ -506,8 +506,8 @@
   border: 1px solid var(--color-border) !important;
 }
 
-.rot-btn[aria-pressed="true"],
-.size-sel-btn[aria-pressed="true"] {
+.rot-btn[aria-checked="true"],
+.size-sel-btn[aria-checked="true"] {
   background: var(--color-accent) !important;
   color: #FFFFFF !important;
   border-color: var(--color-accent) !important;

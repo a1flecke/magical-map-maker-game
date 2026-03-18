@@ -96,9 +96,14 @@ class App {
     }
   }
 
-  announce(message) {
-    if (this._statusEl) {
-      this._statusEl.textContent = message;
+  announce(message, isError = false) {
+    if (isError) {
+      const errorEl = document.getElementById('error-message');
+      if (errorEl) errorEl.textContent = message;
+    } else {
+      if (this._statusEl) {
+        this._statusEl.textContent = message;
+      }
     }
   }
 
@@ -296,7 +301,7 @@ class App {
       this._editor.saveMap();
       this.announce('Map editor ready. Select a tile from the palette to begin painting.');
     } catch (err) {
-      this.announce('Failed to load map editor. Please refresh and try again.');
+      this.announce('Failed to load map editor. Please refresh and try again.', true);
       console.error('Editor init failed:', err);
     }
   }
@@ -332,7 +337,7 @@ class App {
       await this._editor.init();
       this.announce('Map loaded. Select a tile from the palette to continue editing.');
     } catch (err) {
-      this.announce('Failed to load map. Please refresh and try again.');
+      this.announce('Failed to load map. Please refresh and try again.', true);
       console.error('Editor init (load) failed:', err);
     }
   }

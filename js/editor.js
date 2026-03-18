@@ -2075,7 +2075,7 @@ class Editor {
           setTimeout(() => this._closeExportDialog(), 500);
         } catch (err) {
           console.error('Export failed:', err);
-          this._app.announce('Export failed. Try a smaller map or lower quality.');
+          this._app.announce('Export failed. Try a smaller map or lower quality.', true);
           if (progress) progress.classList.add('hidden');
         }
       });
@@ -2094,7 +2094,7 @@ class Editor {
       this._saveDirty = false;
     } catch (e) {
       console.error('Save failed:', e);
-      this._app.announce('Save failed. Storage may be full.');
+      this._app.announce('Save failed. Storage may be full.', true);
     }
   }
 
@@ -2383,10 +2383,8 @@ class Editor {
       const match = !query || name.toLowerCase().includes(query);
       if (match) {
         opt.removeAttribute('aria-hidden');
-        opt.style.display = '';
       } else {
         opt.setAttribute('aria-hidden', 'true');
-        opt.style.display = 'none';
       }
     });
   }
@@ -2866,7 +2864,7 @@ class Editor {
 
     // Update rotation buttons
     document.querySelectorAll('.rot-btn').forEach(btn => {
-      btn.setAttribute('aria-pressed', parseInt(btn.dataset.rotation, 10) === (ov.rotation || 0) ? 'true' : 'false');
+      btn.setAttribute('aria-checked', parseInt(btn.dataset.rotation, 10) === (ov.rotation || 0) ? 'true' : 'false');
     });
 
     // Update opacity slider
@@ -2877,7 +2875,7 @@ class Editor {
 
     // Update size buttons
     document.querySelectorAll('.size-sel-btn').forEach(btn => {
-      btn.setAttribute('aria-pressed', btn.dataset.size === (ov.size || 'medium') ? 'true' : 'false');
+      btn.setAttribute('aria-checked', btn.dataset.size === (ov.size || 'medium') ? 'true' : 'false');
     });
   }
 

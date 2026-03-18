@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="css/editor.css">
   <link rel="stylesheet" href="css/print.css">
 
-  <!-- jsPDF for future export (session 6) -->
+  <!-- jsPDF bundled locally for offline PDF export -->
   <script src="js/lib/jspdf.umd.min.js" defer></script>
 
   <!-- Game scripts -->
@@ -37,6 +37,7 @@
 <body>
   <!-- Screen reader announcements -->
   <div id="status-message" role="status"></div>
+  <div id="error-message" role="alert"></div>
 
   <!-- ==================== TITLE SCREEN ==================== -->
   <div id="title-screen" class="screen">
@@ -61,7 +62,7 @@
     <div class="mymaps-container">
       <h2 class="mymaps-heading">My Maps</h2>
       <div id="mymaps-warning" class="mymaps-warning hidden" role="status"></div>
-      <div id="mymaps-grid" class="mymaps-grid" aria-label="Saved maps"></div>
+      <div id="mymaps-grid" class="mymaps-grid" role="group" aria-label="Saved maps"></div>
       <div id="mymaps-empty" class="mymaps-empty hidden">
         <p>No maps yet!</p>
         <p>Create your first map to see it here.</p>
@@ -302,23 +303,23 @@
               <div class="overlay-list" id="overlay-list" role="list" aria-label="Overlays on this cell"></div>
             </div>
             <div class="properties-controls" id="properties-controls">
-              <div class="overlay-rotation" role="group" aria-label="Overlay rotation">
+              <div class="overlay-rotation" role="radiogroup" aria-label="Overlay rotation">
                 <span class="control-label">Rotate:</span>
-                <button class="rot-btn" data-rotation="0" aria-label="Rotation 0 degrees" aria-pressed="true">0&deg;</button>
-                <button class="rot-btn" data-rotation="90" aria-label="Rotation 90 degrees" aria-pressed="false">90&deg;</button>
-                <button class="rot-btn" data-rotation="180" aria-label="Rotation 180 degrees" aria-pressed="false">180&deg;</button>
-                <button class="rot-btn" data-rotation="270" aria-label="Rotation 270 degrees" aria-pressed="false">270&deg;</button>
+                <button class="rot-btn" role="radio" data-rotation="0" aria-label="Rotation 0 degrees" aria-checked="true">0&deg;</button>
+                <button class="rot-btn" role="radio" data-rotation="90" aria-label="Rotation 90 degrees" aria-checked="false">90&deg;</button>
+                <button class="rot-btn" role="radio" data-rotation="180" aria-label="Rotation 180 degrees" aria-checked="false">180&deg;</button>
+                <button class="rot-btn" role="radio" data-rotation="270" aria-label="Rotation 270 degrees" aria-checked="false">270&deg;</button>
               </div>
               <div class="overlay-opacity" role="group" aria-label="Overlay opacity">
                 <label class="control-label" for="opacity-slider">Opacity:</label>
                 <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="1" aria-label="Overlay opacity">
                 <span id="opacity-value">1.0</span>
               </div>
-              <div class="overlay-size" role="group" aria-label="Overlay size">
+              <div class="overlay-size" role="radiogroup" aria-label="Overlay size">
                 <span class="control-label">Size:</span>
-                <button class="size-sel-btn" data-size="small" aria-label="Small overlay" aria-pressed="false">S</button>
-                <button class="size-sel-btn" data-size="medium" aria-label="Medium overlay" aria-pressed="true">M</button>
-                <button class="size-sel-btn" data-size="large" aria-label="Large overlay" aria-pressed="false">L</button>
+                <button class="size-sel-btn" role="radio" data-size="small" aria-label="Small overlay" aria-checked="false">S</button>
+                <button class="size-sel-btn" role="radio" data-size="medium" aria-label="Medium overlay" aria-checked="true">M</button>
+                <button class="size-sel-btn" role="radio" data-size="large" aria-label="Large overlay" aria-checked="false">L</button>
               </div>
               <button id="btn-clear-overlays" aria-label="Clear all overlays from this cell">Clear Overlays</button>
             </div>
