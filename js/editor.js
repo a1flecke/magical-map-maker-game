@@ -38,6 +38,11 @@ class Editor {
     this._showGrid = true;
     this._fillMode = false;
     this._panMode = false;
+    this._eraserMode = false;
+
+    // Drag-paint stroke batching for undo
+    this._paintStroke = null; // Array of {col, row, cellType, oldBase, newBase} during drag
+    this._eraseStroke = null; // Array of {col, row, cellType, oldBase, oldOverlays} during drag
 
     this._fillHighlight = null;
     this._fillHighlightTimer = null;
@@ -65,6 +70,8 @@ class Editor {
     this._palette = null;
     this._input = null;
     this._animation = null;
+    this._history = null;
+    this._sound = null;
   }
 
   async init() {
@@ -113,6 +120,19 @@ class Editor {
     // Animation manager
     this._animation = new AnimationManager();
 
+    // History (undo/redo)
+    this._history = new HistoryManager();
+    this._history.onStateChange = (canUndo, canRedo) => {
+      const undoBtn = document.getElementById('btn-undo');
+      const redoBtn = document.getElementById('btn-redo');
+      if (undoBtn) undoBtn.disabled = !canUndo;
+      if (redoBtn) redoBtn.disabled = !canRedo;
+    };
+
+    // Sound effects
+    this._sound = new SoundManager();
+    this._sound.init();
+
     // Palette
     const tileIds = this._themeManager.getAvailableTiles(this._themeId);
     this._palette = new Palette(this._paletteEl, this._tileRenderer, (tileId) => {
@@ -154,7 +174,8 @@ class Editor {
       onPan: (dx, dy) => this._handlePan(dx, dy),
       onPinchZoom: (newZoom, cx, cy) => this._handlePinchZoom(newZoom, cx, cy),
       onWheelZoom: (delta, cx, cy) => this._handleWheelZoom(delta, cx, cy),
-      onHoverCell: (cell) => this._handleHoverCell(cell)
+      onHoverCell: (cell) => this._handleHoverCell(cell),
+      onDragEnd: () => this._handleDragEnd()
     });
 
     // Toolbar
@@ -248,6 +269,8 @@ class Editor {
       clearTimeout(this._fillHighlightTimer);
       this._fillHighlightTimer = null;
     }
+    if (this._history) { this._history.destroy(); this._history = null; }
+    if (this._sound) { this._sound.destroy(); this._sound = null; }
   }
 
   /* ---- RAF Loop (single owner) ---- */
@@ -1577,7 +1600,6 @@ class Editor {
     const gridBtn = document.getElementById('btn-grid-toggle');
     if (gridBtn) {
       gridBtn.addEventListener('click', () => this._toggleGrid());
-      gridBtn.classList.toggle('active', this._showGrid);
     }
 
     const fillBtn = document.getElementById('btn-fill-tool');
@@ -1616,19 +1638,60 @@ class Editor {
     });
 
     this._updateBrushUI();
+
+    // Undo / Redo
+    const undoBtn = document.getElementById('btn-undo');
+    if (undoBtn) undoBtn.addEventListener('click', () => this._doUndo());
+    const redoBtn = document.getElementById('btn-redo');
+    if (redoBtn) redoBtn.addEventListener('click', () => this._doRedo());
+
+    // Eraser
+    const eraserBtn = document.getElementById('btn-eraser');
+    if (eraserBtn) eraserBtn.addEventListener('click', () => this._toggleEraser());
+
+    // Sound toggle
+    const soundBtn = document.getElementById('btn-sound-toggle');
+    if (soundBtn) {
+      soundBtn.setAttribute('aria-pressed', this._sound.enabled ? 'true' : 'false');
+      soundBtn.addEventListener('click', () => this._toggleSound());
+    }
+
+    // Clear All
+    const clearAllBtn = document.getElementById('btn-clear-all');
+    if (clearAllBtn) clearAllBtn.addEventListener('click', () => this._showClearAllDialog());
+
+    // Shortcuts
+    const shortcutsBtn = document.getElementById('btn-shortcuts');
+    if (shortcutsBtn) shortcutsBtn.addEventListener('click', () => this._showShortcuts());
+
+    // Clear All dialog buttons
+    const clearAllConfirm = document.getElementById('btn-clear-all-confirm');
+    if (clearAllConfirm) clearAllConfirm.addEventListener('click', () => this._doClearAll());
+    const clearAllCancel = document.getElementById('btn-clear-all-cancel');
+    if (clearAllCancel) clearAllCancel.addEventListener('click', () => this._closeClearAllDialog());
+
+    // Shortcuts dialog close
+    const shortcutsClose = document.getElementById('btn-shortcuts-close');
+    if (shortcutsClose) shortcutsClose.addEventListener('click', () => this._closeShortcuts());
   }
 
   _toggleGrid() {
     this._showGrid = !this._showGrid;
     const gridBtn = document.getElementById('btn-grid-toggle');
-    if (gridBtn) gridBtn.classList.toggle('active', this._showGrid);
+    if (gridBtn) {
+      gridBtn.setAttribute('aria-pressed', this._showGrid ? 'true' : 'false');
+    }
     this._dirty = true;
+    this._app.announce(this._showGrid ? 'Grid on' : 'Grid off');
   }
 
   _toggleFillMode() {
     this._fillMode = !this._fillMode;
+    if (this._fillMode && this._eraserMode) this._eraserMode = false;
     const fillBtn = document.getElementById('btn-fill-tool');
-    if (fillBtn) fillBtn.classList.toggle('active', this._fillMode);
+    if (fillBtn) fillBtn.setAttribute('aria-pressed', this._fillMode ? 'true' : 'false');
+    const eraserBtn = document.getElementById('btn-eraser');
+    if (eraserBtn) eraserBtn.setAttribute('aria-pressed', 'false');
     if (this._selectedTile) {
       this._state = this._fillMode ? EditorState.FILL_MODE : EditorState.TILE_SELECTED;
     }
@@ -1719,6 +1782,12 @@ class Editor {
     if (this._panMode) return;
     this._animation.noteInteraction();
 
+    // Eraser mode
+    if (this._eraserMode) {
+      this._eraseCell(col, row, cellType);
+      return;
+    }
+
     if (this._state === EditorState.FILL_MODE && this._selectedTile) {
       this._doFill(col, row, cellType);
       return;
@@ -1763,73 +1832,108 @@ class Editor {
   }
 
   _handleCellDrag(col, row, cellType) {
-    if (this._panMode || !this._selectedTile || this._fillMode) return;
+    if (this._panMode) return;
     this._animation.noteInteraction();
-    this._paintBrush(col, row, cellType);
+
+    if (this._eraserMode) {
+      this._eraseCellDrag(col, row, cellType);
+      return;
+    }
+
+    if (!this._selectedTile || this._fillMode) return;
+    this._paintBrushDrag(col, row, cellType);
   }
 
+  /** Paint brush (tap) — records a single undo command */
   _paintBrush(col, row, cellType) {
-    // For non-square grids, brush size > 1 paints neighbors
-    if (this._brushSize === 1 || this._shape !== 'square') {
-      let changed = false;
-      if (this._grid.setBase(col, row, this._selectedTile, cellType)) {
-        changed = true;
-        this._tileRenderer.markDirty(this._grid, col, row, cellType);
-      }
+    const cells = this._collectBrushCells(col, row, cellType);
+    if (cells.length === 0) return;
 
-      // For brush > 1 on non-square, paint immediate neighbors
+    const cmd = cmdPaintTiles(this._grid, cells, this._tileRenderer);
+    this._history.push(cmd);
+    this._dirty = true;
+    this._markSaveDirty();
+    this._sound.playPlace();
+  }
+
+  /** Paint brush (drag) — batches into a stroke */
+  _paintBrushDrag(col, row, cellType) {
+    const cells = this._collectBrushCells(col, row, cellType);
+    if (cells.length === 0) return;
+
+    if (!this._paintStroke) this._paintStroke = [];
+    this._paintStroke.push(...cells);
+    this._dirty = true;
+    this._markSaveDirty();
+  }
+
+  /** Collect cells for brush paint, recording old base for undo */
+  _collectBrushCells(col, row, cellType) {
+    const results = [];
+    const tile = this._selectedTile;
+
+    const tryPaint = (c, r, ct) => {
+      const cell = this._grid.getCell(c, r, ct);
+      if (!cell) return;
+      const oldBase = cell.base;
+      if (oldBase === tile) return; // No change
+      if (this._grid.setBase(c, r, tile, ct)) {
+        this._tileRenderer.markDirty(this._grid, c, r, ct);
+        results.push({ col: c, row: r, cellType: ct, oldBase, newBase: tile });
+      }
+    };
+
+    if (this._brushSize === 1 || this._shape !== 'square') {
+      tryPaint(col, row, cellType);
+
       if (this._brushSize >= 2 && this._shape !== 'square') {
         const neighbors = this._grid.getNeighbors(col, row, cellType);
-        for (const n of neighbors) {
-          if (this._grid.setBase(n.col, n.row, this._selectedTile, n.cellType)) {
-            changed = true;
-            this._tileRenderer.markDirty(this._grid, n.col, n.row, n.cellType);
-          }
-        }
+        for (const n of neighbors) tryPaint(n.col, n.row, n.cellType);
       }
       if (this._brushSize >= 3 && this._shape !== 'square') {
         const neighbors = this._grid.getNeighbors(col, row, cellType);
         for (const n of neighbors) {
           const n2 = this._grid.getNeighbors(n.col, n.row, n.cellType);
-          for (const nn of n2) {
-            if (this._grid.setBase(nn.col, nn.row, this._selectedTile, nn.cellType)) {
-              changed = true;
-              this._tileRenderer.markDirty(this._grid, nn.col, nn.row, nn.cellType);
-            }
-          }
+          for (const nn of n2) tryPaint(nn.col, nn.row, nn.cellType);
         }
       }
-      if (changed) this._dirty = true;
-      return;
+    } else {
+      // Square grid: standard NxN brush
+      const half = Math.floor(this._brushSize / 2);
+      for (let dr = -half; dr < this._brushSize - half; dr++) {
+        for (let dc = -half; dc < this._brushSize - half; dc++) {
+          tryPaint(col + dc, row + dr, undefined);
+        }
+      }
     }
 
-    // Square grid: standard NxN brush
-    const half = Math.floor(this._brushSize / 2);
-    let changed = false;
-    for (let dr = -half; dr < this._brushSize - half; dr++) {
-      for (let dc = -half; dc < this._brushSize - half; dc++) {
-        if (this._grid.setBase(col + dc, row + dr, this._selectedTile)) {
-          changed = true;
-          this._tileRenderer.markDirty(this._grid, col + dc, row + dr);
-        }
-      }
-    }
-    if (changed) {
-      this._dirty = true;
-      this._markSaveDirty();
-    }
+    return results;
   }
 
   _doFill(col, row, cellType) {
+    // Capture old base before fill (all cells in the fill region share the same base)
+    const startCell = this._grid.getCell(col, row, cellType);
+    const oldBase = startCell ? startCell.base : null;
+
     const filledCells = this._grid.floodFill(col, row, this._selectedTile, 500, cellType);
     if (filledCells.length > 0) {
       this._markSaveDirty();
+
+      // Build undo data
+      const undoCells = filledCells.map(c => ({
+        col: c.col, row: c.row, cellType: c.cellType,
+        oldBase: oldBase, newBase: this._selectedTile
+      }));
+      const cmd = cmdFillTiles(this._grid, undoCells, this._tileRenderer);
+      this._history.push(cmd);
+
       // Mark all filled cells + their neighbors dirty
       for (const c of filledCells) {
         this._tileRenderer.markDirty(this._grid, c.col, c.row, c.cellType);
       }
       this._dirty = true;
       this._app.announce('Filled ' + filledCells.length + ' cells');
+      this._sound.playCascade();
 
       this._fillHighlight = filledCells;
       if (this._fillHighlightTimer) clearTimeout(this._fillHighlightTimer);
@@ -2039,6 +2143,17 @@ class Editor {
   /* ---- Keyboard ---- */
   _handleKeyAction(action) {
     this._animation.noteInteraction();
+
+    // Quick tile selection (1-9)
+    if (action.startsWith('quick-tile-')) {
+      const idx = parseInt(action.split('-')[2]) - 1;
+      const tiles = this._paletteEl.querySelectorAll('.palette-list [role="option"]');
+      if (tiles[idx]) {
+        tiles[idx].click();
+      }
+      return;
+    }
+
     switch (action) {
       case 'escape':
         this._selectedTile = null;
@@ -2050,15 +2165,18 @@ class Editor {
         this._clearOverlaySelection();
         this._updatePropertiesPanel();
         if (this._panMode) this._togglePanMode();
+        if (this._eraserMode) this._toggleEraser();
         this._dirty = true;
         this._app.announce('Selection cleared');
         break;
+      case 'undo': this._doUndo(); break;
+      case 'redo': this._doRedo(); break;
+      case 'eraser-toggle': this._toggleEraser(); break;
       case 'fill-toggle': this._toggleFillMode(); break;
       case 'grid-toggle': this._toggleGrid(); break;
       case 'pan-toggle': this._togglePanMode(); break;
-      case 'brush-1': this._setBrushSize(1); break;
-      case 'brush-2': this._setBrushSize(2); break;
-      case 'brush-3': this._setBrushSize(3); break;
+      case 'rotate-overlay': this._rotateSelectedOverlay(); break;
+      case 'show-shortcuts': this._showShortcuts(); break;
       case 'zoom-in':
         this._camera.zoomIn(this._canvasWidth(), this._canvasHeight());
         this._dirty = true;
@@ -2571,14 +2689,19 @@ class Editor {
       return;
     }
 
-    cell.overlays.push({
+    const overlay = {
       id: this._selectedOverlay,
       rotation: 0,
       opacity: 1.0,
       size: 'medium'
-    });
+    };
+
+    const cmd = cmdPlaceOverlay(this._grid, col, row, cellType, overlay);
+    cmd.apply();
+    this._history.push(cmd);
     this._dirty = true;
     this._markSaveDirty();
+    this._sound.playChime();
     let placedName;
     if (Editor.isRealmBrewOverlay(this._selectedOverlay)) {
       const rbInfo = Editor.parseRealmBrewOverlayId(this._selectedOverlay);
@@ -2591,18 +2714,25 @@ class Editor {
 
   _deleteLastOverlay() {
     if (this._state !== EditorState.CELL_SELECTED || !this._selectedCell) return;
-    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
+    const { col, row, cellType } = this._selectedCell;
+    const cell = this._grid.getCell(col, row, cellType);
     if (!cell || !cell.overlays || cell.overlays.length === 0) return;
 
     // Remove selected overlay or last one
+    let idx;
     if (this._selectedCellOverlayIndex >= 0 && this._selectedCellOverlayIndex < cell.overlays.length) {
-      cell.overlays.splice(this._selectedCellOverlayIndex, 1);
-      this._selectedCellOverlayIndex = -1;
+      idx = this._selectedCellOverlayIndex;
     } else {
-      cell.overlays.pop();
+      idx = cell.overlays.length - 1;
     }
+    const removedOverlay = { ...cell.overlays[idx] };
+    const cmd = cmdRemoveOverlay(this._grid, col, row, cellType, idx, removedOverlay);
+    cmd.apply();
+    this._history.push(cmd);
+    this._selectedCellOverlayIndex = -1;
     this._markSaveDirty();
     this._dirty = true;
+    this._sound.playErase();
     this._updatePropertiesPanel();
     this._app.announce('Overlay removed');
   }
@@ -2753,8 +2883,13 @@ class Editor {
 
   _setOverlayRotation(rotation) {
     const ov = this._getSelectedCellOverlay();
-    if (!ov) return;
-    ov.rotation = rotation;
+    if (!ov || !this._selectedCell) return;
+    const oldRot = ov.rotation || 0;
+    if (oldRot === rotation) return;
+    const { col, row, cellType } = this._selectedCell;
+    const cmd = cmdRotateOverlay(this._grid, col, row, cellType, this._selectedCellOverlayIndex, oldRot, rotation);
+    cmd.apply();
+    this._history.push(cmd);
     this._overlayRenderer.clearCache();
     this._dirty = true;
     this._markSaveDirty();
@@ -2798,5 +2933,251 @@ class Editor {
     this._markSaveDirty();
     this._updatePropertiesPanel();
     this._app.announce('All overlays cleared');
+  }
+
+  /* ---- Undo / Redo ---- */
+
+  _doUndo() {
+    const cmd = this._history.undo();
+    if (cmd) {
+      this._dirty = true;
+      this._markSaveDirty();
+      this._sound.playClick();
+      this._app.announce('Undo');
+    }
+  }
+
+  _doRedo() {
+    const cmd = this._history.redo();
+    if (cmd) {
+      this._dirty = true;
+      this._markSaveDirty();
+      this._sound.playClick();
+      this._app.announce('Redo');
+    }
+  }
+
+  /* ---- Eraser ---- */
+
+  _toggleEraser() {
+    this._eraserMode = !this._eraserMode;
+    if (this._eraserMode && this._fillMode) this._fillMode = false;
+    const eraserBtn = document.getElementById('btn-eraser');
+    if (eraserBtn) eraserBtn.setAttribute('aria-pressed', this._eraserMode ? 'true' : 'false');
+    const fillBtn = document.getElementById('btn-fill-tool');
+    if (fillBtn) fillBtn.setAttribute('aria-pressed', 'false');
+    this._app.announce(this._eraserMode ? 'Eraser on' : 'Eraser off');
+  }
+
+  _eraseCell(col, row, cellType) {
+    const cell = this._grid.getCell(col, row, cellType);
+    if (!cell) return;
+    if (!cell.base && (!cell.overlays || cell.overlays.length === 0)) return;
+
+    const oldBase = cell.base;
+    const oldOverlays = cell.overlays ? cell.overlays.map(o => ({ ...o })) : [];
+
+    const cmd = cmdClearCell(this._grid, col, row, cellType, oldBase, oldOverlays, this._tileRenderer);
+    cmd.apply();
+    this._history.push(cmd);
+    this._dirty = true;
+    this._markSaveDirty();
+    this._sound.playErase();
+  }
+
+  _eraseCellDrag(col, row, cellType) {
+    const cell = this._grid.getCell(col, row, cellType);
+    if (!cell) return;
+    if (!cell.base && (!cell.overlays || cell.overlays.length === 0)) return;
+
+    const oldBase = cell.base;
+    const oldOverlays = cell.overlays ? cell.overlays.map(o => ({ ...o })) : [];
+
+    // Clear the cell immediately
+    this._grid.setBase(col, row, null, cellType);
+    if (cell.overlays) cell.overlays = [];
+    this._tileRenderer.markDirty(this._grid, col, row, cellType);
+
+    if (!this._eraseStroke) this._eraseStroke = [];
+    this._eraseStroke.push({ col, row, cellType, oldBase, oldOverlays });
+    this._dirty = true;
+    this._markSaveDirty();
+  }
+
+  /* ---- Drag End (commit batched strokes) ---- */
+
+  _handleDragEnd() {
+    // Commit paint stroke
+    if (this._paintStroke && this._paintStroke.length > 0) {
+      const cmd = cmdPaintTiles(this._grid, this._paintStroke, this._tileRenderer);
+      this._history.push(cmd);
+      this._sound.playPlace();
+    }
+    this._paintStroke = null;
+
+    // Commit erase stroke
+    if (this._eraseStroke && this._eraseStroke.length > 0) {
+      const cmd = cmdEraseCells(this._grid, this._eraseStroke, this._tileRenderer);
+      this._history.push(cmd);
+      this._sound.playErase();
+    }
+    this._eraseStroke = null;
+  }
+
+  /* ---- Rotate Selected Overlay ---- */
+
+  _rotateSelectedOverlay() {
+    if (!this._selectedCell || this._selectedCellOverlayIndex < 0) return;
+    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
+    if (!cell || !cell.overlays || this._selectedCellOverlayIndex >= cell.overlays.length) return;
+    const ov = cell.overlays[this._selectedCellOverlayIndex];
+    const oldRot = ov.rotation || 0;
+    const newRot = (oldRot + 90) % 360;
+
+    const cmd = cmdRotateOverlay(
+      this._grid, this._selectedCell.col, this._selectedCell.row,
+      this._selectedCell.cellType, this._selectedCellOverlayIndex, oldRot, newRot
+    );
+    cmd.apply();
+    this._history.push(cmd);
+    this._overlayRenderer.clearCache();
+    this._dirty = true;
+    this._markSaveDirty();
+    this._updatePropertyControlValues();
+    this._app.announce('Rotated to ' + newRot + ' degrees');
+  }
+
+  /* ---- Sound Toggle ---- */
+
+  _toggleSound() {
+    this._sound.enabled = !this._sound.enabled;
+    const btn = document.getElementById('btn-sound-toggle');
+    if (btn) btn.setAttribute('aria-pressed', this._sound.enabled ? 'true' : 'false');
+    this._app.announce(this._sound.enabled ? 'Sound on' : 'Sound off');
+  }
+
+  /* ---- Clear All ---- */
+
+  _showClearAllDialog() {
+    const dialog = document.getElementById('clear-all-dialog');
+    if (!dialog) return;
+    this._clearAllPrevFocus = document.activeElement;
+    dialog.classList.remove('hidden');
+    dialog.setAttribute('aria-hidden', 'false');
+    const confirmBtn = document.getElementById('btn-clear-all-confirm');
+    if (confirmBtn) confirmBtn.focus();
+
+    // Focus trap + Escape
+    this._clearAllTrapHandler = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        this._closeClearAllDialog();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = dialog.querySelectorAll('button:not([disabled])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    dialog.addEventListener('keydown', this._clearAllTrapHandler);
+  }
+
+  _closeClearAllDialog() {
+    const dialog = document.getElementById('clear-all-dialog');
+    if (!dialog) return;
+    dialog.classList.add('hidden');
+    dialog.setAttribute('aria-hidden', 'true');
+    if (this._clearAllTrapHandler) {
+      dialog.removeEventListener('keydown', this._clearAllTrapHandler);
+      this._clearAllTrapHandler = null;
+    }
+    if (this._clearAllPrevFocus) {
+      this._clearAllPrevFocus.focus();
+      this._clearAllPrevFocus = null;
+    }
+  }
+
+  _doClearAll() {
+    this._closeClearAllDialog();
+
+    // Snapshot current state for undo
+    const savedState = [];
+    this._grid.forEachCell((col, row, cell, cellType) => {
+      if (cell.base || (cell.overlays && cell.overlays.length > 0)) {
+        savedState.push({
+          col, row, cellType,
+          oldBase: cell.base,
+          oldOverlays: cell.overlays ? cell.overlays.map(o => ({ ...o })) : []
+        });
+      }
+    });
+
+    if (savedState.length === 0) return;
+
+    const cmd = cmdClearAll(this._grid, savedState, this._tileRenderer);
+    cmd.apply();
+    this._history.push(cmd);
+    this._dirty = true;
+    this._markSaveDirty();
+    this._app.announce('All tiles cleared');
+  }
+
+  /* ---- Keyboard Shortcuts Modal ---- */
+
+  _showShortcuts() {
+    const dialog = document.getElementById('shortcuts-dialog');
+    if (!dialog) return;
+    this._shortcutsPrevFocus = document.activeElement;
+    dialog.classList.remove('hidden');
+    dialog.setAttribute('aria-hidden', 'false');
+    const closeBtn = document.getElementById('btn-shortcuts-close');
+    if (closeBtn) closeBtn.focus();
+
+    // Focus trap + Escape
+    this._shortcutsTrapHandler = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        this._closeShortcuts();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = dialog.querySelectorAll('button:not([disabled])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    dialog.addEventListener('keydown', this._shortcutsTrapHandler);
+  }
+
+  _closeShortcuts() {
+    const dialog = document.getElementById('shortcuts-dialog');
+    if (!dialog) return;
+    dialog.classList.add('hidden');
+    dialog.setAttribute('aria-hidden', 'true');
+    if (this._shortcutsTrapHandler) {
+      dialog.removeEventListener('keydown', this._shortcutsTrapHandler);
+      this._shortcutsTrapHandler = null;
+    }
+    if (this._shortcutsPrevFocus) {
+      this._shortcutsPrevFocus.focus();
+      this._shortcutsPrevFocus = null;
+    }
   }
 }

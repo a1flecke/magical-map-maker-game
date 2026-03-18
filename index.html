@@ -28,6 +28,8 @@
   <script src="js/input.js" defer></script>
   <script src="js/storage.js" defer></script>
   <script src="js/export.js" defer></script>
+  <script src="js/history.js" defer></script>
+  <script src="js/sound.js" defer></script>
   <script src="js/realm-brew.js" defer></script>
   <script src="js/editor.js" defer></script>
   <script src="js/app.js" defer></script>
@@ -236,23 +238,31 @@
         <button id="btn-edit-name" class="edit-name-btn" aria-label="Edit map name">&#9998;</button>
       </div>
       <div class="toolbar-right">
-        <button id="btn-save" aria-label="Save map">Save</button>
-        <button id="btn-export" aria-label="Export map">Export</button>
-        <button id="btn-pan-mode" aria-label="Toggle pan mode" aria-pressed="false">Pan</button>
-        <button id="btn-grid-toggle" aria-label="Toggle grid lines" aria-pressed="true">Grid</button>
+        <button id="btn-save" aria-label="Save map (Ctrl+S)" title="Save (Ctrl+S)">Save</button>
+        <button id="btn-export" aria-label="Export map" title="Export">Export</button>
+        <div class="toolbar-separator" aria-hidden="true"></div>
+        <button id="btn-undo" aria-label="Undo (Ctrl+Z)" title="Undo (Ctrl+Z)" disabled>Undo</button>
+        <button id="btn-redo" aria-label="Redo (Ctrl+Shift+Z)" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+        <div class="toolbar-separator" aria-hidden="true"></div>
+        <button id="btn-eraser" aria-label="Toggle eraser (E)" title="Eraser (E)" aria-pressed="false">Eraser</button>
+        <button id="btn-fill-tool" aria-label="Toggle fill tool (F)" title="Fill (F)" aria-pressed="false">Fill</button>
+        <button id="btn-pan-mode" aria-label="Toggle pan mode (P)" title="Pan (P)" aria-pressed="false">Pan</button>
         <div class="brush-group" role="group" aria-label="Brush size">
           <span class="brush-label" aria-hidden="true">Brush:</span>
           <button class="brush-btn" data-brush="1" aria-label="Brush size 1" aria-pressed="true">1</button>
           <button class="brush-btn" data-brush="2" aria-label="Brush size 2 by 2" aria-pressed="false">2</button>
           <button class="brush-btn" data-brush="3" aria-label="Brush size 3 by 3" aria-pressed="false">3</button>
         </div>
-        <button id="btn-fill-tool" aria-label="Toggle fill tool" aria-pressed="false">Fill</button>
-        <button id="btn-map-life" aria-label="Map Life animation mode. Click to cycle.">Life: Full</button>
+        <button id="btn-grid-toggle" aria-label="Toggle grid lines (G)" title="Grid (G)" aria-pressed="true">Grid</button>
+        <button id="btn-map-life" aria-label="Map Life animation mode. Click to cycle." title="Animation Mode">Life: Full</button>
         <div class="zoom-group" role="group" aria-label="Zoom controls">
-          <button id="btn-zoom-out" aria-label="Zoom out">&minus;</button>
-          <button id="btn-zoom-fit" aria-label="Fit map to screen">Fit</button>
-          <button id="btn-zoom-in" aria-label="Zoom in">+</button>
+          <button id="btn-zoom-out" aria-label="Zoom out" title="Zoom Out (-)">&#8722;</button>
+          <button id="btn-zoom-fit" aria-label="Fit map to screen" title="Fit (0)">Fit</button>
+          <button id="btn-zoom-in" aria-label="Zoom in" title="Zoom In (+)">+</button>
         </div>
+        <button id="btn-sound-toggle" aria-label="Toggle sound effects" aria-pressed="false" title="Sound">Sound</button>
+        <button id="btn-clear-all" aria-label="Clear all tiles" title="Clear All">Clear</button>
+        <button id="btn-shortcuts" aria-label="Show keyboard shortcuts (?)" title="Shortcuts (?)">?</button>
         <span id="coord-display" class="coord-display" aria-hidden="true"></span>
       </div>
     </div>
@@ -379,6 +389,53 @@
           <button id="btn-export-cancel">Cancel</button>
           <button id="btn-export-confirm" class="primary">Export</button>
           <button id="btn-print" aria-label="Print map">Print</button>
+        </div>
+      </div>
+    </div>
+    <!-- Clear All confirmation dialog -->
+    <div id="clear-all-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="clear-all-title">
+        <h3 id="clear-all-title">Clear All Tiles</h3>
+        <p id="clear-all-message">Are you sure you want to clear all tiles and overlays from the map? This can be undone.</p>
+        <div class="modal-buttons">
+          <button id="btn-clear-all-cancel">Cancel</button>
+          <button id="btn-clear-all-confirm" class="danger">Clear All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard shortcuts dialog -->
+    <div id="shortcuts-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal shortcuts-modal" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+        <h3 id="shortcuts-title">Keyboard Shortcuts</h3>
+        <div class="shortcuts-grid">
+          <div class="shortcuts-section">
+            <h4>Editing</h4>
+            <div class="shortcut-row"><kbd>Ctrl+Z</kbd><span>Undo</span></div>
+            <div class="shortcut-row"><kbd>Ctrl+Shift+Z</kbd><span>Redo</span></div>
+            <div class="shortcut-row"><kbd>Ctrl+S</kbd><span>Save</span></div>
+            <div class="shortcut-row"><kbd>Delete</kbd><span>Remove overlay</span></div>
+            <div class="shortcut-row"><kbd>1-9</kbd><span>Select palette tile</span></div>
+          </div>
+          <div class="shortcuts-section">
+            <h4>Tools</h4>
+            <div class="shortcut-row"><kbd>E</kbd><span>Eraser</span></div>
+            <div class="shortcut-row"><kbd>F</kbd><span>Fill tool</span></div>
+            <div class="shortcut-row"><kbd>P</kbd><span>Pan mode</span></div>
+            <div class="shortcut-row"><kbd>G</kbd><span>Toggle grid</span></div>
+            <div class="shortcut-row"><kbd>R</kbd><span>Rotate overlay</span></div>
+          </div>
+          <div class="shortcuts-section">
+            <h4>Navigation</h4>
+            <div class="shortcut-row"><kbd>+</kbd><span>Zoom in</span></div>
+            <div class="shortcut-row"><kbd>-</kbd><span>Zoom out</span></div>
+            <div class="shortcut-row"><kbd>0</kbd><span>Fit to screen</span></div>
+            <div class="shortcut-row"><kbd>Escape</kbd><span>Deselect / cancel</span></div>
+            <div class="shortcut-row"><kbd>?</kbd><span>This help</span></div>
+          </div>
+        </div>
+        <div class="modal-buttons">
+          <button id="btn-shortcuts-close" class="primary">Close</button>
         </div>
       </div>
     </div>

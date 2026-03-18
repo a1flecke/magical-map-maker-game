@@ -532,6 +532,65 @@
   min-height: 32px !important;
 }
 
+/* Toolbar separators */
+.toolbar-separator {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+/* Disabled toolbar buttons */
+.editor-toolbar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Active tool indicator */
+.editor-toolbar button[aria-pressed="true"] {
+  background: rgba(74, 124, 89, 0.15);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  border-color: var(--color-accent);
+}
+
+/* Keyboard shortcuts modal */
+.shortcuts-modal {
+  max-width: 600px;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.shortcuts-section h4 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-accent);
+}
+
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 0.875rem;
+}
+
+.shortcut-row kbd {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  min-width: 28px;
+  text-align: center;
+}
+
 /* Utility */
 .hidden {
   display: none !important;

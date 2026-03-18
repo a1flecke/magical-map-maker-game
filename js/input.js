@@ -12,6 +12,7 @@ class InputHandler {
     this._onPinchZoom = options.onPinchZoom || null;
     this._onWheelZoom = options.onWheelZoom || null;
     this._onHoverCell = options.onHoverCell || null;
+    this._onDragEnd = options.onDragEnd || null;
 
     this._panMode = false;
 
@@ -219,6 +220,10 @@ class InputHandler {
       }
     }
 
+    if (this._isDragging && this._onDragEnd) {
+      this._onDragEnd();
+    }
+
     this._isDragging = false;
     this._isPanning = false;
     this._lastDragCell = null;
@@ -227,6 +232,9 @@ class InputHandler {
   _onPointerCancel(e) {
     this._activePointers.delete(e.pointerId);
     try { this._canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+    if (this._isDragging && this._onDragEnd) {
+      this._onDragEnd();
+    }
     this._isDragging = false;
     this._isPanning = false;
     this._dragCancelled = false;
@@ -250,18 +258,44 @@ class InputHandler {
     if (this._destroyed || !this._onKeyAction) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+    // Cmd/Ctrl+Z = undo, Cmd/Ctrl+Shift+Z = redo
+    if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      this._onKeyAction('undo');
+      return;
+    }
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'Z' || (e.key === 'z' && e.shiftKey))) {
+      e.preventDefault();
+      this._onKeyAction('redo');
+      return;
+    }
+
+    // Don't process other shortcuts if modifier keys are held
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
     switch (e.key) {
       case 'Escape': this._onKeyAction('escape'); break;
+      case 'e': case 'E': this._onKeyAction('eraser-toggle'); break;
       case 'f': case 'F': this._onKeyAction('fill-toggle'); break;
       case 'g': case 'G': this._onKeyAction('grid-toggle'); break;
       case 'p': case 'P': this._onKeyAction('pan-toggle'); break;
-      case '1': this._onKeyAction('brush-1'); break;
-      case '2': this._onKeyAction('brush-2'); break;
-      case '3': this._onKeyAction('brush-3'); break;
+      case 'r': case 'R': this._onKeyAction('rotate-overlay'); break;
+      case '1': this._onKeyAction('quick-tile-1'); break;
+      case '2': this._onKeyAction('quick-tile-2'); break;
+      case '3': this._onKeyAction('quick-tile-3'); break;
+      case '4': this._onKeyAction('quick-tile-4'); break;
+      case '5': this._onKeyAction('quick-tile-5'); break;
+      case '6': this._onKeyAction('quick-tile-6'); break;
+      case '7': this._onKeyAction('quick-tile-7'); break;
+      case '8': this._onKeyAction('quick-tile-8'); break;
+      case '9': this._onKeyAction('quick-tile-9'); break;
       case 'm': case 'M': this._onKeyAction('map-life'); break;
       case '+': case '=': this._onKeyAction('zoom-in'); break;
       case '-': case '_': this._onKeyAction('zoom-out'); break;
+      case ']': this._onKeyAction('zoom-in'); break;
+      case '[': this._onKeyAction('zoom-out'); break;
       case '0': this._onKeyAction('zoom-fit'); break;
+      case '?': this._onKeyAction('show-shortcuts'); break;
       case 'Delete': case 'Backspace': this._onKeyAction('delete'); break;
     }
   }
