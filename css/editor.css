@@ -379,6 +379,12 @@
   flex-shrink: 0;
 }
 
+@supports (padding: env(safe-area-inset-bottom)) {
+  .properties-panel {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 .properties-toggle {
   display: block;
   width: 100%;

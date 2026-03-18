@@ -77,6 +77,11 @@ class App {
       this._editor.destroy();
       this._editor = null;
     }
+    // Clean up My Maps escape handler when leaving mymaps screen
+    if (this._currentScreen === 'mymaps' && name !== 'mymaps' && this._myMapsEscHandler) {
+      document.removeEventListener('keydown', this._myMapsEscHandler);
+      this._myMapsEscHandler = null;
+    }
 
     for (const [key, el] of Object.entries(this._screens)) {
       if (key === name) {
@@ -371,8 +376,8 @@ class App {
     if (renameCancel) renameCancel.addEventListener('click', () => this._closeRenameDialog());
     if (renameConfirm) renameConfirm.addEventListener('click', () => this._confirmRename());
 
-    // Escape to close modals
-    document.addEventListener('keydown', (e) => {
+    // Escape to close modals (store reference for cleanup)
+    this._myMapsEscHandler = (e) => {
       if (e.key !== 'Escape' || this._currentScreen !== 'mymaps') return;
       const deleteDialog = document.getElementById('delete-dialog');
       const renameDialog = document.getElementById('rename-dialog');
@@ -382,7 +387,8 @@ class App {
       if (renameDialog && !renameDialog.classList.contains('hidden')) {
         this._closeRenameDialog();
       }
-    });
+    };
+    document.addEventListener('keydown', this._myMapsEscHandler);
 
     // Rename on Enter
     const renameInput = document.getElementById('rename-input');

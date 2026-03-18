@@ -216,11 +216,10 @@ class Editor {
     };
     document.addEventListener('keydown', this._boundKeyboardSave);
 
-    // Auto-save every 30 seconds (only if dirty)
+    // Auto-save every 30 seconds (only if dirty) — silent, no screen reader announcement
     this._autoSaveTimer = setInterval(() => {
       if (this._saveDirty && this._storage) {
         this.saveMap();
-        this._app.announce('Map saved');
       }
     }, 30000);
 
@@ -271,6 +270,9 @@ class Editor {
     }
     if (this._history) { this._history.destroy(); this._history = null; }
     if (this._sound) { this._sound.destroy(); this._sound = null; }
+    // Close any open modals to clean up their keydown trap handlers
+    this._closeShortcuts();
+    this._closeClearAllDialog();
   }
 
   /* ---- RAF Loop (single owner) ---- */

@@ -220,7 +220,8 @@ class HexGrid extends Grid {
   }
 
   get heightPx() {
-    return this.rowSpacing * this.rows + this.hexH;
+    // Odd columns offset down by hexH/2, so max height is rows * hexH + hexH/2
+    return this.rowSpacing * this.rows + Math.round(this.hexH / 2);
   }
 
   /** Center of hex at (col, row) */

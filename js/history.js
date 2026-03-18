@@ -75,30 +75,6 @@ class HistoryManager {
 /* ---- Command Factories ---- */
 
 /**
- * Create a PlaceTile command.
- * @param {Grid} grid
- * @param {number} col
- * @param {number} row
- * @param {string} cellType
- * @param {string|null} oldBase
- * @param {string} newBase
- * @param {TileRenderer} tileRenderer
- */
-function cmdPlaceTile(grid, col, row, cellType, oldBase, newBase, tileRenderer) {
-  return {
-    type: 'PlaceTile',
-    apply() {
-      grid.setBase(col, row, newBase, cellType);
-      if (tileRenderer) tileRenderer.markDirty(grid, col, row, cellType);
-    },
-    undo() {
-      grid.setBase(col, row, oldBase, cellType);
-      if (tileRenderer) tileRenderer.markDirty(grid, col, row, cellType);
-    }
-  };
-}
-
-/**
  * Create a PaintTiles command (batched drag-paint stroke).
  * @param {Grid} grid
  * @param {Array<{col, row, cellType, oldBase, newBase}>} cells
@@ -155,18 +131,20 @@ function cmdFillTiles(grid, cells, tileRenderer) {
  * @param {object} overlay - { id, rotation, opacity, size }
  */
 function cmdPlaceOverlay(grid, col, row, cellType, overlay) {
+  let insertedIndex = -1;
   return {
     type: 'PlaceOverlay',
     apply() {
       const cell = grid.getCell(col, row, cellType);
       if (!cell) return;
       if (!cell.overlays) cell.overlays = [];
+      insertedIndex = cell.overlays.length;
       cell.overlays.push({ ...overlay });
     },
     undo() {
       const cell = grid.getCell(col, row, cellType);
-      if (!cell || !cell.overlays) return;
-      cell.overlays.pop();
+      if (!cell || !cell.overlays || insertedIndex < 0) return;
+      cell.overlays.splice(insertedIndex, 1);
     }
   };
 }
