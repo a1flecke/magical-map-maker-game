@@ -38,9 +38,15 @@
   <script src="js/app.js" defer></script>
 </head>
 <body>
+  <!-- Skip link for keyboard users -->
+  <a href="#map-canvas" class="skip-link" id="skip-link">Skip to map editor</a>
+
   <!-- Screen reader announcements -->
   <div id="status-message" role="status"></div>
   <div id="error-message" role="alert"></div>
+
+  <!-- Toast container — individual toasts carry role="status" or role="alert" -->
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- ==================== TITLE SCREEN ==================== -->
   <div id="title-screen" class="screen">
@@ -276,7 +282,7 @@
     <!-- Editor body: sidebar + canvas + overlay palette -->
     <div class="editor-body">
       <!-- Tile palette (left sidebar) -->
-      <aside class="tile-palette" aria-label="Terrain tile palette">
+      <aside class="tile-palette" id="tile-palette-drawer" aria-label="Terrain tile palette">
         <div class="palette-header">Terrain Tiles</div>
         <div class="palette-list" role="listbox" aria-label="Available terrain tiles"></div>
       </aside>
@@ -333,7 +339,7 @@
       </div>
 
       <!-- Overlay palette (right sidebar) -->
-      <aside class="overlay-palette" aria-label="Overlay palette">
+      <aside class="overlay-palette" id="overlay-palette-drawer" aria-label="Overlay palette">
         <div class="palette-header">Overlays</div>
         <div class="overlay-search">
           <input type="text" id="overlay-search-input" placeholder="Search overlays..." aria-label="Search overlays" maxlength="50">
@@ -485,6 +491,8 @@
           </div>
           <div class="shortcuts-section">
             <h4>Navigation</h4>
+            <div class="shortcut-row"><kbd>Arrow Keys</kbd><span>Move cursor on grid</span></div>
+            <div class="shortcut-row"><kbd>Enter</kbd><span>Place tile at cursor</span></div>
             <div class="shortcut-row"><kbd>+</kbd><span>Zoom in</span></div>
             <div class="shortcut-row"><kbd>-</kbd><span>Zoom out</span></div>
             <div class="shortcut-row"><kbd>0</kbd><span>Fit to screen</span></div>

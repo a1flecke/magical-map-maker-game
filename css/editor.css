@@ -700,6 +700,115 @@
   text-align: center;
 }
 
+/* ===== RESPONSIVE: TABLET PORTRAIT (≤768px) ===== */
+/* Sidebars collapse into a tabbed bottom drawer */
+@media (max-width: 768px) {
+  .editor-body {
+    flex-direction: column;
+  }
+
+  .tile-palette,
+  .overlay-palette {
+    width: 100%;
+    min-width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    border-right: none;
+    border-left: none;
+    border-top: 2px solid var(--color-border);
+    transition: max-height 250ms ease;
+  }
+
+  .tile-palette.drawer-open,
+  .overlay-palette.drawer-open {
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+
+  /* Palette tabs at bottom */
+  .drawer-tabs {
+    display: flex;
+    border-top: 2px solid var(--color-border);
+    background: var(--color-surface);
+    z-index: 15;
+    flex-shrink: 0;
+  }
+
+  .drawer-tab {
+    flex: 1;
+    min-height: var(--min-touch);
+    padding: 8px 4px !important;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border: none !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    cursor: pointer;
+    touch-action: manipulation;
+    text-align: center;
+  }
+
+  .drawer-tab.active {
+    background: var(--color-accent) !important;
+    color: #FFFFFF !important;
+  }
+
+  .drawer-tab:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: -3px;
+  }
+
+  /* Tile palette list becomes horizontal scroll */
+  .tile-palette .palette-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .tile-palette .tile-option {
+    width: 70px;
+    min-height: 56px;
+  }
+
+  /* Toolbar wraps on narrow screens */
+  .editor-toolbar .toolbar-right {
+    flex-wrap: wrap;
+  }
+
+  .editor-toolbar .toolbar-center {
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .coord-display {
+    display: none;
+  }
+}
+
+/* ===== RESPONSIVE: DESKTOP WIDESCREEN (≥1200px) ===== */
+@media (min-width: 1200px) {
+  .tile-palette {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .overlay-palette {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .tile-option canvas {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Hide drawer tabs on desktop */
+.drawer-tabs {
+  display: none;
+}
+
 /* Utility */
 .hidden {
   display: none !important;

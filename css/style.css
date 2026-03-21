@@ -125,6 +125,30 @@ input[type="text"]:focus-visible {
   border-color: var(--color-accent);
 }
 
+/* Skip link — visible only when focused */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-accent);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 1000;
+  transition: top 150ms ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+  outline: 3px solid var(--color-text);
+  outline-offset: 2px;
+}
+
 /* Status region for screen reader announcements */
 #status-message {
   position: absolute;
@@ -133,6 +157,77 @@ input[type="text"]:focus-visible {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+/* Error region — also visually hidden by default */
+#error-message {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ==================== TOAST NOTIFICATIONS ==================== */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  .toast-container {
+    bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+}
+
+.toast {
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-family: var(--font-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  pointer-events: auto;
+  animation: toastSlideIn 250ms ease;
+  max-width: 90vw;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.toast.toast-error {
+  background: #D32F2F;
+  color: #FFFFFF;
+}
+
+.toast.toast-exit {
+  animation: toastSlideOut 200ms ease forwards;
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast, .toast.toast-exit {
+    animation: none;
+  }
 }
 
 /* Tooltip for disabled buttons */
@@ -160,6 +255,58 @@ input[type="text"]:focus-visible {
 .tooltip-wrapper:hover .tooltip-text,
 .tooltip-wrapper:focus-within .tooltip-text {
   display: block;
+}
+
+/* ==================== SKELETON / LOADING ==================== */
+
+/* No-JS fallback loading state */
+.screen.loading-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-pulse {
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-pulse {
+    animation: none;
+    background: var(--color-surface-hover);
+  }
+}
+
+/* Loading spinner for theme/data loading */
+.loading-spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spinnerRotate 800ms linear infinite;
+}
+
+@keyframes spinnerRotate {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+    border-top-color: var(--color-border);
+    opacity: 0.6;
+  }
 }
 
 /* ==================== TITLE SCREEN ==================== */

@@ -48,6 +48,7 @@ class Editor {
     this._fillHighlight = null;
     this._fillHighlightTimer = null;
     this._hoveredCell = null;
+    this._kbCursor = null;
 
     // Overlay state
     this._selectedOverlay = null; // overlay ID to place
@@ -214,6 +215,7 @@ class Editor {
       saveBtn.addEventListener('click', () => {
         this.saveMap();
         this._app.announce('Map saved');
+        this._app.showToast('Map saved');
       });
     }
 
@@ -229,6 +231,7 @@ class Editor {
         e.preventDefault();
         this.saveMap();
         this._app.announce('Map saved');
+        this._app.showToast('Map saved');
       }
     };
     document.addEventListener('keydown', this._boundKeyboardSave);
@@ -413,6 +416,9 @@ class Editor {
 
     // Layer 4: Selection highlight
     this._renderSelectionHighlight(ctx);
+
+    // Keyboard cursor
+    this._renderKeyboardCursor(ctx);
 
     // Fill highlight
     this._renderFillHighlight(ctx);
@@ -835,7 +841,7 @@ class Editor {
           const ly = y + (fallOff + i * h / 3) % h;
           ctx.beginPath();
           ctx.moveTo(lx, ly);
-          ctx.lineTo(lx + (Math.random() - 0.5) * 2, ly + 8);
+          ctx.lineTo(lx + Math.sin(fx.fallOffset * 0.7 + i * 1.3) * 2, ly + 8);
           ctx.stroke();
         }
         // Mist
@@ -1584,6 +1590,20 @@ class Editor {
     ctx.stroke(path);
   }
 
+  _renderKeyboardCursor(ctx) {
+    if (!this._kbCursor) return;
+    const { col, row, cellType } = this._kbCursor;
+    const path = this._grid.getCellPath(col, row, cellType);
+    // Dashed outline to distinguish from selection
+    ctx.save();
+    ctx.strokeStyle = '#FF9800';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 4]);
+    ctx.stroke(path);
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
   _renderFillHighlight(ctx) {
     if (!this._fillHighlight) return;
     ctx.fillStyle = 'rgba(255, 235, 59, 0.3)';
@@ -2095,11 +2115,13 @@ class Editor {
 
           if (fill) fill.style.width = '100%';
           this._app.announce('Map exported as ' + format.toUpperCase());
+          this._app.showToast('Map exported as ' + format.toUpperCase());
 
           setTimeout(() => this._closeExportDialog(), 500);
         } catch (err) {
           console.error('Export failed:', err);
           this._app.announce('Export failed. Try a smaller map or lower quality.', true);
+          this._app.showToast('Export failed. Try a smaller map or lower quality.', { isError: true });
           if (progress) progress.classList.add('hidden');
         }
       });
@@ -2119,6 +2141,7 @@ class Editor {
     } catch (e) {
       console.error('Save failed:', e);
       this._app.announce('Save failed. Storage may be full.', true);
+      this._app.showToast('Save failed. Storage may be full.', { isError: true });
     }
   }
 
@@ -2217,6 +2240,72 @@ class Editor {
       case 'delete':
         this._deleteLastOverlay();
         break;
+      case 'arrow-up': this._moveKeyboardCursor(0, -1); break;
+      case 'arrow-down': this._moveKeyboardCursor(0, 1); break;
+      case 'arrow-left': this._moveKeyboardCursor(-1, 0); break;
+      case 'arrow-right': this._moveKeyboardCursor(1, 0); break;
+      case 'enter': this._placeAtKeyboardCursor(); break;
+    }
+  }
+
+  /* ---- Keyboard Cursor Navigation ---- */
+  _moveKeyboardCursor(dx, dy) {
+    if (!this._kbCursor) {
+      // Initialize cursor at center of grid
+      this._kbCursor = {
+        col: Math.floor(this._grid.cols / 2),
+        row: Math.floor(this._grid.rows / 2),
+        cellType: undefined
+      };
+    }
+
+    const newCol = this._kbCursor.col + dx;
+    const newRow = this._kbCursor.row + dy;
+
+    // Bounds check
+    if (newCol < 0 || newCol >= this._grid.cols || newRow < 0 || newRow >= this._grid.rows) {
+      return;
+    }
+
+    this._kbCursor.col = newCol;
+    this._kbCursor.row = newRow;
+    // For octagon grids, default to 'oct' cell type (keyboard nav stays on main cells)
+    this._kbCursor.cellType = this._shape === 'octagon' ? 'oct' : undefined;
+    this._dirty = true;
+
+    // Ensure cursor cell is visible by panning camera if needed
+    const cellCenter = this._grid.gridToPixel(newCol, newRow, this._kbCursor.cellType);
+    const screen = this._camera.worldToScreen(cellCenter.x, cellCenter.y);
+    const margin = 60;
+    const cw = this._canvasWidth();
+    const ch = this._canvasHeight();
+    let panX = 0, panY = 0;
+    if (screen.x < margin) panX = margin - screen.x;
+    else if (screen.x > cw - margin) panX = (cw - margin) - screen.x;
+    if (screen.y < margin) panY = margin - screen.y;
+    else if (screen.y > ch - margin) panY = (ch - margin) - screen.y;
+    if (panX !== 0 || panY !== 0) {
+      this._camera.pan(panX, panY);
+    }
+
+    // Announce cell position
+    const cell = this._grid.getCell(newCol, newRow, this._kbCursor.cellType);
+    const tileName = cell && cell.base ? this._tileRenderer.getDisplayName(cell.base) : 'empty';
+    this._app.announce('Column ' + (newCol + 1) + ', row ' + (newRow + 1) + ': ' + tileName);
+  }
+
+  _placeAtKeyboardCursor() {
+    if (!this._kbCursor) return;
+    const { col, row, cellType } = this._kbCursor;
+
+    if (this._eraserMode || this._selectedTile || this._selectedOverlay) {
+      this._handleCellTap(col, row, cellType);
+    } else {
+      // Select cell for properties
+      this._selectedCell = { col, row, cellType };
+      this._state = EditorState.CELL_SELECTED;
+      this._updatePropertiesPanel();
+      this._dirty = true;
     }
   }
 

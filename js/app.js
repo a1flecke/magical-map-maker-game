@@ -52,6 +52,7 @@ class App {
     this._pendingRenameId = null;
     this._templates = null;
     this._tutorial = null;
+    this._toastTimers = [];
   }
 
   async init() {
@@ -72,6 +73,9 @@ class App {
     this._bindSettingsModal();
     this._bindTemplateModal();
 
+    // Register service worker for offline support
+    this._registerServiceWorker();
+
     // Detect Realm Brew assets (non-blocking)
     this._realmBrew.detect().catch(e => console.warn('Realm Brew detect:', e));
 
@@ -90,6 +94,9 @@ class App {
       // Clean up tutorial if active
       if (this._tutorialTimerId) { clearTimeout(this._tutorialTimerId); this._tutorialTimerId = null; }
       if (this._tutorial) this._tutorial.destroy();
+      // Clean up drawer tabs
+      const drawerTabs = document.querySelector('.drawer-tabs');
+      if (drawerTabs) drawerTabs.remove();
       // Clean up any open modal escape handlers
       if (this._settingsEscHandler) { document.removeEventListener('keydown', this._settingsEscHandler); this._settingsEscHandler = null; }
       if (this._templateEscHandler) { document.removeEventListener('keydown', this._templateEscHandler); this._templateEscHandler = null; }
@@ -99,6 +106,12 @@ class App {
       document.removeEventListener('keydown', this._myMapsEscHandler);
       this._myMapsEscHandler = null;
     }
+
+    // Clear any pending toasts on screen change
+    this._toastTimers.forEach(t => clearTimeout(t));
+    this._toastTimers = [];
+    const toastContainer = document.getElementById('toast-container');
+    if (toastContainer) toastContainer.innerHTML = '';
 
     for (const [key, el] of Object.entries(this._screens)) {
       if (key === name) {
@@ -127,6 +140,40 @@ class App {
         this._statusEl.textContent = message;
       }
     }
+  }
+
+  /**
+   * Show a visual toast notification.
+   * @param {string} message - Toast text
+   * @param {object} [opts] - Options: { isError: false, duration: 3000 }
+   */
+  showToast(message, opts = {}) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast' + (opts.isError ? ' toast-error' : '');
+    toast.textContent = message;
+    // Set role for screen reader
+    toast.setAttribute('role', opts.isError ? 'alert' : 'status');
+    container.appendChild(toast);
+
+    const duration = opts.duration || 3000;
+    const dismiss = () => {
+      toast.classList.add('toast-exit');
+      toast.addEventListener('animationend', () => toast.remove(), { once: true });
+      setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+      this._toastTimers = this._toastTimers.filter(t => t !== timerId);
+    };
+
+    const timerId = setTimeout(dismiss, duration);
+    this._toastTimers.push(timerId);
+
+    // Allow click to dismiss
+    toast.addEventListener('click', () => {
+      clearTimeout(timerId);
+      dismiss();
+    }, { once: true });
   }
 
   /* ---- Title Screen ---- */
@@ -349,6 +396,7 @@ class App {
       // Initial save to create the map record
       this._editor.saveMap();
       this.announce('Map editor ready. Select a tile from the palette to begin painting.');
+      this.initDrawerTabs();
 
       // Show tutorial for first-time users
       if (!this._tutorial) {
@@ -410,9 +458,18 @@ class App {
   }
 
   async _loadMap(mapId) {
-    const mapData = this._storage.loadMap(mapId);
+    let mapData;
+    try {
+      mapData = this._storage.loadMap(mapId);
+    } catch (e) {
+      console.error('Corrupt save data:', e);
+      this.announce('This map appears to be corrupted and could not be loaded.', true);
+      this.showToast('Map data is corrupted. Try deleting and recreating it.', { isError: true, duration: 5000 });
+      return;
+    }
     if (!mapData) {
       this.announce('Could not load map.');
+      this.showToast('Could not load map.', { isError: true });
       return;
     }
 
@@ -440,6 +497,7 @@ class App {
     try {
       await this._editor.init();
       this.announce('Map loaded. Select a tile from the palette to continue editing.');
+      this.initDrawerTabs();
     } catch (err) {
       this.announce('Failed to load map. Please refresh and try again.', true);
       console.error('Editor init (load) failed:', err);
@@ -873,6 +931,83 @@ class App {
     }
     this._closeRenameDialog();
     this._renderMyMaps();
+  }
+
+  /* ---- Service Worker ---- */
+  _registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        // Check for updates
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+              this.showToast('New version available! Refresh to update.', { duration: 6000 });
+            }
+          });
+        });
+      }).catch(err => {
+        console.warn('Service worker registration failed:', err);
+      });
+    }
+  }
+
+  /* ---- Responsive Drawer (tablet portrait) ---- */
+  initDrawerTabs() {
+    // Only add drawer tabs on narrow screens
+    if (window.innerWidth > 768) return;
+
+    const editorBody = document.querySelector('.editor-body');
+    if (!editorBody || editorBody.querySelector('.drawer-tabs')) return;
+
+    const tilePalette = editorBody.querySelector('.tile-palette');
+    const overlayPalette = editorBody.querySelector('.overlay-palette');
+    if (!tilePalette || !overlayPalette) return;
+
+    // Create drawer tab bar
+    const tabBar = document.createElement('div');
+    tabBar.className = 'drawer-tabs';
+    tabBar.setAttribute('role', 'tablist');
+    tabBar.setAttribute('aria-label', 'Palette drawers');
+
+    const tilesTab = document.createElement('button');
+    tilesTab.className = 'drawer-tab';
+    tilesTab.textContent = 'Tiles';
+    tilesTab.setAttribute('role', 'tab');
+    tilesTab.setAttribute('aria-selected', 'false');
+    tilesTab.setAttribute('aria-controls', 'tile-palette-drawer');
+
+    const overlaysTab = document.createElement('button');
+    overlaysTab.className = 'drawer-tab';
+    overlaysTab.textContent = 'Overlays';
+    overlaysTab.setAttribute('role', 'tab');
+    overlaysTab.setAttribute('aria-selected', 'false');
+    overlaysTab.setAttribute('aria-controls', 'overlay-palette-drawer');
+
+    const hideTab = document.createElement('button');
+    hideTab.className = 'drawer-tab active';
+    hideTab.textContent = 'Map';
+    hideTab.setAttribute('aria-label', 'Hide palette drawers and show map');
+
+    tabBar.appendChild(tilesTab);
+    tabBar.appendChild(overlaysTab);
+    tabBar.appendChild(hideTab);
+    editorBody.appendChild(tabBar);
+
+    const setActiveDrawer = (active) => {
+      tilePalette.classList.toggle('drawer-open', active === 'tiles');
+      overlayPalette.classList.toggle('drawer-open', active === 'overlays');
+      tilesTab.classList.toggle('active', active === 'tiles');
+      tilesTab.setAttribute('aria-selected', active === 'tiles' ? 'true' : 'false');
+      overlaysTab.classList.toggle('active', active === 'overlays');
+      overlaysTab.setAttribute('aria-selected', active === 'overlays' ? 'true' : 'false');
+      hideTab.classList.toggle('active', active === 'map');
+    };
+
+    tilesTab.addEventListener('click', () => setActiveDrawer(tilePalette.classList.contains('drawer-open') ? 'map' : 'tiles'));
+    overlaysTab.addEventListener('click', () => setActiveDrawer(overlayPalette.classList.contains('drawer-open') ? 'map' : 'overlays'));
+    hideTab.addEventListener('click', () => setActiveDrawer('map'));
   }
 }
 

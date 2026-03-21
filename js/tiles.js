@@ -280,6 +280,11 @@ class TileRenderer {
     return this._typeMap[id] || null;
   }
 
+  getDisplayName(id) {
+    const t = this._typeMap[id];
+    return t ? t.name : id.replace(/-/g, ' ');
+  }
+
   getTypesForTheme(tileIds) {
     return tileIds.map(id => this._typeMap[id]).filter(Boolean);
   }

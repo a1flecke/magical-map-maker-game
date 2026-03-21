@@ -297,6 +297,16 @@ class InputHandler {
       case '0': this._onKeyAction('zoom-fit'); break;
       case '?': this._onKeyAction('show-shortcuts'); break;
       case 'Delete': case 'Backspace': this._onKeyAction('delete'); break;
+      case 'ArrowUp': e.preventDefault(); this._onKeyAction('arrow-up'); break;
+      case 'ArrowDown': e.preventDefault(); this._onKeyAction('arrow-down'); break;
+      case 'ArrowLeft': e.preventDefault(); this._onKeyAction('arrow-left'); break;
+      case 'ArrowRight': e.preventDefault(); this._onKeyAction('arrow-right'); break;
+      case 'Enter': case ' ':
+        if (e.target === this._canvas) {
+          e.preventDefault();
+          this._onKeyAction('enter');
+        }
+        break;
     }
   }
 }

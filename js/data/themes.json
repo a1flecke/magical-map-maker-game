@@ -67,7 +67,7 @@
     "description": "Underground corridors, caverns, traps, and treasure rooms.",
     "colors": {
       "bg": "#2C2416",
-      "accent": "#8B7355",
+      "accent": "#C4A46A",
       "grid": "#4A3F2F"
     },
     "transitionMode": "terrestrial",
@@ -179,7 +179,7 @@
     "description": "Explore the cosmos: nebulae, planets, black holes, and star fields.",
     "colors": {
       "bg": "#0A0A1A",
-      "accent": "#6B3FA0",
+      "accent": "#9B6FD0",
       "grid": "#1A1A3A"
     },
     "transitionMode": "cosmic",
@@ -333,7 +333,7 @@
     "description": "Wide open plains, rolling hills, farms, and golden fields.",
     "colors": {
       "bg": "#F7F2E4",
-      "accent": "#B8943E",
+      "accent": "#8A6E20",
       "grid": "#D8CCA8"
     },
     "transitionMode": "terrestrial",
@@ -382,7 +382,7 @@
     "description": "Alpine peaks, glaciers, deep canyons, and icy passes.",
     "colors": {
       "bg": "#ECEEF0",
-      "accent": "#5A6B7A",
+      "accent": "#4A5B6A",
       "grid": "#B8C0C8"
     },
     "transitionMode": "terrestrial",
