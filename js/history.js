@@ -259,6 +259,30 @@ function cmdRotateOverlay(grid, col, row, cellType, overlayIndex, oldRotation, n
 }
 
 /**
+ * Create an AutoFill command (fills all empty cells with random terrain).
+ * @param {Grid} grid
+ * @param {Array<{col, row, cellType, newBase}>} cells - cells that were filled
+ * @param {TileRenderer} tileRenderer
+ */
+function cmdAutoFill(grid, cells, tileRenderer) {
+  return {
+    type: 'AutoFill',
+    apply() {
+      for (const c of cells) {
+        grid.setBase(c.col, c.row, c.newBase, c.cellType);
+        if (tileRenderer) tileRenderer.markDirty(grid, c.col, c.row, c.cellType);
+      }
+    },
+    undo() {
+      for (const c of cells) {
+        grid.setBase(c.col, c.row, null, c.cellType);
+        if (tileRenderer) tileRenderer.markDirty(grid, c.col, c.row, c.cellType);
+      }
+    }
+  };
+}
+
+/**
  * Create a ClearAll command (stores entire grid state).
  * @param {Grid} grid
  * @param {Array} savedState - snapshot of all non-empty cells

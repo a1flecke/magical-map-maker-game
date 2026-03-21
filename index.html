@@ -30,6 +30,9 @@
   <script src="js/export.js" defer></script>
   <script src="js/history.js" defer></script>
   <script src="js/sound.js" defer></script>
+  <script src="js/names.js" defer></script>
+  <script src="js/settings.js" defer></script>
+  <script src="js/tutorial.js" defer></script>
   <script src="js/realm-brew.js" defer></script>
   <script src="js/editor.js" defer></script>
   <script src="js/app.js" defer></script>
@@ -47,12 +50,9 @@
       <div class="title-buttons">
         <button id="btn-new-map" class="primary" aria-label="Create a new map">New Map</button>
         <button id="btn-my-maps" aria-label="View my saved maps">My Maps</button>
-        <div class="tooltip-wrapper">
-          <button disabled aria-label="Settings — coming soon">
-            <span aria-hidden="true">&#9881;</span> Settings
-          </button>
-          <span class="tooltip-text" role="tooltip">Coming Soon</span>
-        </div>
+        <button id="btn-settings" aria-label="Open settings">
+          <span aria-hidden="true">&#9881;</span> Settings
+        </button>
       </div>
     </div>
   </div>
@@ -216,12 +216,16 @@
       <!-- Map name -->
       <div class="setup-section">
         <label class="setup-label" for="map-name-input">Map Name</label>
-        <input type="text" id="map-name-input" placeholder="My Fantasy Map" maxlength="50">
+        <div class="map-name-row">
+          <input type="text" id="map-name-input" placeholder="My Fantasy Map" maxlength="50">
+          <button id="btn-random-name" class="random-name-btn" aria-label="Generate random map name" title="Random Name">&#127922;</button>
+        </div>
       </div>
 
       <!-- Buttons -->
       <div class="setup-buttons">
         <button id="btn-setup-back" aria-label="Go back to title screen">Back</button>
+        <button id="btn-from-template" aria-label="Start from a template">Start from Template</button>
         <button id="btn-create-map" class="primary" aria-label="Create map and open editor">Create Map</button>
       </div>
     </div>
@@ -262,6 +266,7 @@
           <button id="btn-zoom-in" aria-label="Zoom in" title="Zoom In (+)">+</button>
         </div>
         <button id="btn-sound-toggle" aria-label="Toggle sound effects" aria-pressed="false" title="Sound">Sound</button>
+        <button id="btn-auto-fill" aria-label="Auto-fill empty cells with random terrain" title="Auto-Fill">Auto-Fill</button>
         <button id="btn-clear-all" aria-label="Clear all tiles" title="Clear All">Clear</button>
         <button id="btn-shortcuts" aria-label="Show keyboard shortcuts (?)" title="Shortcuts (?)">?</button>
         <span id="coord-display" class="coord-display" aria-hidden="true"></span>
@@ -490,6 +495,70 @@
         <div class="modal-buttons">
           <button id="btn-shortcuts-close" class="primary">Close</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div id="settings-dialog" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h3 id="settings-title">Settings</h3>
+
+      <div class="settings-group">
+        <span class="settings-label" id="font-size-label">Font Size</span>
+        <div class="settings-options" role="radiogroup" aria-labelledby="font-size-label">
+          <button class="settings-radio" role="radio" aria-checked="false" data-setting="fontSize" data-value="small">Small</button>
+          <button class="settings-radio" role="radio" aria-checked="true" data-setting="fontSize" data-value="medium">Medium</button>
+          <button class="settings-radio" role="radio" aria-checked="false" data-setting="fontSize" data-value="large">Large</button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-toggle-label">
+          <input type="checkbox" id="setting-sound" class="settings-checkbox">
+          Sound Effects
+        </label>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-toggle-label">
+          <input type="checkbox" id="setting-auto-save" class="settings-checkbox" checked>
+          Auto-Save
+        </label>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-toggle-label">
+          <input type="checkbox" id="setting-grid-lines" class="settings-checkbox" checked>
+          Grid Lines (default)
+        </label>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-toggle-label">
+          <input type="checkbox" id="setting-show-coords" class="settings-checkbox">
+          Show Coordinates
+        </label>
+      </div>
+
+      <div class="settings-group">
+        <button id="btn-show-tutorial" aria-label="Show the welcome tutorial again">Show Tutorial Again</button>
+      </div>
+
+      <div class="modal-buttons">
+        <button id="btn-settings-close" class="primary">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TEMPLATE BROWSER MODAL ==================== -->
+  <div id="template-dialog" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal template-modal" role="dialog" aria-modal="true" aria-labelledby="template-title">
+      <h3 id="template-title">Start from Template</h3>
+      <p class="template-subtitle">Pick a template to start with. You can customize it after!</p>
+      <div id="template-grid" class="template-grid" role="listbox" aria-label="Map templates"></div>
+      <div class="modal-buttons">
+        <button id="btn-template-cancel">Cancel</button>
       </div>
     </div>
   </div>

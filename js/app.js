@@ -46,9 +46,12 @@ class App {
     this._editor = null;
     this._statusEl = null;
     this._storage = new StorageManager();
+    this._settings = new SettingsManager();
     this._realmBrew = new RealmBrewLoader();
     this._pendingDeleteId = null;
     this._pendingRenameId = null;
+    this._templates = null;
+    this._tutorial = null;
   }
 
   async init() {
@@ -60,12 +63,20 @@ class App {
       editor: document.getElementById('editor-screen')
     };
 
+    // Load settings (applies font size)
+    this._settings.load();
+
     this._bindTitleScreen();
     this._bindSetupScreen();
     this._bindMyMapsScreen();
+    this._bindSettingsModal();
+    this._bindTemplateModal();
 
     // Detect Realm Brew assets (non-blocking)
     this._realmBrew.detect().catch(e => console.warn('Realm Brew detect:', e));
+
+    // Pre-load templates (non-blocking)
+    this._loadTemplates();
 
     this.showScreen('title');
   }
@@ -76,6 +87,12 @@ class App {
       this._autoSaveEditor();
       this._editor.destroy();
       this._editor = null;
+      // Clean up tutorial if active
+      if (this._tutorialTimerId) { clearTimeout(this._tutorialTimerId); this._tutorialTimerId = null; }
+      if (this._tutorial) this._tutorial.destroy();
+      // Clean up any open modal escape handlers
+      if (this._settingsEscHandler) { document.removeEventListener('keydown', this._settingsEscHandler); this._settingsEscHandler = null; }
+      if (this._templateEscHandler) { document.removeEventListener('keydown', this._templateEscHandler); this._templateEscHandler = null; }
     }
     // Clean up My Maps escape handler when leaving mymaps screen
     if (this._currentScreen === 'mymaps' && name !== 'mymaps' && this._myMapsEscHandler) {
@@ -122,6 +139,10 @@ class App {
     if (myMapsBtn) {
       myMapsBtn.addEventListener('click', () => this.showScreen('mymaps'));
     }
+    const settingsBtn = document.getElementById('btn-settings');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', () => this._openSettingsModal());
+    }
   }
 
   /* ---- Setup Screen ---- */
@@ -153,6 +174,24 @@ class App {
     const createBtn = document.getElementById('btn-create-map');
     if (createBtn) {
       createBtn.addEventListener('click', () => this._createMap());
+    }
+
+    // Random Name button
+    const randomNameBtn = document.getElementById('btn-random-name');
+    if (randomNameBtn) {
+      randomNameBtn.addEventListener('click', () => {
+        const themeId = this._getSelectedTheme();
+        const input = document.getElementById('map-name-input');
+        if (input) {
+          input.value = NameGenerator.generate(themeId);
+        }
+      });
+    }
+
+    // Template button
+    const templateBtn = document.getElementById('btn-from-template');
+    if (templateBtn) {
+      templateBtn.addEventListener('click', () => this._openTemplateModal());
     }
   }
 
@@ -274,16 +313,19 @@ class App {
     });
   }
 
-  async _createMap() {
-    const shape = this._getSelectedShape();
-    const size = this._getSelectedSize();
-    const name = this._getMapName();
+  async _createMap(templateData) {
+    const shape = templateData ? templateData.shape : this._getSelectedShape();
+    const size = templateData ? templateData.size : this._getSelectedSize();
+    const name = templateData ? templateData.name : this._getMapName();
+    const themeId = templateData ? templateData.theme : this._getSelectedTheme();
 
     this.showScreen('editor');
 
-    const themeId = this._getSelectedTheme();
     const rbSubTheme = (themeId === 'dungeon' && this._realmBrew.available && shape === 'hex')
       ? this._getSelectedSubTheme() : null;
+
+    // If loading from template, convert template cells to savedCells format
+    const savedCells = templateData ? this._templateToSavedCells(templateData) : null;
 
     this._editor = new Editor({
       canvasEl: document.getElementById('map-canvas'),
@@ -294,8 +336,10 @@ class App {
       shape: shape,
       size: size,
       mapName: name,
+      savedCells: savedCells,
       app: this,
       storage: this._storage,
+      settings: this._settings,
       realmBrew: this._realmBrew,
       rbSubTheme: rbSubTheme
     });
@@ -305,10 +349,64 @@ class App {
       // Initial save to create the map record
       this._editor.saveMap();
       this.announce('Map editor ready. Select a tile from the palette to begin painting.');
+
+      // Show tutorial for first-time users
+      if (!this._tutorial) {
+        this._tutorial = new Tutorial(this._settings);
+      }
+      if (this._tutorial.shouldShow()) {
+        // Slight delay to let editor render first
+        this._tutorialTimerId = setTimeout(() => {
+          this._tutorialTimerId = null;
+          this._tutorial.show();
+        }, 500);
+      }
     } catch (err) {
       this.announce('Failed to load map editor. Please refresh and try again.', true);
       console.error('Editor init failed:', err);
     }
+  }
+
+  /** Convert template data to the savedCells format expected by StorageManager.deserializeIntoGrid */
+  _templateToSavedCells(templateData) {
+    const cells = [];
+    if (templateData.cells) {
+      for (const tc of templateData.cells) {
+        const cell = { col: tc.col, row: tc.row, base: tc.base };
+        if (tc.cellType) cell.cellType = tc.cellType;
+        // Find overlays for this cell position
+        const overlays = (templateData.overlays || []).filter(
+          o => o.col === tc.col && o.row === tc.row
+        );
+        if (overlays.length > 0) {
+          cell.overlays = overlays.map(o => ({
+            id: o.id,
+            rotation: o.rotation || 0,
+            opacity: o.opacity != null ? o.opacity : 1.0,
+            size: o.size || 'medium'
+          }));
+        }
+        cells.push(cell);
+      }
+      // Also add overlay-only cells (overlays on cells not in the template cells list)
+      const cellKeys = new Set(templateData.cells.map(c => c.col + ',' + c.row));
+      for (const o of (templateData.overlays || [])) {
+        if (!cellKeys.has(o.col + ',' + o.row)) {
+          cells.push({
+            col: o.col,
+            row: o.row,
+            base: null,
+            overlays: [{
+              id: o.id,
+              rotation: o.rotation || 0,
+              opacity: o.opacity != null ? o.opacity : 1.0,
+              size: o.size || 'medium'
+            }]
+          });
+        }
+      }
+    }
+    return cells;
   }
 
   async _loadMap(mapId) {
@@ -334,6 +432,7 @@ class App {
       savedCamera: mapData.camera,
       app: this,
       storage: this._storage,
+      settings: this._settings,
       realmBrew: this._realmBrew,
       rbSubTheme: mapData.rbSubTheme || null
     });
@@ -354,6 +453,198 @@ class App {
       } catch (e) {
         console.warn('Auto-save on exit failed', e);
       }
+    }
+  }
+
+  /* ---- Templates ---- */
+
+  async _loadTemplates() {
+    try {
+      const resp = await fetch('js/data/templates.json');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      this._templates = await resp.json();
+    } catch (e) {
+      console.warn('Failed to load templates:', e);
+      this._templates = [];
+    }
+  }
+
+  _bindTemplateModal() {
+    const cancelBtn = document.getElementById('btn-template-cancel');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => this._closeTemplateModal());
+    }
+  }
+
+  _openTemplateModal() {
+    const dialog = document.getElementById('template-dialog');
+    if (!dialog) return;
+
+    const themeId = this._getSelectedTheme();
+    this._renderTemplateGrid(themeId);
+    this._openModal(dialog);
+
+    // Escape to close
+    this._templateEscHandler = (e) => {
+      if (e.key === 'Escape') this._closeTemplateModal();
+    };
+    document.addEventListener('keydown', this._templateEscHandler);
+  }
+
+  _closeTemplateModal() {
+    const dialog = document.getElementById('template-dialog');
+    if (dialog) this._closeModal(dialog);
+    if (this._templateEscHandler) {
+      document.removeEventListener('keydown', this._templateEscHandler);
+      this._templateEscHandler = null;
+    }
+  }
+
+  _renderTemplateGrid(themeId) {
+    const grid = document.getElementById('template-grid');
+    if (!grid) return;
+
+    if (!this._templates) {
+      grid.innerHTML = '<p class="template-empty">Loading templates...</p>';
+      return;
+    }
+
+    // Filter templates for the selected theme
+    const filtered = this._templates.filter(t => t.theme === themeId);
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<p class="template-empty">No templates for this theme yet.</p>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(t => {
+      const shapeIcon = SHAPE_ICONS[t.shape] || '';
+      const config = getGridConfig(t.shape, t.size);
+      const sizeText = config ? config.cols + '\u00d7' + config.rows : t.size;
+
+      return '<div class="template-card" tabindex="0" role="option" data-template-id="' + escHtml(t.id) + '" aria-label="' + escHtml(t.name) + '">'
+        + '<div class="template-card-preview" aria-hidden="true">' + escHtml(shapeIcon) + '</div>'
+        + '<div class="template-card-name">' + escHtml(t.name) + '</div>'
+        + '<div class="template-card-meta">'
+        + '<span class="template-badge">' + escHtml(t.shape) + '</span>'
+        + '<span>' + escHtml(sizeText) + '</span>'
+        + '</div></div>';
+    }).join('');
+
+    // Bind clicks
+    grid.querySelectorAll('.template-card').forEach(card => {
+      const handler = () => {
+        const template = this._templates.find(t => t.id === card.dataset.templateId);
+        if (template) {
+          this._closeTemplateModal();
+          this._createMap(JSON.parse(JSON.stringify(template)));
+        }
+      };
+      card.addEventListener('click', handler);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handler();
+        }
+      });
+    });
+  }
+
+  /* ---- Settings Modal ---- */
+
+  _bindSettingsModal() {
+    const closeBtn = document.getElementById('btn-settings-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this._closeSettingsModal());
+    }
+
+    // Font size radio buttons
+    const fontRadios = document.querySelectorAll('.settings-radio[data-setting="fontSize"]');
+    fontRadios.forEach(btn => {
+      btn.addEventListener('click', () => {
+        fontRadios.forEach(b => b.setAttribute('aria-checked', 'false'));
+        btn.setAttribute('aria-checked', 'true');
+        this._settings.set('fontSize', btn.dataset.value);
+      });
+    });
+
+    // Checkbox toggles
+    const soundCheck = document.getElementById('setting-sound');
+    if (soundCheck) {
+      soundCheck.addEventListener('change', () => {
+        this._settings.set('soundEnabled', soundCheck.checked);
+      });
+    }
+
+    const autoSaveCheck = document.getElementById('setting-auto-save');
+    if (autoSaveCheck) {
+      autoSaveCheck.addEventListener('change', () => {
+        this._settings.set('autoSave', autoSaveCheck.checked);
+      });
+    }
+
+    const gridCheck = document.getElementById('setting-grid-lines');
+    if (gridCheck) {
+      gridCheck.addEventListener('change', () => {
+        this._settings.set('gridLines', gridCheck.checked);
+      });
+    }
+
+    const coordsCheck = document.getElementById('setting-show-coords');
+    if (coordsCheck) {
+      coordsCheck.addEventListener('change', () => {
+        this._settings.set('showCoordinates', coordsCheck.checked);
+      });
+    }
+
+    // Show tutorial again
+    const tutorialBtn = document.getElementById('btn-show-tutorial');
+    if (tutorialBtn) {
+      tutorialBtn.addEventListener('click', () => {
+        this._settings.resetTutorial();
+        this.announce('Tutorial will show next time you create a map.');
+      });
+    }
+  }
+
+  _openSettingsModal() {
+    const dialog = document.getElementById('settings-dialog');
+    if (!dialog) return;
+
+    // Sync UI with current settings
+    const s = this._settings.getAll();
+
+    // Font size
+    const fontRadios = dialog.querySelectorAll('.settings-radio[data-setting="fontSize"]');
+    fontRadios.forEach(btn => {
+      btn.setAttribute('aria-checked', btn.dataset.value === s.fontSize ? 'true' : 'false');
+    });
+
+    // Checkboxes
+    const soundCheck = document.getElementById('setting-sound');
+    if (soundCheck) soundCheck.checked = s.soundEnabled;
+    const autoSaveCheck = document.getElementById('setting-auto-save');
+    if (autoSaveCheck) autoSaveCheck.checked = s.autoSave;
+    const gridCheck = document.getElementById('setting-grid-lines');
+    if (gridCheck) gridCheck.checked = s.gridLines;
+    const coordsCheck = document.getElementById('setting-show-coords');
+    if (coordsCheck) coordsCheck.checked = s.showCoordinates;
+
+    this._openModal(dialog);
+
+    // Escape to close
+    this._settingsEscHandler = (e) => {
+      if (e.key === 'Escape') this._closeSettingsModal();
+    };
+    document.addEventListener('keydown', this._settingsEscHandler);
+  }
+
+  _closeSettingsModal() {
+    const dialog = document.getElementById('settings-dialog');
+    if (dialog) this._closeModal(dialog);
+    if (this._settingsEscHandler) {
+      document.removeEventListener('keydown', this._settingsEscHandler);
+      this._settingsEscHandler = null;
     }
   }
 
@@ -501,19 +792,22 @@ class App {
     dialogEl.classList.remove('hidden');
     dialogEl.removeAttribute('aria-hidden');
     this._trapFocusInModal(dialogEl);
+    // Focus the first focusable element inside the modal
+    const focusable = dialogEl.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+    if (focusable.length > 0) focusable[0].focus();
   }
 
   _closeModal(dialogEl) {
     dialogEl.classList.add('hidden');
     dialogEl.setAttribute('aria-hidden', 'true');
-    if (this._modalFocusTrap) {
-      dialogEl.removeEventListener('keydown', this._modalFocusTrap);
-      this._modalFocusTrap = null;
+    if (dialogEl._focusTrap) {
+      dialogEl.removeEventListener('keydown', dialogEl._focusTrap);
+      dialogEl._focusTrap = null;
     }
   }
 
   _trapFocusInModal(dialogEl) {
-    this._modalFocusTrap = (e) => {
+    dialogEl._focusTrap = (e) => {
       if (e.key !== 'Tab') return;
       const focusable = dialogEl.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
       if (focusable.length === 0) return;
@@ -525,7 +819,7 @@ class App {
         if (document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
     };
-    dialogEl.addEventListener('keydown', this._modalFocusTrap);
+    dialogEl.addEventListener('keydown', dialogEl._focusTrap);
   }
 
   /* ---- Delete Dialog ---- */

@@ -1,0 +1,472 @@
+[
+  {
+    "id": "fantasy-small-island",
+    "name": "Small Island",
+    "theme": "fantasy-overworld",
+    "shape": "square",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"ocean"},{"col":1,"row":0,"base":"ocean"},{"col":2,"row":0,"base":"ocean"},{"col":3,"row":0,"base":"ocean"},{"col":4,"row":0,"base":"ocean"},{"col":5,"row":0,"base":"ocean"},{"col":6,"row":0,"base":"ocean"},{"col":7,"row":0,"base":"ocean"},
+      {"col":0,"row":1,"base":"ocean"},{"col":1,"row":1,"base":"ocean"},{"col":2,"row":1,"base":"beach"},{"col":3,"row":1,"base":"beach"},{"col":4,"row":1,"base":"beach"},{"col":5,"row":1,"base":"ocean"},{"col":6,"row":1,"base":"ocean"},{"col":7,"row":1,"base":"ocean"},
+      {"col":0,"row":2,"base":"ocean"},{"col":1,"row":2,"base":"beach"},{"col":2,"row":2,"base":"grassland"},{"col":3,"row":2,"base":"forest"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"beach"},{"col":6,"row":2,"base":"ocean"},{"col":7,"row":2,"base":"ocean"},
+      {"col":0,"row":3,"base":"ocean"},{"col":1,"row":3,"base":"beach"},{"col":2,"row":3,"base":"forest"},{"col":3,"row":3,"base":"hills"},{"col":4,"row":3,"base":"forest"},{"col":5,"row":3,"base":"grassland"},{"col":6,"row":3,"base":"beach"},{"col":7,"row":3,"base":"ocean"},
+      {"col":0,"row":4,"base":"ocean"},{"col":1,"row":4,"base":"ocean"},{"col":2,"row":4,"base":"beach"},{"col":3,"row":4,"base":"grassland"},{"col":4,"row":4,"base":"grassland"},{"col":5,"row":4,"base":"beach"},{"col":6,"row":4,"base":"ocean"},{"col":7,"row":4,"base":"ocean"},
+      {"col":0,"row":5,"base":"ocean"},{"col":1,"row":5,"base":"ocean"},{"col":2,"row":5,"base":"ocean"},{"col":3,"row":5,"base":"beach"},{"col":4,"row":5,"base":"ocean"},{"col":5,"row":5,"base":"ocean"},{"col":6,"row":5,"base":"ocean"},{"col":7,"row":5,"base":"ocean"}
+    ],
+    "overlays": [
+      {"col":3,"row":3,"id":"castle"},
+      {"col":5,"row":3,"id":"village-cluster"},
+      {"col":2,"row":2,"id":"giant-tree"}
+    ]
+  },
+  {
+    "id": "fantasy-forest-kingdom",
+    "name": "Forest Kingdom",
+    "theme": "fantasy-overworld",
+    "shape": "hex",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"forest"},{"col":1,"row":0,"base":"forest"},{"col":2,"row":0,"base":"pine-forest"},{"col":3,"row":0,"base":"forest"},{"col":4,"row":0,"base":"hills"},{"col":5,"row":0,"base":"mountain"},{"col":6,"row":0,"base":"hills"},{"col":7,"row":0,"base":"forest"},{"col":8,"row":0,"base":"forest"},{"col":9,"row":0,"base":"pine-forest"},{"col":10,"row":0,"base":"forest"},
+      {"col":0,"row":1,"base":"light-woods"},{"col":1,"row":1,"base":"forest"},{"col":2,"row":1,"base":"forest"},{"col":3,"row":1,"base":"clearing"},{"col":4,"row":1,"base":"grassland"},{"col":5,"row":1,"base":"hills"},{"col":6,"row":1,"base":"foothill"},{"col":7,"row":1,"base":"forest"},{"col":8,"row":1,"base":"pine-forest"},{"col":9,"row":1,"base":"forest"},{"col":10,"row":1,"base":"forest"},
+      {"col":0,"row":2,"base":"grassland"},{"col":1,"row":2,"base":"light-woods"},{"col":2,"row":2,"base":"clearing"},{"col":3,"row":2,"base":"road"},{"col":4,"row":2,"base":"road"},{"col":5,"row":2,"base":"grassland"},{"col":6,"row":2,"base":"grassland"},{"col":7,"row":2,"base":"light-woods"},{"col":8,"row":2,"base":"forest"},{"col":9,"row":2,"base":"forest"},{"col":10,"row":2,"base":"pine-forest"},
+      {"col":0,"row":3,"base":"forest"},{"col":1,"row":3,"base":"grassland"},{"col":2,"row":3,"base":"road"},{"col":3,"row":3,"base":"grassland"},{"col":4,"row":3,"base":"grassland"},{"col":5,"row":3,"base":"road"},{"col":6,"row":3,"base":"grassland"},{"col":7,"row":3,"base":"grassland"},{"col":8,"row":3,"base":"river"},{"col":9,"row":3,"base":"light-woods"},{"col":10,"row":3,"base":"forest"},
+      {"col":0,"row":4,"base":"forest"},{"col":1,"row":4,"base":"forest"},{"col":2,"row":4,"base":"road"},{"col":3,"row":4,"base":"grassland"},{"col":4,"row":4,"base":"farmland"},{"col":5,"row":4,"base":"grassland"},{"col":6,"row":4,"base":"road"},{"col":7,"row":4,"base":"bridge"},{"col":8,"row":4,"base":"river"},{"col":9,"row":4,"base":"grassland"},{"col":10,"row":4,"base":"light-woods"},
+      {"col":0,"row":5,"base":"pine-forest"},{"col":1,"row":5,"base":"forest"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"road"},{"col":4,"row":5,"base":"farmland"},{"col":5,"row":5,"base":"wheat-field"},{"col":6,"row":5,"base":"grassland"},{"col":7,"row":5,"base":"road"},{"col":8,"row":5,"base":"grassland"},{"col":9,"row":5,"base":"river"},{"col":10,"row":5,"base":"swamp"},
+      {"col":0,"row":6,"base":"forest"},{"col":1,"row":6,"base":"pine-forest"},{"col":2,"row":6,"base":"forest"},{"col":3,"row":6,"base":"grassland"},{"col":4,"row":6,"base":"road"},{"col":5,"row":6,"base":"road"},{"col":6,"row":6,"base":"road"},{"col":7,"row":6,"base":"grassland"},{"col":8,"row":6,"base":"grassland"},{"col":9,"row":6,"base":"river"},{"col":10,"row":6,"base":"swamp"},
+      {"col":0,"row":7,"base":"forest"},{"col":1,"row":7,"base":"forest"},{"col":2,"row":7,"base":"light-woods"},{"col":3,"row":7,"base":"grassland"},{"col":4,"row":7,"base":"grassland"},{"col":5,"row":7,"base":"grassland"},{"col":6,"row":7,"base":"grassland"},{"col":7,"row":7,"base":"wildflower-field"},{"col":8,"row":7,"base":"lake"},{"col":9,"row":7,"base":"lake"},{"col":10,"row":7,"base":"swamp"},
+      {"col":0,"row":8,"base":"forest"},{"col":1,"row":8,"base":"forest"},{"col":2,"row":8,"base":"forest"},{"col":3,"row":8,"base":"light-woods"},{"col":4,"row":8,"base":"grassland"},{"col":5,"row":8,"base":"grassland"},{"col":6,"row":8,"base":"light-woods"},{"col":7,"row":8,"base":"grassland"},{"col":8,"row":8,"base":"lake"},{"col":9,"row":8,"base":"shallow-water"},{"col":10,"row":8,"base":"grassland"},
+      {"col":0,"row":9,"base":"forest"},{"col":1,"row":9,"base":"pine-forest"},{"col":2,"row":9,"base":"forest"},{"col":3,"row":9,"base":"forest"},{"col":4,"row":9,"base":"light-woods"},{"col":5,"row":9,"base":"forest"},{"col":6,"row":9,"base":"forest"},{"col":7,"row":9,"base":"light-woods"},{"col":8,"row":9,"base":"grassland"},{"col":9,"row":9,"base":"grassland"},{"col":10,"row":9,"base":"light-woods"}
+    ],
+    "overlays": [
+      {"col":3,"row":2,"id":"castle"},
+      {"col":5,"row":5,"id":"village-cluster"},
+      {"col":4,"row":4,"id":"windmill"},
+      {"col":5,"row":0,"id":"cave-entrance"},
+      {"col":7,"row":4,"id":"stone-bridge"},
+      {"col":9,"row":7,"id":"lighthouse"}
+    ]
+  },
+  {
+    "id": "fantasy-mountain-pass",
+    "name": "Mountain Pass",
+    "theme": "fantasy-overworld",
+    "shape": "diamond",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"mountain"},{"col":1,"row":0,"base":"mountain"},{"col":2,"row":0,"base":"cliff"},{"col":3,"row":0,"base":"mountain"},{"col":4,"row":0,"base":"mountain"},{"col":5,"row":0,"base":"mountain"},{"col":6,"row":0,"base":"mountain"},{"col":7,"row":0,"base":"cliff"},
+      {"col":0,"row":1,"base":"mountain"},{"col":1,"row":1,"base":"hills"},{"col":2,"row":1,"base":"foothill"},{"col":3,"row":1,"base":"road"},{"col":4,"row":1,"base":"road"},{"col":5,"row":1,"base":"foothill"},{"col":6,"row":1,"base":"hills"},{"col":7,"row":1,"base":"mountain"},
+      {"col":0,"row":2,"base":"cliff"},{"col":1,"row":2,"base":"foothill"},{"col":2,"row":2,"base":"grassland"},{"col":3,"row":2,"base":"road"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"forest"},{"col":6,"row":2,"base":"foothill"},{"col":7,"row":2,"base":"mountain"},
+      {"col":0,"row":3,"base":"mountain"},{"col":1,"row":3,"base":"hills"},{"col":2,"row":3,"base":"grassland"},{"col":3,"row":3,"base":"road"},{"col":4,"row":3,"base":"grassland"},{"col":5,"row":3,"base":"grassland"},{"col":6,"row":3,"base":"hills"},{"col":7,"row":3,"base":"cliff"},
+      {"col":0,"row":4,"base":"mountain"},{"col":1,"row":4,"base":"mountain"},{"col":2,"row":4,"base":"hills"},{"col":3,"row":4,"base":"road"},{"col":4,"row":4,"base":"road"},{"col":5,"row":4,"base":"hills"},{"col":6,"row":4,"base":"mountain"},{"col":7,"row":4,"base":"mountain"},
+      {"col":0,"row":5,"base":"cliff"},{"col":1,"row":5,"base":"mountain"},{"col":2,"row":5,"base":"mountain"},{"col":3,"row":5,"base":"hills"},{"col":4,"row":5,"base":"mountain"},{"col":5,"row":5,"base":"mountain"},{"col":6,"row":5,"base":"cliff"},{"col":7,"row":5,"base":"mountain"},
+      {"col":0,"row":6,"base":"mountain"},{"col":1,"row":6,"base":"mountain"},{"col":2,"row":6,"base":"mountain"},{"col":3,"row":6,"base":"mountain"},{"col":4,"row":6,"base":"mountain"},{"col":5,"row":6,"base":"mountain"},{"col":6,"row":6,"base":"mountain"},{"col":7,"row":6,"base":"mountain"}
+    ],
+    "overlays": [
+      {"col":3,"row":2,"id":"village-cluster"},
+      {"col":4,"row":0,"id":"cave-entrance"}
+    ]
+  },
+  {
+    "id": "dungeon-entrance",
+    "name": "Dungeon Entrance",
+    "theme": "dungeon",
+    "shape": "square",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"rocky-ground"},{"col":1,"row":0,"base":"rocky-ground"},{"col":2,"row":0,"base":"rocky-ground"},{"col":3,"row":0,"base":"cavern"},{"col":4,"row":0,"base":"rocky-ground"},{"col":5,"row":0,"base":"rocky-ground"},{"col":6,"row":0,"base":"rocky-ground"},{"col":7,"row":0,"base":"rocky-ground"},
+      {"col":0,"row":1,"base":"rocky-ground"},{"col":1,"row":1,"base":"corridor"},{"col":2,"row":1,"base":"corridor"},{"col":3,"row":1,"base":"corridor"},{"col":4,"row":1,"base":"corridor"},{"col":5,"row":1,"base":"corridor"},{"col":6,"row":1,"base":"rocky-ground"},{"col":7,"row":1,"base":"rocky-ground"},
+      {"col":0,"row":2,"base":"rocky-ground"},{"col":1,"row":2,"base":"corridor"},{"col":2,"row":2,"base":"stone-floor"},{"col":3,"row":2,"base":"stone-floor"},{"col":4,"row":2,"base":"stone-floor"},{"col":5,"row":2,"base":"corridor"},{"col":6,"row":2,"base":"rocky-ground"},{"col":7,"row":2,"base":"rocky-ground"},
+      {"col":0,"row":3,"base":"rocky-ground"},{"col":1,"row":3,"base":"corridor"},{"col":2,"row":3,"base":"stone-floor"},{"col":3,"row":3,"base":"cobblestone"},{"col":4,"row":3,"base":"stone-floor"},{"col":5,"row":3,"base":"corridor"},{"col":6,"row":3,"base":"corridor"},{"col":7,"row":3,"base":"dark-room"},
+      {"col":0,"row":4,"base":"rocky-ground"},{"col":1,"row":4,"base":"rocky-ground"},{"col":2,"row":4,"base":"corridor"},{"col":3,"row":4,"base":"corridor"},{"col":4,"row":4,"base":"stone-floor"},{"col":5,"row":4,"base":"stone-floor"},{"col":6,"row":4,"base":"corridor"},{"col":7,"row":4,"base":"dark-room"},
+      {"col":0,"row":5,"base":"rocky-ground"},{"col":1,"row":5,"base":"rocky-ground"},{"col":2,"row":5,"base":"rocky-ground"},{"col":3,"row":5,"base":"pit"},{"col":4,"row":5,"base":"corridor"},{"col":5,"row":5,"base":"crypt"},{"col":6,"row":5,"base":"corridor"},{"col":7,"row":5,"base":"rocky-ground"}
+    ],
+    "overlays": [
+      {"col":3,"row":0,"id":"cave-entrance"},
+      {"col":3,"row":3,"id":"torch-sconce"},
+      {"col":5,"row":4,"id":"chest"},
+      {"col":7,"row":3,"id":"door-locked"},
+      {"col":3,"row":5,"id":"trap"},
+      {"col":5,"row":5,"id":"skeleton"}
+    ]
+  },
+  {
+    "id": "dungeon-treasure-vault",
+    "name": "Treasure Vault",
+    "theme": "dungeon",
+    "shape": "hex",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"rocky-ground"},{"col":1,"row":0,"base":"rocky-ground"},{"col":2,"row":0,"base":"corridor"},{"col":3,"row":0,"base":"corridor"},{"col":4,"row":0,"base":"rocky-ground"},{"col":5,"row":0,"base":"rocky-ground"},{"col":6,"row":0,"base":"rocky-ground"},
+      {"col":0,"row":1,"base":"rocky-ground"},{"col":1,"row":1,"base":"corridor"},{"col":2,"row":1,"base":"stone-floor"},{"col":3,"row":1,"base":"stone-floor"},{"col":4,"row":1,"base":"corridor"},{"col":5,"row":1,"base":"rocky-ground"},{"col":6,"row":1,"base":"rocky-ground"},
+      {"col":0,"row":2,"base":"rocky-ground"},{"col":1,"row":2,"base":"corridor"},{"col":2,"row":2,"base":"stone-floor"},{"col":3,"row":2,"base":"throne-room"},{"col":4,"row":2,"base":"stone-floor"},{"col":5,"row":2,"base":"corridor"},{"col":6,"row":2,"base":"rocky-ground"},
+      {"col":0,"row":3,"base":"rocky-ground"},{"col":1,"row":3,"base":"corridor"},{"col":2,"row":3,"base":"stone-floor"},{"col":3,"row":3,"base":"cobblestone"},{"col":4,"row":3,"base":"stone-floor"},{"col":5,"row":3,"base":"corridor"},{"col":6,"row":3,"base":"rocky-ground"},
+      {"col":0,"row":4,"base":"rocky-ground"},{"col":1,"row":4,"base":"rocky-ground"},{"col":2,"row":4,"base":"corridor"},{"col":3,"row":4,"base":"lava-flow"},{"col":4,"row":4,"base":"corridor"},{"col":5,"row":4,"base":"rocky-ground"},{"col":6,"row":4,"base":"rocky-ground"},
+      {"col":0,"row":5,"base":"rocky-ground"},{"col":1,"row":5,"base":"rocky-ground"},{"col":2,"row":5,"base":"rocky-ground"},{"col":3,"row":5,"base":"rocky-ground"},{"col":4,"row":5,"base":"rocky-ground"},{"col":5,"row":5,"base":"rocky-ground"},{"col":6,"row":5,"base":"rocky-ground"}
+    ],
+    "overlays": [
+      {"col":3,"row":2,"id":"throne"},
+      {"col":2,"row":2,"id":"chest"},
+      {"col":4,"row":2,"id":"chest"},
+      {"col":2,"row":1,"id":"pillar"},
+      {"col":4,"row":1,"id":"pillar"},
+      {"col":3,"row":4,"id":"trap"}
+    ]
+  },
+  {
+    "id": "space-star-system",
+    "name": "Star System",
+    "theme": "space",
+    "shape": "hex",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"deep-space"},{"col":1,"row":0,"base":"deep-space"},{"col":2,"row":0,"base":"nebula-blue"},{"col":3,"row":0,"base":"deep-space"},{"col":4,"row":0,"base":"deep-space"},{"col":5,"row":0,"base":"deep-space"},{"col":6,"row":0,"base":"deep-space"},{"col":7,"row":0,"base":"nebula-red"},{"col":8,"row":0,"base":"deep-space"},{"col":9,"row":0,"base":"deep-space"},{"col":10,"row":0,"base":"deep-space"},
+      {"col":0,"row":1,"base":"deep-space"},{"col":1,"row":1,"base":"nebula-blue"},{"col":2,"row":1,"base":"deep-space"},{"col":3,"row":1,"base":"asteroid-field"},{"col":4,"row":1,"base":"deep-space"},{"col":5,"row":1,"base":"deep-space"},{"col":6,"row":1,"base":"deep-space"},{"col":7,"row":1,"base":"deep-space"},{"col":8,"row":1,"base":"nebula-red"},{"col":9,"row":1,"base":"deep-space"},{"col":10,"row":1,"base":"deep-space"},
+      {"col":0,"row":2,"base":"deep-space"},{"col":1,"row":2,"base":"deep-space"},{"col":2,"row":2,"base":"deep-space"},{"col":3,"row":2,"base":"deep-space"},{"col":4,"row":2,"base":"deep-space"},{"col":5,"row":2,"base":"planet-rocky"},{"col":6,"row":2,"base":"deep-space"},{"col":7,"row":2,"base":"deep-space"},{"col":8,"row":2,"base":"deep-space"},{"col":9,"row":2,"base":"deep-space"},{"col":10,"row":2,"base":"deep-space"},
+      {"col":0,"row":3,"base":"deep-space"},{"col":1,"row":3,"base":"deep-space"},{"col":2,"row":3,"base":"deep-space"},{"col":3,"row":3,"base":"deep-space"},{"col":4,"row":3,"base":"deep-space"},{"col":5,"row":3,"base":"deep-space"},{"col":6,"row":3,"base":"deep-space"},{"col":7,"row":3,"base":"deep-space"},{"col":8,"row":3,"base":"deep-space"},{"col":9,"row":3,"base":"gas-cloud"},{"col":10,"row":3,"base":"deep-space"},
+      {"col":0,"row":4,"base":"deep-space"},{"col":1,"row":4,"base":"deep-space"},{"col":2,"row":4,"base":"planet-ice"},{"col":3,"row":4,"base":"deep-space"},{"col":4,"row":4,"base":"deep-space"},{"col":5,"row":4,"base":"star-yellow"},{"col":6,"row":4,"base":"deep-space"},{"col":7,"row":4,"base":"deep-space"},{"col":8,"row":4,"base":"planet-gas"},{"col":9,"row":4,"base":"deep-space"},{"col":10,"row":4,"base":"deep-space"},
+      {"col":0,"row":5,"base":"deep-space"},{"col":1,"row":5,"base":"deep-space"},{"col":2,"row":5,"base":"deep-space"},{"col":3,"row":5,"base":"deep-space"},{"col":4,"row":5,"base":"deep-space"},{"col":5,"row":5,"base":"deep-space"},{"col":6,"row":5,"base":"deep-space"},{"col":7,"row":5,"base":"deep-space"},{"col":8,"row":5,"base":"deep-space"},{"col":9,"row":5,"base":"deep-space"},{"col":10,"row":5,"base":"nebula-green"},
+      {"col":0,"row":6,"base":"nebula-green"},{"col":1,"row":6,"base":"deep-space"},{"col":2,"row":6,"base":"deep-space"},{"col":3,"row":6,"base":"deep-space"},{"col":4,"row":6,"base":"deep-space"},{"col":5,"row":6,"base":"deep-space"},{"col":6,"row":6,"base":"planet-rocky"},{"col":7,"row":6,"base":"deep-space"},{"col":8,"row":6,"base":"deep-space"},{"col":9,"row":6,"base":"deep-space"},{"col":10,"row":6,"base":"deep-space"},
+      {"col":0,"row":7,"base":"deep-space"},{"col":1,"row":7,"base":"deep-space"},{"col":2,"row":7,"base":"deep-space"},{"col":3,"row":7,"base":"deep-space"},{"col":4,"row":7,"base":"wormhole"},{"col":5,"row":7,"base":"deep-space"},{"col":6,"row":7,"base":"deep-space"},{"col":7,"row":7,"base":"deep-space"},{"col":8,"row":7,"base":"deep-space"},{"col":9,"row":7,"base":"deep-space"},{"col":10,"row":7,"base":"deep-space"},
+      {"col":0,"row":8,"base":"deep-space"},{"col":1,"row":8,"base":"deep-space"},{"col":2,"row":8,"base":"deep-space"},{"col":3,"row":8,"base":"asteroid-field"},{"col":4,"row":8,"base":"deep-space"},{"col":5,"row":8,"base":"deep-space"},{"col":6,"row":8,"base":"deep-space"},{"col":7,"row":8,"base":"deep-space"},{"col":8,"row":8,"base":"deep-space"},{"col":9,"row":8,"base":"black-hole"},{"col":10,"row":8,"base":"deep-space"},
+      {"col":0,"row":9,"base":"deep-space"},{"col":1,"row":9,"base":"deep-space"},{"col":2,"row":9,"base":"deep-space"},{"col":3,"row":9,"base":"deep-space"},{"col":4,"row":9,"base":"deep-space"},{"col":5,"row":9,"base":"deep-space"},{"col":6,"row":9,"base":"deep-space"},{"col":7,"row":9,"base":"deep-space"},{"col":8,"row":9,"base":"deep-space"},{"col":9,"row":9,"base":"deep-space"},{"col":10,"row":9,"base":"deep-space"}
+    ],
+    "overlays": [
+      {"col":5,"row":4,"id":"space-station"},
+      {"col":8,"row":4,"id":"ring-planet"},
+      {"col":2,"row":4,"id":"moon-base"},
+      {"col":4,"row":7,"id":"warp-gate"},
+      {"col":3,"row":1,"id":"asteroid"},
+      {"col":6,"row":6,"id":"dome-habitat"}
+    ]
+  },
+  {
+    "id": "space-station",
+    "name": "Space Station",
+    "theme": "space",
+    "shape": "square",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"deep-space"},{"col":1,"row":0,"base":"deep-space"},{"col":2,"row":0,"base":"deep-space"},{"col":3,"row":0,"base":"deep-space"},{"col":4,"row":0,"base":"deep-space"},{"col":5,"row":0,"base":"deep-space"},{"col":6,"row":0,"base":"deep-space"},{"col":7,"row":0,"base":"deep-space"},
+      {"col":0,"row":1,"base":"deep-space"},{"col":1,"row":1,"base":"deep-space"},{"col":2,"row":1,"base":"deep-space"},{"col":3,"row":1,"base":"asteroid-field"},{"col":4,"row":1,"base":"asteroid-field"},{"col":5,"row":1,"base":"deep-space"},{"col":6,"row":1,"base":"deep-space"},{"col":7,"row":1,"base":"deep-space"},
+      {"col":0,"row":2,"base":"deep-space"},{"col":1,"row":2,"base":"deep-space"},{"col":2,"row":2,"base":"gas-cloud"},{"col":3,"row":2,"base":"deep-space"},{"col":4,"row":2,"base":"deep-space"},{"col":5,"row":2,"base":"deep-space"},{"col":6,"row":2,"base":"nebula-blue"},{"col":7,"row":2,"base":"deep-space"},
+      {"col":0,"row":3,"base":"deep-space"},{"col":1,"row":3,"base":"deep-space"},{"col":2,"row":3,"base":"deep-space"},{"col":3,"row":3,"base":"deep-space"},{"col":4,"row":3,"base":"deep-space"},{"col":5,"row":3,"base":"deep-space"},{"col":6,"row":3,"base":"deep-space"},{"col":7,"row":3,"base":"deep-space"},
+      {"col":0,"row":4,"base":"deep-space"},{"col":1,"row":4,"base":"nebula-red"},{"col":2,"row":4,"base":"deep-space"},{"col":3,"row":4,"base":"deep-space"},{"col":4,"row":4,"base":"planet-rocky"},{"col":5,"row":4,"base":"deep-space"},{"col":6,"row":4,"base":"deep-space"},{"col":7,"row":4,"base":"deep-space"},
+      {"col":0,"row":5,"base":"deep-space"},{"col":1,"row":5,"base":"deep-space"},{"col":2,"row":5,"base":"deep-space"},{"col":3,"row":5,"base":"deep-space"},{"col":4,"row":5,"base":"deep-space"},{"col":5,"row":5,"base":"deep-space"},{"col":6,"row":5,"base":"deep-space"},{"col":7,"row":5,"base":"deep-space"}
+    ],
+    "overlays": [
+      {"col":3,"row":3,"id":"space-station"},
+      {"col":4,"row":3,"id":"solar-panel"},
+      {"col":3,"row":1,"id":"satellite"},
+      {"col":4,"row":4,"id":"dome-habitat"},
+      {"col":6,"row":2,"id":"beacon"}
+    ]
+  },
+  {
+    "id": "battlefields-river-crossing",
+    "name": "River Crossing",
+    "theme": "historical-battlefields",
+    "shape": "square",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"forest"},{"col":1,"row":0,"base":"grassland"},{"col":2,"row":0,"base":"grassland"},{"col":3,"row":0,"base":"hills"},{"col":4,"row":0,"base":"hills"},{"col":5,"row":0,"base":"grassland"},{"col":6,"row":0,"base":"river"},{"col":7,"row":0,"base":"grassland"},{"col":8,"row":0,"base":"grassland"},{"col":9,"row":0,"base":"farmland"},{"col":10,"row":0,"base":"farmland"},{"col":11,"row":0,"base":"road"},{"col":12,"row":0,"base":"grassland"},
+      {"col":0,"row":1,"base":"forest"},{"col":1,"row":1,"base":"grassland"},{"col":2,"row":1,"base":"road"},{"col":3,"row":1,"base":"hills"},{"col":4,"row":1,"base":"grassland"},{"col":5,"row":1,"base":"grassland"},{"col":6,"row":1,"base":"river"},{"col":7,"row":1,"base":"grassland"},{"col":8,"row":1,"base":"grassland"},{"col":9,"row":1,"base":"farmland"},{"col":10,"row":1,"base":"grassland"},{"col":11,"row":1,"base":"road"},{"col":12,"row":1,"base":"grassland"},
+      {"col":0,"row":2,"base":"grassland"},{"col":1,"row":2,"base":"grassland"},{"col":2,"row":2,"base":"road"},{"col":3,"row":2,"base":"grassland"},{"col":4,"row":2,"base":"trench"},{"col":5,"row":2,"base":"trench"},{"col":6,"row":2,"base":"river"},{"col":7,"row":2,"base":"grassland"},{"col":8,"row":2,"base":"grassland"},{"col":9,"row":2,"base":"grassland"},{"col":10,"row":2,"base":"grassland"},{"col":11,"row":2,"base":"road"},{"col":12,"row":2,"base":"grassland"},
+      {"col":0,"row":3,"base":"grassland"},{"col":1,"row":3,"base":"grassland"},{"col":2,"row":3,"base":"road"},{"col":3,"row":3,"base":"grassland"},{"col":4,"row":3,"base":"trench"},{"col":5,"row":3,"base":"grassland"},{"col":6,"row":3,"base":"river"},{"col":7,"row":3,"base":"grassland"},{"col":8,"row":3,"base":"fortification"},{"col":9,"row":3,"base":"fortification"},{"col":10,"row":3,"base":"grassland"},{"col":11,"row":3,"base":"road"},{"col":12,"row":3,"base":"grassland"},
+      {"col":0,"row":4,"base":"grassland"},{"col":1,"row":4,"base":"road"},{"col":2,"row":4,"base":"road"},{"col":3,"row":4,"base":"road"},{"col":4,"row":4,"base":"road"},{"col":5,"row":4,"base":"road"},{"col":6,"row":4,"base":"bridge"},{"col":7,"row":4,"base":"road"},{"col":8,"row":4,"base":"road"},{"col":9,"row":4,"base":"road"},{"col":10,"row":4,"base":"road"},{"col":11,"row":4,"base":"road"},{"col":12,"row":4,"base":"grassland"},
+      {"col":0,"row":5,"base":"grassland"},{"col":1,"row":5,"base":"grassland"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"camp-ground"},{"col":4,"row":5,"base":"camp-ground"},{"col":5,"row":5,"base":"grassland"},{"col":6,"row":5,"base":"river"},{"col":7,"row":5,"base":"grassland"},{"col":8,"row":5,"base":"grassland"},{"col":9,"row":5,"base":"grassland"},{"col":10,"row":5,"base":"grassland"},{"col":11,"row":5,"base":"grassland"},{"col":12,"row":5,"base":"forest"},
+      {"col":0,"row":6,"base":"grassland"},{"col":1,"row":6,"base":"grassland"},{"col":2,"row":6,"base":"grassland"},{"col":3,"row":6,"base":"grassland"},{"col":4,"row":6,"base":"grassland"},{"col":5,"row":6,"base":"grassland"},{"col":6,"row":6,"base":"river"},{"col":7,"row":6,"base":"grassland"},{"col":8,"row":6,"base":"grassland"},{"col":9,"row":6,"base":"mud"},{"col":10,"row":6,"base":"grassland"},{"col":11,"row":6,"base":"grassland"},{"col":12,"row":6,"base":"forest"},
+      {"col":0,"row":7,"base":"farmland"},{"col":1,"row":7,"base":"farmland"},{"col":2,"row":7,"base":"grassland"},{"col":3,"row":7,"base":"grassland"},{"col":4,"row":7,"base":"grassland"},{"col":5,"row":7,"base":"grassland"},{"col":6,"row":7,"base":"river"},{"col":7,"row":7,"base":"swamp"},{"col":8,"row":7,"base":"grassland"},{"col":9,"row":7,"base":"grassland"},{"col":10,"row":7,"base":"grassland"},{"col":11,"row":7,"base":"forest"},{"col":12,"row":7,"base":"forest"},
+      {"col":0,"row":8,"base":"farmland"},{"col":1,"row":8,"base":"grassland"},{"col":2,"row":8,"base":"grassland"},{"col":3,"row":8,"base":"grassland"},{"col":4,"row":8,"base":"hills"},{"col":5,"row":8,"base":"grassland"},{"col":6,"row":8,"base":"river"},{"col":7,"row":8,"base":"grassland"},{"col":8,"row":8,"base":"grassland"},{"col":9,"row":8,"base":"grassland"},{"col":10,"row":8,"base":"forest"},{"col":11,"row":8,"base":"forest"},{"col":12,"row":8,"base":"forest"},
+      {"col":0,"row":9,"base":"grassland"},{"col":1,"row":9,"base":"grassland"},{"col":2,"row":9,"base":"grassland"},{"col":3,"row":9,"base":"hills"},{"col":4,"row":9,"base":"hills"},{"col":5,"row":9,"base":"grassland"},{"col":6,"row":9,"base":"river"},{"col":7,"row":9,"base":"river"},{"col":8,"row":9,"base":"grassland"},{"col":9,"row":9,"base":"grassland"},{"col":10,"row":9,"base":"forest"},{"col":11,"row":9,"base":"forest"},{"col":12,"row":9,"base":"forest"}
+    ],
+    "overlays": [
+      {"col":6,"row":4,"id":"pontoon-bridge"},
+      {"col":3,"row":5,"id":"tent-command"},
+      {"col":8,"row":3,"id":"bunker"},
+      {"col":3,"row":0,"id":"watchtower"},
+      {"col":4,"row":2,"id":"barricade"},
+      {"col":9,"row":3,"id":"cannon"}
+    ]
+  },
+  {
+    "id": "battlefields-hilltop-fort",
+    "name": "Hilltop Fort",
+    "theme": "historical-battlefields",
+    "shape": "hex",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"grassland"},{"col":1,"row":0,"base":"grassland"},{"col":2,"row":0,"base":"grassland"},{"col":3,"row":0,"base":"hills"},{"col":4,"row":0,"base":"grassland"},{"col":5,"row":0,"base":"grassland"},{"col":6,"row":0,"base":"forest"},
+      {"col":0,"row":1,"base":"grassland"},{"col":1,"row":1,"base":"grassland"},{"col":2,"row":1,"base":"hills"},{"col":3,"row":1,"base":"fortification"},{"col":4,"row":1,"base":"hills"},{"col":5,"row":1,"base":"grassland"},{"col":6,"row":1,"base":"grassland"},
+      {"col":0,"row":2,"base":"road"},{"col":1,"row":2,"base":"road"},{"col":2,"row":2,"base":"road"},{"col":3,"row":2,"base":"fortification"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"grassland"},{"col":6,"row":2,"base":"grassland"},
+      {"col":0,"row":3,"base":"grassland"},{"col":1,"row":3,"base":"grassland"},{"col":2,"row":3,"base":"trench"},{"col":3,"row":3,"base":"grassland"},{"col":4,"row":3,"base":"trench"},{"col":5,"row":3,"base":"grassland"},{"col":6,"row":3,"base":"river"},
+      {"col":0,"row":4,"base":"farmland"},{"col":1,"row":4,"base":"grassland"},{"col":2,"row":4,"base":"grassland"},{"col":3,"row":4,"base":"camp-ground"},{"col":4,"row":4,"base":"grassland"},{"col":5,"row":4,"base":"grassland"},{"col":6,"row":4,"base":"river"},
+      {"col":0,"row":5,"base":"farmland"},{"col":1,"row":5,"base":"farmland"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"grassland"},{"col":4,"row":5,"base":"grassland"},{"col":5,"row":5,"base":"forest"},{"col":6,"row":5,"base":"forest"}
+    ],
+    "overlays": [
+      {"col":3,"row":1,"id":"cannon"},
+      {"col":3,"row":2,"id":"watchtower"},
+      {"col":3,"row":4,"id":"tent-command"},
+      {"col":2,"row":3,"id":"barricade"}
+    ]
+  },
+  {
+    "id": "jungle-temple-ruins",
+    "name": "Temple Ruins",
+    "theme": "jungle",
+    "shape": "hex",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"jungle-canopy"},{"col":1,"row":0,"base":"jungle-canopy"},{"col":2,"row":0,"base":"jungle-canopy"},{"col":3,"row":0,"base":"jungle-floor"},{"col":4,"row":0,"base":"jungle-canopy"},{"col":5,"row":0,"base":"jungle-canopy"},{"col":6,"row":0,"base":"jungle-canopy"},
+      {"col":0,"row":1,"base":"jungle-canopy"},{"col":1,"row":1,"base":"jungle-floor"},{"col":2,"row":1,"base":"clearing"},{"col":3,"row":1,"base":"clearing"},{"col":4,"row":1,"base":"clearing"},{"col":5,"row":1,"base":"jungle-floor"},{"col":6,"row":1,"base":"jungle-canopy"},
+      {"col":0,"row":2,"base":"jungle-canopy"},{"col":1,"row":2,"base":"clearing"},{"col":2,"row":2,"base":"clearing"},{"col":3,"row":2,"base":"clearing"},{"col":4,"row":2,"base":"clearing"},{"col":5,"row":2,"base":"clearing"},{"col":6,"row":2,"base":"jungle-canopy"},
+      {"col":0,"row":3,"base":"bamboo-grove"},{"col":1,"row":3,"base":"jungle-floor"},{"col":2,"row":3,"base":"clearing"},{"col":3,"row":3,"base":"clearing"},{"col":4,"row":3,"base":"clearing"},{"col":5,"row":3,"base":"vine-wall"},{"col":6,"row":3,"base":"jungle-canopy"},
+      {"col":0,"row":4,"base":"jungle-canopy"},{"col":1,"row":4,"base":"river"},{"col":2,"row":4,"base":"river"},{"col":3,"row":4,"base":"jungle-floor"},{"col":4,"row":4,"base":"jungle-canopy"},{"col":5,"row":4,"base":"jungle-canopy"},{"col":6,"row":4,"base":"jungle-canopy"},
+      {"col":0,"row":5,"base":"jungle-canopy"},{"col":1,"row":5,"base":"jungle-canopy"},{"col":2,"row":5,"base":"river"},{"col":3,"row":5,"base":"jungle-canopy"},{"col":4,"row":5,"base":"jungle-canopy"},{"col":5,"row":5,"base":"jungle-canopy"},{"col":6,"row":5,"base":"jungle-canopy"}
+    ],
+    "overlays": [
+      {"col":3,"row":2,"id":"temple-ruin"},
+      {"col":2,"row":2,"id":"ancient-statue"},
+      {"col":4,"row":2,"id":"ancient-statue"},
+      {"col":3,"row":1,"id":"totem-pole"},
+      {"col":5,"row":3,"id":"snake"},
+      {"col":1,"row":4,"id":"crocodile"}
+    ]
+  },
+  {
+    "id": "jungle-river-village",
+    "name": "River Village",
+    "theme": "jungle",
+    "shape": "square",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"jungle-canopy"},{"col":1,"row":0,"base":"jungle-canopy"},{"col":2,"row":0,"base":"jungle-canopy"},{"col":3,"row":0,"base":"jungle-canopy"},{"col":4,"row":0,"base":"jungle-canopy"},{"col":5,"row":0,"base":"jungle-floor"},{"col":6,"row":0,"base":"jungle-canopy"},{"col":7,"row":0,"base":"jungle-canopy"},{"col":8,"row":0,"base":"hills"},{"col":9,"row":0,"base":"hills"},{"col":10,"row":0,"base":"jungle-canopy"},{"col":11,"row":0,"base":"jungle-canopy"},{"col":12,"row":0,"base":"jungle-canopy"},
+      {"col":0,"row":1,"base":"jungle-canopy"},{"col":1,"row":1,"base":"jungle-canopy"},{"col":2,"row":1,"base":"bamboo-grove"},{"col":3,"row":1,"base":"jungle-floor"},{"col":4,"row":1,"base":"clearing"},{"col":5,"row":1,"base":"clearing"},{"col":6,"row":1,"base":"jungle-floor"},{"col":7,"row":1,"base":"jungle-canopy"},{"col":8,"row":1,"base":"hills"},{"col":9,"row":1,"base":"jungle-canopy"},{"col":10,"row":1,"base":"jungle-canopy"},{"col":11,"row":1,"base":"jungle-canopy"},{"col":12,"row":1,"base":"jungle-canopy"},
+      {"col":0,"row":2,"base":"jungle-canopy"},{"col":1,"row":2,"base":"jungle-floor"},{"col":2,"row":2,"base":"clearing"},{"col":3,"row":2,"base":"clearing"},{"col":4,"row":2,"base":"clearing"},{"col":5,"row":2,"base":"clearing"},{"col":6,"row":2,"base":"clearing"},{"col":7,"row":2,"base":"jungle-floor"},{"col":8,"row":2,"base":"jungle-canopy"},{"col":9,"row":2,"base":"jungle-canopy"},{"col":10,"row":2,"base":"river"},{"col":11,"row":2,"base":"jungle-canopy"},{"col":12,"row":2,"base":"jungle-canopy"},
+      {"col":0,"row":3,"base":"jungle-canopy"},{"col":1,"row":3,"base":"clearing"},{"col":2,"row":3,"base":"clearing"},{"col":3,"row":3,"base":"clearing"},{"col":4,"row":3,"base":"clearing"},{"col":5,"row":3,"base":"clearing"},{"col":6,"row":3,"base":"clearing"},{"col":7,"row":3,"base":"clearing"},{"col":8,"row":3,"base":"jungle-floor"},{"col":9,"row":3,"base":"river"},{"col":10,"row":3,"base":"river"},{"col":11,"row":3,"base":"jungle-canopy"},{"col":12,"row":3,"base":"jungle-canopy"},
+      {"col":0,"row":4,"base":"jungle-canopy"},{"col":1,"row":4,"base":"jungle-floor"},{"col":2,"row":4,"base":"clearing"},{"col":3,"row":4,"base":"clearing"},{"col":4,"row":4,"base":"clearing"},{"col":5,"row":4,"base":"clearing"},{"col":6,"row":4,"base":"river"},{"col":7,"row":4,"base":"river"},{"col":8,"row":4,"base":"river"},{"col":9,"row":4,"base":"river"},{"col":10,"row":4,"base":"jungle-floor"},{"col":11,"row":4,"base":"jungle-canopy"},{"col":12,"row":4,"base":"jungle-canopy"},
+      {"col":0,"row":5,"base":"jungle-canopy"},{"col":1,"row":5,"base":"jungle-canopy"},{"col":2,"row":5,"base":"clearing"},{"col":3,"row":5,"base":"clearing"},{"col":4,"row":5,"base":"river"},{"col":5,"row":5,"base":"river"},{"col":6,"row":5,"base":"river"},{"col":7,"row":5,"base":"wide-river"},{"col":8,"row":5,"base":"jungle-floor"},{"col":9,"row":5,"base":"jungle-canopy"},{"col":10,"row":5,"base":"jungle-canopy"},{"col":11,"row":5,"base":"jungle-canopy"},{"col":12,"row":5,"base":"jungle-canopy"},
+      {"col":0,"row":6,"base":"jungle-canopy"},{"col":1,"row":6,"base":"jungle-canopy"},{"col":2,"row":6,"base":"river"},{"col":3,"row":6,"base":"river"},{"col":4,"row":6,"base":"river"},{"col":5,"row":6,"base":"wide-river"},{"col":6,"row":6,"base":"jungle-floor"},{"col":7,"row":6,"base":"jungle-canopy"},{"col":8,"row":6,"base":"jungle-canopy"},{"col":9,"row":6,"base":"fern-gully"},{"col":10,"row":6,"base":"jungle-canopy"},{"col":11,"row":6,"base":"jungle-canopy"},{"col":12,"row":6,"base":"jungle-canopy"},
+      {"col":0,"row":7,"base":"river"},{"col":1,"row":7,"base":"river"},{"col":2,"row":7,"base":"river"},{"col":3,"row":7,"base":"jungle-floor"},{"col":4,"row":7,"base":"jungle-canopy"},{"col":5,"row":7,"base":"jungle-canopy"},{"col":6,"row":7,"base":"jungle-canopy"},{"col":7,"row":7,"base":"jungle-canopy"},{"col":8,"row":7,"base":"mangrove"},{"col":9,"row":7,"base":"swamp"},{"col":10,"row":7,"base":"jungle-canopy"},{"col":11,"row":7,"base":"jungle-canopy"},{"col":12,"row":7,"base":"jungle-canopy"},
+      {"col":0,"row":8,"base":"jungle-canopy"},{"col":1,"row":8,"base":"jungle-canopy"},{"col":2,"row":8,"base":"jungle-canopy"},{"col":3,"row":8,"base":"jungle-canopy"},{"col":4,"row":8,"base":"jungle-canopy"},{"col":5,"row":8,"base":"jungle-canopy"},{"col":6,"row":8,"base":"jungle-canopy"},{"col":7,"row":8,"base":"jungle-canopy"},{"col":8,"row":8,"base":"mangrove"},{"col":9,"row":8,"base":"jungle-canopy"},{"col":10,"row":8,"base":"jungle-canopy"},{"col":11,"row":8,"base":"jungle-canopy"},{"col":12,"row":8,"base":"jungle-canopy"},
+      {"col":0,"row":9,"base":"jungle-canopy"},{"col":1,"row":9,"base":"jungle-canopy"},{"col":2,"row":9,"base":"jungle-canopy"},{"col":3,"row":9,"base":"jungle-canopy"},{"col":4,"row":9,"base":"jungle-canopy"},{"col":5,"row":9,"base":"jungle-canopy"},{"col":6,"row":9,"base":"jungle-canopy"},{"col":7,"row":9,"base":"jungle-canopy"},{"col":8,"row":9,"base":"jungle-canopy"},{"col":9,"row":9,"base":"jungle-canopy"},{"col":10,"row":9,"base":"jungle-canopy"},{"col":11,"row":9,"base":"jungle-canopy"},{"col":12,"row":9,"base":"jungle-canopy"}
+    ],
+    "overlays": [
+      {"col":4,"row":3,"id":"tree-house"},
+      {"col":3,"row":2,"id":"totem-pole"},
+      {"col":5,"row":2,"id":"canoe"},
+      {"col":8,"row":1,"id":"cave-entrance"},
+      {"col":9,"row":7,"id":"crocodile"},
+      {"col":6,"row":3,"id":"vine-bridge"}
+    ]
+  },
+  {
+    "id": "rivers-delta-town",
+    "name": "Delta Town",
+    "theme": "rivers-waterways",
+    "shape": "hex",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"grassland"},{"col":1,"row":0,"base":"grassland"},{"col":2,"row":0,"base":"grassland"},{"col":3,"row":0,"base":"river"},{"col":4,"row":0,"base":"river"},{"col":5,"row":0,"base":"grassland"},{"col":6,"row":0,"base":"grassland"},{"col":7,"row":0,"base":"grassland"},{"col":8,"row":0,"base":"grassland"},{"col":9,"row":0,"base":"forest"},{"col":10,"row":0,"base":"forest"},
+      {"col":0,"row":1,"base":"grassland"},{"col":1,"row":1,"base":"grassland"},{"col":2,"row":1,"base":"river"},{"col":3,"row":1,"base":"river"},{"col":4,"row":1,"base":"grassland"},{"col":5,"row":1,"base":"grassland"},{"col":6,"row":1,"base":"grassland"},{"col":7,"row":1,"base":"grassland"},{"col":8,"row":1,"base":"grassland"},{"col":9,"row":1,"base":"grassland"},{"col":10,"row":1,"base":"forest"},
+      {"col":0,"row":2,"base":"grassland"},{"col":1,"row":2,"base":"river"},{"col":2,"row":2,"base":"river"},{"col":3,"row":2,"base":"grassland"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"grassland"},{"col":6,"row":2,"base":"river"},{"col":7,"row":2,"base":"grassland"},{"col":8,"row":2,"base":"grassland"},{"col":9,"row":2,"base":"grassland"},{"col":10,"row":2,"base":"grassland"},
+      {"col":0,"row":3,"base":"river"},{"col":1,"row":3,"base":"river"},{"col":2,"row":3,"base":"grassland"},{"col":3,"row":3,"base":"grassland"},{"col":4,"row":3,"base":"grassland"},{"col":5,"row":3,"base":"river"},{"col":6,"row":3,"base":"river"},{"col":7,"row":3,"base":"grassland"},{"col":8,"row":3,"base":"grassland"},{"col":9,"row":3,"base":"grassland"},{"col":10,"row":3,"base":"grassland"},
+      {"col":0,"row":4,"base":"river"},{"col":1,"row":4,"base":"grassland"},{"col":2,"row":4,"base":"grassland"},{"col":3,"row":4,"base":"grassland"},{"col":4,"row":4,"base":"river"},{"col":5,"row":4,"base":"river"},{"col":6,"row":4,"base":"grassland"},{"col":7,"row":4,"base":"grassland"},{"col":8,"row":4,"base":"pond"},{"col":9,"row":4,"base":"grassland"},{"col":10,"row":4,"base":"grassland"},
+      {"col":0,"row":5,"base":"shallow-water"},{"col":1,"row":5,"base":"river"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"river"},{"col":4,"row":5,"base":"river"},{"col":5,"row":5,"base":"grassland"},{"col":6,"row":5,"base":"grassland"},{"col":7,"row":5,"base":"grassland"},{"col":8,"row":5,"base":"grassland"},{"col":9,"row":5,"base":"stream"},{"col":10,"row":5,"base":"grassland"},
+      {"col":0,"row":6,"base":"shallow-water"},{"col":1,"row":6,"base":"shallow-water"},{"col":2,"row":6,"base":"river"},{"col":3,"row":6,"base":"river"},{"col":4,"row":6,"base":"delta"},{"col":5,"row":6,"base":"delta"},{"col":6,"row":6,"base":"grassland"},{"col":7,"row":6,"base":"grassland"},{"col":8,"row":6,"base":"grassland"},{"col":9,"row":6,"base":"grassland"},{"col":10,"row":6,"base":"grassland"},
+      {"col":0,"row":7,"base":"ocean"},{"col":1,"row":7,"base":"shallow-water"},{"col":2,"row":7,"base":"shallow-water"},{"col":3,"row":7,"base":"delta"},{"col":4,"row":7,"base":"shallow-water"},{"col":5,"row":7,"base":"shallow-water"},{"col":6,"row":7,"base":"beach"},{"col":7,"row":7,"base":"grassland"},{"col":8,"row":7,"base":"grassland"},{"col":9,"row":7,"base":"grassland"},{"col":10,"row":7,"base":"forest"},
+      {"col":0,"row":8,"base":"ocean"},{"col":1,"row":8,"base":"ocean"},{"col":2,"row":8,"base":"shallow-water"},{"col":3,"row":8,"base":"shallow-water"},{"col":4,"row":8,"base":"shallow-water"},{"col":5,"row":8,"base":"beach"},{"col":6,"row":8,"base":"beach"},{"col":7,"row":8,"base":"grassland"},{"col":8,"row":8,"base":"grassland"},{"col":9,"row":8,"base":"forest"},{"col":10,"row":8,"base":"forest"},
+      {"col":0,"row":9,"base":"ocean"},{"col":1,"row":9,"base":"ocean"},{"col":2,"row":9,"base":"ocean"},{"col":3,"row":9,"base":"ocean"},{"col":4,"row":9,"base":"shallow-water"},{"col":5,"row":9,"base":"beach"},{"col":6,"row":9,"base":"grassland"},{"col":7,"row":9,"base":"grassland"},{"col":8,"row":9,"base":"forest"},{"col":9,"row":9,"base":"forest"},{"col":10,"row":9,"base":"forest"}
+    ],
+    "overlays": [
+      {"col":4,"row":4,"id":"harbor"},
+      {"col":5,"row":5,"id":"dock"},
+      {"col":3,"row":2,"id":"watermill"},
+      {"col":6,"row":7,"id":"lighthouse"},
+      {"col":8,"row":4,"id":"reed-bed"},
+      {"col":1,"row":3,"id":"fishing-boat"}
+    ]
+  },
+  {
+    "id": "rivers-rapids-run",
+    "name": "Rapids Run",
+    "theme": "rivers-waterways",
+    "shape": "square",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"forest"},{"col":1,"row":0,"base":"forest"},{"col":2,"row":0,"base":"grassland"},{"col":3,"row":0,"base":"rapids"},{"col":4,"row":0,"base":"rapids"},{"col":5,"row":0,"base":"grassland"},{"col":6,"row":0,"base":"grassland"},{"col":7,"row":0,"base":"forest"},
+      {"col":0,"row":1,"base":"forest"},{"col":1,"row":1,"base":"grassland"},{"col":2,"row":1,"base":"river"},{"col":3,"row":1,"base":"river"},{"col":4,"row":1,"base":"grassland"},{"col":5,"row":1,"base":"grassland"},{"col":6,"row":1,"base":"grassland"},{"col":7,"row":1,"base":"forest"},
+      {"col":0,"row":2,"base":"grassland"},{"col":1,"row":2,"base":"river"},{"col":2,"row":2,"base":"river"},{"col":3,"row":2,"base":"grassland"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"stream"},{"col":6,"row":2,"base":"grassland"},{"col":7,"row":2,"base":"grassland"},
+      {"col":0,"row":3,"base":"grassland"},{"col":1,"row":3,"base":"grassland"},{"col":2,"row":3,"base":"river"},{"col":3,"row":3,"base":"waterfall"},{"col":4,"row":3,"base":"grassland"},{"col":5,"row":3,"base":"stream"},{"col":6,"row":3,"base":"pond"},{"col":7,"row":3,"base":"grassland"},
+      {"col":0,"row":4,"base":"grassland"},{"col":1,"row":4,"base":"grassland"},{"col":2,"row":4,"base":"grassland"},{"col":3,"row":4,"base":"river"},{"col":4,"row":4,"base":"river"},{"col":5,"row":4,"base":"river"},{"col":6,"row":4,"base":"grassland"},{"col":7,"row":4,"base":"forest"},
+      {"col":0,"row":5,"base":"forest"},{"col":1,"row":5,"base":"grassland"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"grassland"},{"col":4,"row":5,"base":"lake"},{"col":5,"row":5,"base":"lake"},{"col":6,"row":5,"base":"grassland"},{"col":7,"row":5,"base":"forest"}
+    ],
+    "overlays": [
+      {"col":3,"row":3,"id":"whirlpool"},
+      {"col":4,"row":5,"id":"fishing-boat"},
+      {"col":2,"row":0,"id":"stone-bridge"},
+      {"col":6,"row":3,"id":"frog"}
+    ]
+  },
+  {
+    "id": "prairie-frontier-settlement",
+    "name": "Frontier Settlement",
+    "theme": "prairie-grasslands",
+    "shape": "square",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"tall-grass"},{"col":1,"row":0,"base":"tall-grass"},{"col":2,"row":0,"base":"grassland"},{"col":3,"row":0,"base":"grassland"},{"col":4,"row":0,"base":"grassland"},{"col":5,"row":0,"base":"grassland"},{"col":6,"row":0,"base":"grassland"},{"col":7,"row":0,"base":"grassland"},{"col":8,"row":0,"base":"tall-grass"},{"col":9,"row":0,"base":"tall-grass"},{"col":10,"row":0,"base":"tall-grass"},{"col":11,"row":0,"base":"grassland"},{"col":12,"row":0,"base":"grassland"},
+      {"col":0,"row":1,"base":"tall-grass"},{"col":1,"row":1,"base":"grassland"},{"col":2,"row":1,"base":"grassland"},{"col":3,"row":1,"base":"road"},{"col":4,"row":1,"base":"road"},{"col":5,"row":1,"base":"road"},{"col":6,"row":1,"base":"road"},{"col":7,"row":1,"base":"road"},{"col":8,"row":1,"base":"grassland"},{"col":9,"row":1,"base":"grassland"},{"col":10,"row":1,"base":"grassland"},{"col":11,"row":1,"base":"grassland"},{"col":12,"row":1,"base":"grassland"},
+      {"col":0,"row":2,"base":"grassland"},{"col":1,"row":2,"base":"grassland"},{"col":2,"row":2,"base":"grassland"},{"col":3,"row":2,"base":"road"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"grassland"},{"col":6,"row":2,"base":"grassland"},{"col":7,"row":2,"base":"road"},{"col":8,"row":2,"base":"grassland"},{"col":9,"row":2,"base":"grassland"},{"col":10,"row":2,"base":"farmland"},{"col":11,"row":2,"base":"farmland"},{"col":12,"row":2,"base":"grassland"},
+      {"col":0,"row":3,"base":"grassland"},{"col":1,"row":3,"base":"grassland"},{"col":2,"row":3,"base":"grassland"},{"col":3,"row":3,"base":"road"},{"col":4,"row":3,"base":"grassland"},{"col":5,"row":3,"base":"grassland"},{"col":6,"row":3,"base":"grassland"},{"col":7,"row":3,"base":"road"},{"col":8,"row":3,"base":"grassland"},{"col":9,"row":3,"base":"wheat-field"},{"col":10,"row":3,"base":"wheat-field"},{"col":11,"row":3,"base":"farmland"},{"col":12,"row":3,"base":"grassland"},
+      {"col":0,"row":4,"base":"grassland"},{"col":1,"row":4,"base":"road"},{"col":2,"row":4,"base":"road"},{"col":3,"row":4,"base":"road"},{"col":4,"row":4,"base":"grassland"},{"col":5,"row":4,"base":"grassland"},{"col":6,"row":4,"base":"grassland"},{"col":7,"row":4,"base":"road"},{"col":8,"row":4,"base":"grassland"},{"col":9,"row":4,"base":"grassland"},{"col":10,"row":4,"base":"grassland"},{"col":11,"row":4,"base":"grassland"},{"col":12,"row":4,"base":"grassland"},
+      {"col":0,"row":5,"base":"grassland"},{"col":1,"row":5,"base":"road"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"grassland"},{"col":4,"row":5,"base":"grassland"},{"col":5,"row":5,"base":"grassland"},{"col":6,"row":5,"base":"grassland"},{"col":7,"row":5,"base":"road"},{"col":8,"row":5,"base":"road"},{"col":9,"row":5,"base":"road"},{"col":10,"row":5,"base":"road"},{"col":11,"row":5,"base":"grassland"},{"col":12,"row":5,"base":"grassland"},
+      {"col":0,"row":6,"base":"grassland"},{"col":1,"row":6,"base":"road"},{"col":2,"row":6,"base":"grassland"},{"col":3,"row":6,"base":"grassland"},{"col":4,"row":6,"base":"grassland"},{"col":5,"row":6,"base":"pond"},{"col":6,"row":6,"base":"grassland"},{"col":7,"row":6,"base":"grassland"},{"col":8,"row":6,"base":"grassland"},{"col":9,"row":6,"base":"grassland"},{"col":10,"row":6,"base":"road"},{"col":11,"row":6,"base":"grassland"},{"col":12,"row":6,"base":"tall-grass"},
+      {"col":0,"row":7,"base":"grassland"},{"col":1,"row":7,"base":"road"},{"col":2,"row":7,"base":"grassland"},{"col":3,"row":7,"base":"grassland"},{"col":4,"row":7,"base":"grassland"},{"col":5,"row":7,"base":"grassland"},{"col":6,"row":7,"base":"grassland"},{"col":7,"row":7,"base":"grassland"},{"col":8,"row":7,"base":"grassland"},{"col":9,"row":7,"base":"grassland"},{"col":10,"row":7,"base":"road"},{"col":11,"row":7,"base":"grassland"},{"col":12,"row":7,"base":"tall-grass"},
+      {"col":0,"row":8,"base":"grassland"},{"col":1,"row":8,"base":"road"},{"col":2,"row":8,"base":"road"},{"col":3,"row":8,"base":"road"},{"col":4,"row":8,"base":"grassland"},{"col":5,"row":8,"base":"grassland"},{"col":6,"row":8,"base":"stream"},{"col":7,"row":8,"base":"grassland"},{"col":8,"row":8,"base":"grassland"},{"col":9,"row":8,"base":"grassland"},{"col":10,"row":8,"base":"road"},{"col":11,"row":8,"base":"tall-grass"},{"col":12,"row":8,"base":"tall-grass"},
+      {"col":0,"row":9,"base":"grassland"},{"col":1,"row":9,"base":"grassland"},{"col":2,"row":9,"base":"grassland"},{"col":3,"row":9,"base":"road"},{"col":4,"row":9,"base":"grassland"},{"col":5,"row":9,"base":"stream"},{"col":6,"row":9,"base":"stream"},{"col":7,"row":9,"base":"grassland"},{"col":8,"row":9,"base":"grassland"},{"col":9,"row":9,"base":"grassland"},{"col":10,"row":9,"base":"road"},{"col":11,"row":9,"base":"tall-grass"},{"col":12,"row":9,"base":"tall-grass"}
+    ],
+    "overlays": [
+      {"col":5,"row":3,"id":"ranch"},
+      {"col":3,"row":1,"id":"market-town"},
+      {"col":10,"row":3,"id":"grain-silo"},
+      {"col":11,"row":3,"id":"windmill"},
+      {"col":1,"row":6,"id":"covered-wagon"},
+      {"col":5,"row":6,"id":"buffalo"}
+    ]
+  },
+  {
+    "id": "prairie-buffalo-plains",
+    "name": "Buffalo Plains",
+    "theme": "prairie-grasslands",
+    "shape": "hex",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"tall-grass"},{"col":1,"row":0,"base":"grassland"},{"col":2,"row":0,"base":"grassland"},{"col":3,"row":0,"base":"tall-grass"},{"col":4,"row":0,"base":"tall-grass"},{"col":5,"row":0,"base":"grassland"},{"col":6,"row":0,"base":"grassland"},
+      {"col":0,"row":1,"base":"grassland"},{"col":1,"row":1,"base":"wildflower-field"},{"col":2,"row":1,"base":"grassland"},{"col":3,"row":1,"base":"grassland"},{"col":4,"row":1,"base":"grassland"},{"col":5,"row":1,"base":"tall-grass"},{"col":6,"row":1,"base":"tall-grass"},
+      {"col":0,"row":2,"base":"grassland"},{"col":1,"row":2,"base":"grassland"},{"col":2,"row":2,"base":"grassland"},{"col":3,"row":2,"base":"grassland"},{"col":4,"row":2,"base":"grassland"},{"col":5,"row":2,"base":"grassland"},{"col":6,"row":2,"base":"grassland"},
+      {"col":0,"row":3,"base":"hills"},{"col":1,"row":3,"base":"grassland"},{"col":2,"row":3,"base":"grassland"},{"col":3,"row":3,"base":"stream"},{"col":4,"row":3,"base":"grassland"},{"col":5,"row":3,"base":"grassland"},{"col":6,"row":3,"base":"grassland"},
+      {"col":0,"row":4,"base":"hills"},{"col":1,"row":4,"base":"grassland"},{"col":2,"row":4,"base":"stream"},{"col":3,"row":4,"base":"stream"},{"col":4,"row":4,"base":"grassland"},{"col":5,"row":4,"base":"tall-grass"},{"col":6,"row":4,"base":"grassland"},
+      {"col":0,"row":5,"base":"grassland"},{"col":1,"row":5,"base":"grassland"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"grassland"},{"col":4,"row":5,"base":"grassland"},{"col":5,"row":5,"base":"grassland"},{"col":6,"row":5,"base":"grassland"}
+    ],
+    "overlays": [
+      {"col":3,"row":2,"id":"buffalo"},
+      {"col":4,"row":2,"id":"buffalo"},
+      {"col":1,"row":1,"id":"eagle"},
+      {"col":5,"row":4,"id":"tepee-village"},
+      {"col":0,"row":3,"id":"standing-stones"}
+    ]
+  },
+  {
+    "id": "mountains-mountain-pass",
+    "name": "Mountain Pass",
+    "theme": "mountains",
+    "shape": "hex",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"snow-peak"},{"col":1,"row":0,"base":"mountain"},{"col":2,"row":0,"base":"mountain"},{"col":3,"row":0,"base":"high-peak"},{"col":4,"row":0,"base":"snow-peak"},{"col":5,"row":0,"base":"mountain"},{"col":6,"row":0,"base":"mountain"},{"col":7,"row":0,"base":"snow-peak"},{"col":8,"row":0,"base":"mountain"},{"col":9,"row":0,"base":"high-peak"},{"col":10,"row":0,"base":"snow-peak"},
+      {"col":0,"row":1,"base":"mountain"},{"col":1,"row":1,"base":"cliff"},{"col":2,"row":1,"base":"mountain"},{"col":3,"row":1,"base":"mountain"},{"col":4,"row":1,"base":"scree"},{"col":5,"row":1,"base":"ridge"},{"col":6,"row":1,"base":"mountain"},{"col":7,"row":1,"base":"mountain"},{"col":8,"row":1,"base":"cliff"},{"col":9,"row":1,"base":"mountain"},{"col":10,"row":1,"base":"mountain"},
+      {"col":0,"row":2,"base":"mountain"},{"col":1,"row":2,"base":"mountain"},{"col":2,"row":2,"base":"scree"},{"col":3,"row":2,"base":"rocky-ground"},{"col":4,"row":2,"base":"clearing"},{"col":5,"row":2,"base":"foothill"},{"col":6,"row":2,"base":"foothill"},{"col":7,"row":2,"base":"scree"},{"col":8,"row":2,"base":"mountain"},{"col":9,"row":2,"base":"mountain"},{"col":10,"row":2,"base":"mountain"},
+      {"col":0,"row":3,"base":"mountain"},{"col":1,"row":3,"base":"hills"},{"col":2,"row":3,"base":"clearing"},{"col":3,"row":3,"base":"clearing"},{"col":4,"row":3,"base":"forest"},{"col":5,"row":3,"base":"clearing"},{"col":6,"row":3,"base":"clearing"},{"col":7,"row":3,"base":"foothill"},{"col":8,"row":3,"base":"hills"},{"col":9,"row":3,"base":"mountain"},{"col":10,"row":3,"base":"mountain"},
+      {"col":0,"row":4,"base":"mountain"},{"col":1,"row":4,"base":"hills"},{"col":2,"row":4,"base":"pine-forest"},{"col":3,"row":4,"base":"clearing"},{"col":4,"row":4,"base":"stream"},{"col":5,"row":4,"base":"clearing"},{"col":6,"row":4,"base":"pine-forest"},{"col":7,"row":4,"base":"clearing"},{"col":8,"row":4,"base":"hills"},{"col":9,"row":4,"base":"cliff"},{"col":10,"row":4,"base":"mountain"},
+      {"col":0,"row":5,"base":"mountain"},{"col":1,"row":5,"base":"mountain"},{"col":2,"row":5,"base":"hills"},{"col":3,"row":5,"base":"clearing"},{"col":4,"row":5,"base":"river"},{"col":5,"row":5,"base":"clearing"},{"col":6,"row":5,"base":"clearing"},{"col":7,"row":5,"base":"pine-forest"},{"col":8,"row":5,"base":"hills"},{"col":9,"row":5,"base":"mountain"},{"col":10,"row":5,"base":"mountain"},
+      {"col":0,"row":6,"base":"mountain"},{"col":1,"row":6,"base":"mountain"},{"col":2,"row":6,"base":"mountain"},{"col":3,"row":6,"base":"foothill"},{"col":4,"row":6,"base":"river"},{"col":5,"row":6,"base":"clearing"},{"col":6,"row":6,"base":"foothill"},{"col":7,"row":6,"base":"hills"},{"col":8,"row":6,"base":"mountain"},{"col":9,"row":6,"base":"mountain"},{"col":10,"row":6,"base":"snow-peak"},
+      {"col":0,"row":7,"base":"snow-peak"},{"col":1,"row":7,"base":"mountain"},{"col":2,"row":7,"base":"mountain"},{"col":3,"row":7,"base":"mountain"},{"col":4,"row":7,"base":"hills"},{"col":5,"row":7,"base":"foothill"},{"col":6,"row":7,"base":"mountain"},{"col":7,"row":7,"base":"mountain"},{"col":8,"row":7,"base":"mountain"},{"col":9,"row":7,"base":"snow-peak"},{"col":10,"row":7,"base":"glacier"},
+      {"col":0,"row":8,"base":"snow-peak"},{"col":1,"row":8,"base":"glacier"},{"col":2,"row":8,"base":"mountain"},{"col":3,"row":8,"base":"mountain"},{"col":4,"row":8,"base":"mountain"},{"col":5,"row":8,"base":"mountain"},{"col":6,"row":8,"base":"mountain"},{"col":7,"row":8,"base":"mountain"},{"col":8,"row":8,"base":"snow-peak"},{"col":9,"row":8,"base":"glacier"},{"col":10,"row":8,"base":"snow-peak"},
+      {"col":0,"row":9,"base":"glacier"},{"col":1,"row":9,"base":"snow-peak"},{"col":2,"row":9,"base":"mountain"},{"col":3,"row":9,"base":"mountain"},{"col":4,"row":9,"base":"high-peak"},{"col":5,"row":9,"base":"mountain"},{"col":6,"row":9,"base":"snow-peak"},{"col":7,"row":9,"base":"mountain"},{"col":8,"row":9,"base":"mountain"},{"col":9,"row":9,"base":"snow-peak"},{"col":10,"row":9,"base":"glacier"}
+    ],
+    "overlays": [
+      {"col":5,"row":3,"id":"hermit-hut"},
+      {"col":3,"row":4,"id":"rope-bridge"},
+      {"col":4,"row":2,"id":"cairn"},
+      {"col":3,"row":0,"id":"mountain-peak"},
+      {"col":9,"row":4,"id":"eagle-nest"},
+      {"col":1,"row":1,"id":"cave-entrance"}
+    ]
+  },
+  {
+    "id": "mountains-alpine-village",
+    "name": "Alpine Village",
+    "theme": "mountains",
+    "shape": "square",
+    "size": "small",
+    "cells": [
+      {"col":0,"row":0,"base":"snow-peak"},{"col":1,"row":0,"base":"mountain"},{"col":2,"row":0,"base":"mountain"},{"col":3,"row":0,"base":"cliff"},{"col":4,"row":0,"base":"mountain"},{"col":5,"row":0,"base":"mountain"},{"col":6,"row":0,"base":"snow-peak"},{"col":7,"row":0,"base":"mountain"},
+      {"col":0,"row":1,"base":"mountain"},{"col":1,"row":1,"base":"hills"},{"col":2,"row":1,"base":"pine-forest"},{"col":3,"row":1,"base":"clearing"},{"col":4,"row":1,"base":"clearing"},{"col":5,"row":1,"base":"pine-forest"},{"col":6,"row":1,"base":"hills"},{"col":7,"row":1,"base":"mountain"},
+      {"col":0,"row":2,"base":"hills"},{"col":1,"row":2,"base":"clearing"},{"col":2,"row":2,"base":"clearing"},{"col":3,"row":2,"base":"clearing"},{"col":4,"row":2,"base":"clearing"},{"col":5,"row":2,"base":"clearing"},{"col":6,"row":2,"base":"pine-forest"},{"col":7,"row":2,"base":"hills"},
+      {"col":0,"row":3,"base":"hills"},{"col":1,"row":3,"base":"clearing"},{"col":2,"row":3,"base":"clearing"},{"col":3,"row":3,"base":"clearing"},{"col":4,"row":3,"base":"clearing"},{"col":5,"row":3,"base":"stream"},{"col":6,"row":3,"base":"clearing"},{"col":7,"row":3,"base":"hills"},
+      {"col":0,"row":4,"base":"mountain"},{"col":1,"row":4,"base":"hills"},{"col":2,"row":4,"base":"clearing"},{"col":3,"row":4,"base":"clearing"},{"col":4,"row":4,"base":"stream"},{"col":5,"row":4,"base":"river"},{"col":6,"row":4,"base":"clearing"},{"col":7,"row":4,"base":"hills"},
+      {"col":0,"row":5,"base":"mountain"},{"col":1,"row":5,"base":"mountain"},{"col":2,"row":5,"base":"hills"},{"col":3,"row":5,"base":"foothill"},{"col":4,"row":5,"base":"river"},{"col":5,"row":5,"base":"foothill"},{"col":6,"row":5,"base":"hills"},{"col":7,"row":5,"base":"mountain"}
+    ],
+    "overlays": [
+      {"col":3,"row":2,"id":"ski-lodge"},
+      {"col":2,"row":3,"id":"hermit-hut"},
+      {"col":4,"row":3,"id":"stone-bridge"},
+      {"col":3,"row":0,"id":"cave-entrance"},
+      {"col":6,"row":3,"id":"lookout-tower"}
+    ]
+  },
+  {
+    "id": "continents-island-archipelago",
+    "name": "Island Archipelago",
+    "theme": "continents-world",
+    "shape": "hex",
+    "size": "medium",
+    "cells": [
+      {"col":0,"row":0,"base":"ocean"},{"col":1,"row":0,"base":"ocean"},{"col":2,"row":0,"base":"ocean"},{"col":3,"row":0,"base":"ocean"},{"col":4,"row":0,"base":"shallow-water"},{"col":5,"row":0,"base":"beach"},{"col":6,"row":0,"base":"lowland"},{"col":7,"row":0,"base":"beach"},{"col":8,"row":0,"base":"ocean"},{"col":9,"row":0,"base":"ocean"},{"col":10,"row":0,"base":"ocean"},
+      {"col":0,"row":1,"base":"ocean"},{"col":1,"row":1,"base":"ocean"},{"col":2,"row":1,"base":"ocean"},{"col":3,"row":1,"base":"shallow-water"},{"col":4,"row":1,"base":"beach"},{"col":5,"row":1,"base":"lowland"},{"col":6,"row":1,"base":"highland"},{"col":7,"row":1,"base":"lowland"},{"col":8,"row":1,"base":"beach"},{"col":9,"row":1,"base":"ocean"},{"col":10,"row":1,"base":"ocean"},
+      {"col":0,"row":2,"base":"ocean"},{"col":1,"row":2,"base":"ocean"},{"col":2,"row":2,"base":"ocean"},{"col":3,"row":2,"base":"ocean"},{"col":4,"row":2,"base":"shallow-water"},{"col":5,"row":2,"base":"beach"},{"col":6,"row":2,"base":"lowland"},{"col":7,"row":2,"base":"beach"},{"col":8,"row":2,"base":"shallow-water"},{"col":9,"row":2,"base":"ocean"},{"col":10,"row":2,"base":"ocean"},
+      {"col":0,"row":3,"base":"ocean"},{"col":1,"row":3,"base":"ocean"},{"col":2,"row":3,"base":"ocean"},{"col":3,"row":3,"base":"ocean"},{"col":4,"row":3,"base":"ocean"},{"col":5,"row":3,"base":"ocean"},{"col":6,"row":3,"base":"ocean"},{"col":7,"row":3,"base":"ocean"},{"col":8,"row":3,"base":"ocean"},{"col":9,"row":3,"base":"ocean"},{"col":10,"row":3,"base":"ocean"},
+      {"col":0,"row":4,"base":"ocean"},{"col":1,"row":4,"base":"ocean"},{"col":2,"row":4,"base":"beach"},{"col":3,"row":4,"base":"lowland"},{"col":4,"row":4,"base":"forest"},{"col":5,"row":4,"base":"highland"},{"col":6,"row":4,"base":"mountain"},{"col":7,"row":4,"base":"highland"},{"col":8,"row":4,"base":"forest"},{"col":9,"row":4,"base":"beach"},{"col":10,"row":4,"base":"ocean"},
+      {"col":0,"row":5,"base":"ocean"},{"col":1,"row":5,"base":"beach"},{"col":2,"row":5,"base":"lowland"},{"col":3,"row":5,"base":"forest"},{"col":4,"row":5,"base":"grassland"},{"col":5,"row":5,"base":"grassland"},{"col":6,"row":5,"base":"highland"},{"col":7,"row":5,"base":"grassland"},{"col":8,"row":5,"base":"lowland"},{"col":9,"row":5,"base":"beach"},{"col":10,"row":5,"base":"ocean"},
+      {"col":0,"row":6,"base":"ocean"},{"col":1,"row":6,"base":"ocean"},{"col":2,"row":6,"base":"beach"},{"col":3,"row":6,"base":"lowland"},{"col":4,"row":6,"base":"lowland"},{"col":5,"row":6,"base":"river"},{"col":6,"row":6,"base":"grassland"},{"col":7,"row":6,"base":"forest"},{"col":8,"row":6,"base":"beach"},{"col":9,"row":6,"base":"ocean"},{"col":10,"row":6,"base":"ocean"},
+      {"col":0,"row":7,"base":"ocean"},{"col":1,"row":7,"base":"ocean"},{"col":2,"row":7,"base":"ocean"},{"col":3,"row":7,"base":"beach"},{"col":4,"row":7,"base":"lowland"},{"col":5,"row":7,"base":"beach"},{"col":6,"row":7,"base":"ocean"},{"col":7,"row":7,"base":"ocean"},{"col":8,"row":7,"base":"ocean"},{"col":9,"row":7,"base":"ocean"},{"col":10,"row":7,"base":"ocean"},
+      {"col":0,"row":8,"base":"ocean"},{"col":1,"row":8,"base":"ocean"},{"col":2,"row":8,"base":"ocean"},{"col":3,"row":8,"base":"ocean"},{"col":4,"row":8,"base":"ocean"},{"col":5,"row":8,"base":"ocean"},{"col":6,"row":8,"base":"ocean"},{"col":7,"row":8,"base":"beach"},{"col":8,"row":8,"base":"lowland"},{"col":9,"row":8,"base":"beach"},{"col":10,"row":8,"base":"ocean"},
+      {"col":0,"row":9,"base":"ocean"},{"col":1,"row":9,"base":"ocean"},{"col":2,"row":9,"base":"ocean"},{"col":3,"row":9,"base":"ocean"},{"col":4,"row":9,"base":"ocean"},{"col":5,"row":9,"base":"ocean"},{"col":6,"row":9,"base":"ocean"},{"col":7,"row":9,"base":"ocean"},{"col":8,"row":9,"base":"shallow-water"},{"col":9,"row":9,"base":"ocean"},{"col":10,"row":9,"base":"ocean"}
+    ],
+    "overlays": [
+      {"col":6,"row":1,"id":"capital-city"},
+      {"col":5,"row":5,"id":"major-city"},
+      {"col":6,"row":4,"id":"volcano"},
+      {"col":3,"row":5,"id":"harbor"},
+      {"col":9,"row":4,"id":"lighthouse"},
+      {"col":8,"row":8,"id":"island"}
+    ]
+  },
+  {
+    "id": "continents-twin-kingdoms",
+    "name": "Twin Kingdoms",
+    "theme": "continents-world",
+    "shape": "square",
+    "size": "large",
+    "cells": [
+      {"col":0,"row":0,"base":"ocean"},{"col":1,"row":0,"base":"ocean"},{"col":2,"row":0,"base":"ocean"},{"col":3,"row":0,"base":"ocean"},{"col":4,"row":0,"base":"ocean"},{"col":5,"row":0,"base":"ocean"},{"col":6,"row":0,"base":"ocean"},{"col":7,"row":0,"base":"ocean"},{"col":8,"row":0,"base":"ocean"},{"col":9,"row":0,"base":"ocean"},{"col":10,"row":0,"base":"ocean"},{"col":11,"row":0,"base":"ocean"},{"col":12,"row":0,"base":"ocean"},{"col":13,"row":0,"base":"ocean"},{"col":14,"row":0,"base":"ocean"},{"col":15,"row":0,"base":"ocean"},{"col":16,"row":0,"base":"ocean"},{"col":17,"row":0,"base":"ocean"},{"col":18,"row":0,"base":"ocean"},{"col":19,"row":0,"base":"ocean"},
+      {"col":0,"row":1,"base":"ocean"},{"col":1,"row":1,"base":"ocean"},{"col":2,"row":1,"base":"ocean"},{"col":3,"row":1,"base":"beach"},{"col":4,"row":1,"base":"lowland"},{"col":5,"row":1,"base":"lowland"},{"col":6,"row":1,"base":"beach"},{"col":7,"row":1,"base":"ocean"},{"col":8,"row":1,"base":"ocean"},{"col":9,"row":1,"base":"ocean"},{"col":10,"row":1,"base":"ocean"},{"col":11,"row":1,"base":"ocean"},{"col":12,"row":1,"base":"ocean"},{"col":13,"row":1,"base":"ocean"},{"col":14,"row":1,"base":"beach"},{"col":15,"row":1,"base":"lowland"},{"col":16,"row":1,"base":"lowland"},{"col":17,"row":1,"base":"beach"},{"col":18,"row":1,"base":"ocean"},{"col":19,"row":1,"base":"ocean"},
+      {"col":0,"row":2,"base":"ocean"},{"col":1,"row":2,"base":"ocean"},{"col":2,"row":2,"base":"beach"},{"col":3,"row":2,"base":"lowland"},{"col":4,"row":2,"base":"forest"},{"col":5,"row":2,"base":"grassland"},{"col":6,"row":2,"base":"lowland"},{"col":7,"row":2,"base":"beach"},{"col":8,"row":2,"base":"ocean"},{"col":9,"row":2,"base":"ocean"},{"col":10,"row":2,"base":"ocean"},{"col":11,"row":2,"base":"ocean"},{"col":12,"row":2,"base":"ocean"},{"col":13,"row":2,"base":"beach"},{"col":14,"row":2,"base":"lowland"},{"col":15,"row":2,"base":"grassland"},{"col":16,"row":2,"base":"forest"},{"col":17,"row":2,"base":"lowland"},{"col":18,"row":2,"base":"beach"},{"col":19,"row":2,"base":"ocean"},
+      {"col":0,"row":3,"base":"ocean"},{"col":1,"row":3,"base":"beach"},{"col":2,"row":3,"base":"lowland"},{"col":3,"row":3,"base":"grassland"},{"col":4,"row":3,"base":"forest"},{"col":5,"row":3,"base":"highland"},{"col":6,"row":3,"base":"grassland"},{"col":7,"row":3,"base":"lowland"},{"col":8,"row":3,"base":"beach"},{"col":9,"row":3,"base":"ocean"},{"col":10,"row":3,"base":"ocean"},{"col":11,"row":3,"base":"ocean"},{"col":12,"row":3,"base":"beach"},{"col":13,"row":3,"base":"lowland"},{"col":14,"row":3,"base":"grassland"},{"col":15,"row":3,"base":"highland"},{"col":16,"row":3,"base":"mountain"},{"col":17,"row":3,"base":"highland"},{"col":18,"row":3,"base":"lowland"},{"col":19,"row":3,"base":"ocean"},
+      {"col":0,"row":4,"base":"ocean"},{"col":1,"row":4,"base":"beach"},{"col":2,"row":4,"base":"lowland"},{"col":3,"row":4,"base":"grassland"},{"col":4,"row":4,"base":"river"},{"col":5,"row":4,"base":"mountain"},{"col":6,"row":4,"base":"highland"},{"col":7,"row":4,"base":"grassland"},{"col":8,"row":4,"base":"lowland"},{"col":9,"row":4,"base":"beach"},{"col":10,"row":4,"base":"ocean"},{"col":11,"row":4,"base":"beach"},{"col":12,"row":4,"base":"lowland"},{"col":13,"row":4,"base":"grassland"},{"col":14,"row":4,"base":"grassland"},{"col":15,"row":4,"base":"mountain-range"},{"col":16,"row":4,"base":"mountain"},{"col":17,"row":4,"base":"grassland"},{"col":18,"row":4,"base":"beach"},{"col":19,"row":4,"base":"ocean"},
+      {"col":0,"row":5,"base":"ocean"},{"col":1,"row":5,"base":"lowland"},{"col":2,"row":5,"base":"grassland"},{"col":3,"row":5,"base":"grassland"},{"col":4,"row":5,"base":"river"},{"col":5,"row":5,"base":"highland"},{"col":6,"row":5,"base":"grassland"},{"col":7,"row":5,"base":"grassland"},{"col":8,"row":5,"base":"grassland"},{"col":9,"row":5,"base":"lowland"},{"col":10,"row":5,"base":"shallow-water"},{"col":11,"row":5,"base":"lowland"},{"col":12,"row":5,"base":"grassland"},{"col":13,"row":5,"base":"desert-sand"},{"col":14,"row":5,"base":"desert-sand"},{"col":15,"row":5,"base":"highland"},{"col":16,"row":5,"base":"grassland"},{"col":17,"row":5,"base":"lowland"},{"col":18,"row":5,"base":"beach"},{"col":19,"row":5,"base":"ocean"},
+      {"col":0,"row":6,"base":"ocean"},{"col":1,"row":6,"base":"beach"},{"col":2,"row":6,"base":"lowland"},{"col":3,"row":6,"base":"savanna"},{"col":4,"row":6,"base":"grassland"},{"col":5,"row":6,"base":"river"},{"col":6,"row":6,"base":"grassland"},{"col":7,"row":6,"base":"forest"},{"col":8,"row":6,"base":"grassland"},{"col":9,"row":6,"base":"beach"},{"col":10,"row":6,"base":"ocean"},{"col":11,"row":6,"base":"beach"},{"col":12,"row":6,"base":"lowland"},{"col":13,"row":6,"base":"desert-sand"},{"col":14,"row":6,"base":"grassland"},{"col":15,"row":6,"base":"grassland"},{"col":16,"row":6,"base":"forest"},{"col":17,"row":6,"base":"lowland"},{"col":18,"row":6,"base":"ocean"},{"col":19,"row":6,"base":"ocean"},
+      {"col":0,"row":7,"base":"ocean"},{"col":1,"row":7,"base":"ocean"},{"col":2,"row":7,"base":"beach"},{"col":3,"row":7,"base":"lowland"},{"col":4,"row":7,"base":"grassland"},{"col":5,"row":7,"base":"river"},{"col":6,"row":7,"base":"lake"},{"col":7,"row":7,"base":"grassland"},{"col":8,"row":7,"base":"lowland"},{"col":9,"row":7,"base":"beach"},{"col":10,"row":7,"base":"ocean"},{"col":11,"row":7,"base":"ocean"},{"col":12,"row":7,"base":"beach"},{"col":13,"row":7,"base":"lowland"},{"col":14,"row":7,"base":"grassland"},{"col":15,"row":7,"base":"grassland"},{"col":16,"row":7,"base":"lowland"},{"col":17,"row":7,"base":"beach"},{"col":18,"row":7,"base":"ocean"},{"col":19,"row":7,"base":"ocean"},
+      {"col":0,"row":8,"base":"ocean"},{"col":1,"row":8,"base":"ocean"},{"col":2,"row":8,"base":"ocean"},{"col":3,"row":8,"base":"beach"},{"col":4,"row":8,"base":"lowland"},{"col":5,"row":8,"base":"lowland"},{"col":6,"row":8,"base":"lowland"},{"col":7,"row":8,"base":"beach"},{"col":8,"row":8,"base":"ocean"},{"col":9,"row":8,"base":"ocean"},{"col":10,"row":8,"base":"ocean"},{"col":11,"row":8,"base":"ocean"},{"col":12,"row":8,"base":"ocean"},{"col":13,"row":8,"base":"beach"},{"col":14,"row":8,"base":"lowland"},{"col":15,"row":8,"base":"beach"},{"col":16,"row":8,"base":"ocean"},{"col":17,"row":8,"base":"ocean"},{"col":18,"row":8,"base":"ocean"},{"col":19,"row":8,"base":"ocean"},
+      {"col":0,"row":9,"base":"ocean"},{"col":1,"row":9,"base":"ocean"},{"col":2,"row":9,"base":"ocean"},{"col":3,"row":9,"base":"ocean"},{"col":4,"row":9,"base":"ocean"},{"col":5,"row":9,"base":"beach"},{"col":6,"row":9,"base":"beach"},{"col":7,"row":9,"base":"ocean"},{"col":8,"row":9,"base":"ocean"},{"col":9,"row":9,"base":"ocean"},{"col":10,"row":9,"base":"ocean"},{"col":11,"row":9,"base":"ocean"},{"col":12,"row":9,"base":"ocean"},{"col":13,"row":9,"base":"ocean"},{"col":14,"row":9,"base":"ocean"},{"col":15,"row":9,"base":"ocean"},{"col":16,"row":9,"base":"ocean"},{"col":17,"row":9,"base":"ocean"},{"col":18,"row":9,"base":"ocean"},{"col":19,"row":9,"base":"ocean"},
+      {"col":0,"row":10,"base":"ocean"},{"col":1,"row":10,"base":"ocean"},{"col":2,"row":10,"base":"ocean"},{"col":3,"row":10,"base":"ocean"},{"col":4,"row":10,"base":"ocean"},{"col":5,"row":10,"base":"ocean"},{"col":6,"row":10,"base":"ocean"},{"col":7,"row":10,"base":"ocean"},{"col":8,"row":10,"base":"ocean"},{"col":9,"row":10,"base":"ocean"},{"col":10,"row":10,"base":"ocean"},{"col":11,"row":10,"base":"ocean"},{"col":12,"row":10,"base":"ocean"},{"col":13,"row":10,"base":"ocean"},{"col":14,"row":10,"base":"ocean"},{"col":15,"row":10,"base":"ocean"},{"col":16,"row":10,"base":"ocean"},{"col":17,"row":10,"base":"ocean"},{"col":18,"row":10,"base":"ocean"},{"col":19,"row":10,"base":"ocean"},
+      {"col":0,"row":11,"base":"ocean"},{"col":1,"row":11,"base":"ocean"},{"col":2,"row":11,"base":"ocean"},{"col":3,"row":11,"base":"ocean"},{"col":4,"row":11,"base":"ocean"},{"col":5,"row":11,"base":"ocean"},{"col":6,"row":11,"base":"ocean"},{"col":7,"row":11,"base":"ocean"},{"col":8,"row":11,"base":"ocean"},{"col":9,"row":11,"base":"ocean"},{"col":10,"row":11,"base":"ocean"},{"col":11,"row":11,"base":"ocean"},{"col":12,"row":11,"base":"ocean"},{"col":13,"row":11,"base":"ocean"},{"col":14,"row":11,"base":"ocean"},{"col":15,"row":11,"base":"ocean"},{"col":16,"row":11,"base":"ocean"},{"col":17,"row":11,"base":"ocean"},{"col":18,"row":11,"base":"ocean"},{"col":19,"row":11,"base":"ocean"},
+      {"col":0,"row":12,"base":"ocean"},{"col":1,"row":12,"base":"ocean"},{"col":2,"row":12,"base":"ocean"},{"col":3,"row":12,"base":"ocean"},{"col":4,"row":12,"base":"ocean"},{"col":5,"row":12,"base":"ocean"},{"col":6,"row":12,"base":"ocean"},{"col":7,"row":12,"base":"ocean"},{"col":8,"row":12,"base":"ocean"},{"col":9,"row":12,"base":"ocean"},{"col":10,"row":12,"base":"ocean"},{"col":11,"row":12,"base":"ocean"},{"col":12,"row":12,"base":"ocean"},{"col":13,"row":12,"base":"ocean"},{"col":14,"row":12,"base":"ocean"},{"col":15,"row":12,"base":"ocean"},{"col":16,"row":12,"base":"ocean"},{"col":17,"row":12,"base":"ocean"},{"col":18,"row":12,"base":"ocean"},{"col":19,"row":12,"base":"ocean"},
+      {"col":0,"row":13,"base":"ocean"},{"col":1,"row":13,"base":"ocean"},{"col":2,"row":13,"base":"ocean"},{"col":3,"row":13,"base":"ocean"},{"col":4,"row":13,"base":"ocean"},{"col":5,"row":13,"base":"ocean"},{"col":6,"row":13,"base":"ocean"},{"col":7,"row":13,"base":"ocean"},{"col":8,"row":13,"base":"ocean"},{"col":9,"row":13,"base":"ocean"},{"col":10,"row":13,"base":"ocean"},{"col":11,"row":13,"base":"ocean"},{"col":12,"row":13,"base":"ocean"},{"col":13,"row":13,"base":"ocean"},{"col":14,"row":13,"base":"ocean"},{"col":15,"row":13,"base":"ocean"},{"col":16,"row":13,"base":"ocean"},{"col":17,"row":13,"base":"ocean"},{"col":18,"row":13,"base":"ocean"},{"col":19,"row":13,"base":"ocean"},
+      {"col":0,"row":14,"base":"ocean"},{"col":1,"row":14,"base":"ocean"},{"col":2,"row":14,"base":"ocean"},{"col":3,"row":14,"base":"ocean"},{"col":4,"row":14,"base":"ocean"},{"col":5,"row":14,"base":"ocean"},{"col":6,"row":14,"base":"ocean"},{"col":7,"row":14,"base":"ocean"},{"col":8,"row":14,"base":"ocean"},{"col":9,"row":14,"base":"ocean"},{"col":10,"row":14,"base":"ocean"},{"col":11,"row":14,"base":"ocean"},{"col":12,"row":14,"base":"ocean"},{"col":13,"row":14,"base":"ocean"},{"col":14,"row":14,"base":"ocean"},{"col":15,"row":14,"base":"ocean"},{"col":16,"row":14,"base":"ocean"},{"col":17,"row":14,"base":"ocean"},{"col":18,"row":14,"base":"ocean"},{"col":19,"row":14,"base":"ocean"},
+      {"col":0,"row":15,"base":"ocean"},{"col":1,"row":15,"base":"ocean"},{"col":2,"row":15,"base":"ocean"},{"col":3,"row":15,"base":"ocean"},{"col":4,"row":15,"base":"ocean"},{"col":5,"row":15,"base":"ocean"},{"col":6,"row":15,"base":"ocean"},{"col":7,"row":15,"base":"ocean"},{"col":8,"row":15,"base":"ocean"},{"col":9,"row":15,"base":"ocean"},{"col":10,"row":15,"base":"ocean"},{"col":11,"row":15,"base":"ocean"},{"col":12,"row":15,"base":"ocean"},{"col":13,"row":15,"base":"ocean"},{"col":14,"row":15,"base":"ocean"},{"col":15,"row":15,"base":"ocean"},{"col":16,"row":15,"base":"ocean"},{"col":17,"row":15,"base":"ocean"},{"col":18,"row":15,"base":"ocean"},{"col":19,"row":15,"base":"ocean"}
+    ],
+    "overlays": [
+      {"col":5,"row":3,"id":"capital-city"},
+      {"col":15,"row":3,"id":"capital-city"},
+      {"col":3,"row":5,"id":"major-city"},
+      {"col":14,"row":5,"id":"major-city"},
+      {"col":6,"row":7,"id":"harbor"},
+      {"col":13,"row":7,"id":"harbor"},
+      {"col":5,"row":4,"id":"mountain-marker"},
+      {"col":15,"row":4,"id":"mountain-marker"},
+      {"col":10,"row":5,"id":"ship"},
+      {"col":13,"row":6,"id":"caravan"}
+    ]
+  }
+]

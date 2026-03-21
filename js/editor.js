@@ -24,6 +24,7 @@ class Editor {
     this._savedCells = options.savedCells || null;
     this._savedCamera = options.savedCamera || null;
     this._storage = options.storage || null;
+    this._settingsManager = options.settings || null;
 
     this._ctx = null;
     this._dpr = 1;
@@ -136,6 +137,19 @@ class Editor {
     this._sound = new SoundManager();
     this._sound.init();
 
+    // Apply settings defaults
+    if (this._settingsManager) {
+      const s = this._settingsManager.getAll();
+      // Sound preference from settings
+      if (s.soundEnabled && !this._sound.enabled) {
+        this._sound.enabled = true;
+      }
+      // Grid lines default from settings
+      if (s.gridLines === false) {
+        this._showGrid = false;
+      }
+    }
+
     // Palette
     const tileIds = this._themeManager.getAvailableTiles(this._themeId);
     this._palette = new Palette(this._paletteEl, this._tileRenderer, (tileId) => {
@@ -219,9 +233,10 @@ class Editor {
     };
     document.addEventListener('keydown', this._boundKeyboardSave);
 
-    // Auto-save every 30 seconds (only if dirty) — silent, no screen reader announcement
+    // Auto-save every 30 seconds (only if dirty and auto-save enabled) — silent, no screen reader announcement
     this._autoSaveTimer = setInterval(() => {
-      if (this._saveDirty && this._storage) {
+      const autoSaveEnabled = this._settingsManager ? this._settingsManager.get('autoSave') !== false : true;
+      if (this._saveDirty && this._storage && autoSaveEnabled) {
         this.saveMap();
       }
     }, 30000);
@@ -1664,6 +1679,10 @@ class Editor {
     // Clear All
     const clearAllBtn = document.getElementById('btn-clear-all');
     if (clearAllBtn) clearAllBtn.addEventListener('click', () => this._showClearAllDialog());
+
+    // Auto-Fill
+    const autoFillBtn = document.getElementById('btn-auto-fill');
+    if (autoFillBtn) autoFillBtn.addEventListener('click', () => this._doAutoFill());
 
     // Shortcuts
     const shortcutsBtn = document.getElementById('btn-shortcuts');
@@ -3526,6 +3545,47 @@ class Editor {
     this._dirty = true;
     this._markSaveDirty();
     this._app.announce('All tiles cleared');
+  }
+
+  /* ---- Auto-Fill ---- */
+
+  _doAutoFill() {
+    const tileIds = this._themeManager.getAvailableTiles(this._themeId);
+    if (!tileIds || tileIds.length === 0) return;
+
+    // Build weighted tile list — first few tiles in theme list are "common" (higher weight)
+    const weighted = [];
+    for (let i = 0; i < tileIds.length; i++) {
+      // First 1/3 of tiles get 3x weight, middle 1/3 get 2x, rest get 1x
+      const third = Math.floor(tileIds.length / 3);
+      const weight = i < third ? 3 : (i < third * 2 ? 2 : 1);
+      for (let w = 0; w < weight; w++) {
+        weighted.push(tileIds[i]);
+      }
+    }
+
+    // Collect all empty cells
+    const cellsToFill = [];
+    this._grid.forEachCell((col, row, cell, cellType) => {
+      if (!cell.base) {
+        const newBase = weighted[Math.floor(Math.random() * weighted.length)];
+        cellsToFill.push({ col, row, cellType, newBase });
+      }
+    });
+
+    if (cellsToFill.length === 0) {
+      this._app.announce('No empty cells to fill.');
+      return;
+    }
+
+    // Apply as single undo command
+    const cmd = cmdAutoFill(this._grid, cellsToFill, this._tileRenderer);
+    cmd.apply();
+    this._history.push(cmd);
+    this._dirty = true;
+    this._markSaveDirty();
+    if (this._sound) this._sound.play('fill');
+    this._app.announce(cellsToFill.length + ' cells filled with random terrain.');
   }
 
   /* ---- Keyboard Shortcuts Modal ---- */
