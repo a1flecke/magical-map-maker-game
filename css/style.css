@@ -550,6 +550,74 @@ input[type="text"]:focus-visible {
   touch-action: manipulation;
 }
 
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.modal-actions button {
+  min-height: var(--min-touch);
+  min-width: 80px;
+  touch-action: manipulation;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  min-height: var(--min-touch);
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent) !important;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.9);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  border-color: var(--color-border) !important;
+}
+
+.size-btn {
+  min-height: var(--min-touch);
+  min-width: 64px;
+  padding: 6px 12px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+  touch-action: manipulation;
+  font-family: var(--font-primary);
+}
+
+.size-btn[aria-checked="true"] {
+  border-color: var(--color-accent);
+  background: rgba(74, 124, 89, 0.1);
+  font-weight: 700;
+}
+
 button.danger {
   background: #D32F2F;
   color: white;

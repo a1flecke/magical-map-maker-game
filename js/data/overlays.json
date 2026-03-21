@@ -385,5 +385,1302 @@
     "themes": [],
     "svgSymbolId": "overlay-text-label",
     "sizeRatio": 0.6
+  },
+
+  {
+    "id": "fence",
+    "name": "Fence",
+    "category": "structure",
+    "themes": [],
+    "svgSymbolId": "overlay-fence",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "gate",
+    "name": "Gate",
+    "category": "structure",
+    "themes": [],
+    "svgSymbolId": "overlay-gate",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "tower",
+    "name": "Tower",
+    "category": "structure",
+    "themes": [],
+    "svgSymbolId": "overlay-tower",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "fish",
+    "name": "Fish",
+    "category": "wildlife",
+    "themes": [],
+    "svgSymbolId": "overlay-fish",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "warrior",
+    "name": "Warrior",
+    "category": "character",
+    "themes": [],
+    "svgSymbolId": "overlay-warrior",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "wizard",
+    "name": "Wizard",
+    "category": "character",
+    "themes": [],
+    "svgSymbolId": "overlay-wizard",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "archer",
+    "name": "Archer",
+    "category": "character",
+    "themes": [],
+    "svgSymbolId": "overlay-archer",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "king",
+    "name": "King",
+    "category": "character",
+    "themes": [],
+    "svgSymbolId": "overlay-king",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "monster",
+    "name": "Monster",
+    "category": "character",
+    "themes": [],
+    "svgSymbolId": "overlay-monster",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "npc",
+    "name": "NPC",
+    "category": "character",
+    "themes": [],
+    "svgSymbolId": "overlay-npc",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-1",
+    "name": "Marker 1",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-1",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-2",
+    "name": "Marker 2",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-2",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-3",
+    "name": "Marker 3",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-3",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-4",
+    "name": "Marker 4",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-4",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-5",
+    "name": "Marker 5",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-5",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-6",
+    "name": "Marker 6",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-6",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-7",
+    "name": "Marker 7",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-7",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-8",
+    "name": "Marker 8",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-8",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-9",
+    "name": "Marker 9",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-9",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-10",
+    "name": "Marker 10",
+    "category": "numbered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-10",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-a",
+    "name": "Marker A",
+    "category": "lettered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-a",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-b",
+    "name": "Marker B",
+    "category": "lettered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-b",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-c",
+    "name": "Marker C",
+    "category": "lettered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-c",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-d",
+    "name": "Marker D",
+    "category": "lettered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-d",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-e",
+    "name": "Marker E",
+    "category": "lettered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-e",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "marker-f",
+    "name": "Marker F",
+    "category": "lettered",
+    "themes": [],
+    "svgSymbolId": "overlay-marker-f",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "path-marker",
+    "name": "Path Marker",
+    "category": "navigation",
+    "themes": [],
+    "svgSymbolId": "overlay-path-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "rock-formation",
+    "name": "Rock Formation",
+    "category": "nature",
+    "themes": [],
+    "svgSymbolId": "overlay-rock-formation",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "flowers",
+    "name": "Flowers",
+    "category": "nature",
+    "themes": [],
+    "svgSymbolId": "overlay-flowers",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "mushrooms",
+    "name": "Mushrooms",
+    "category": "nature",
+    "themes": [],
+    "svgSymbolId": "overlay-mushrooms",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "fog",
+    "name": "Fog",
+    "category": "weather",
+    "themes": [],
+    "svgSymbolId": "overlay-fog",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "rain",
+    "name": "Rain",
+    "category": "weather",
+    "themes": [],
+    "svgSymbolId": "overlay-rain",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "snow",
+    "name": "Snow",
+    "category": "weather",
+    "themes": [],
+    "svgSymbolId": "overlay-snow",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "smoke",
+    "name": "Smoke",
+    "category": "atmosphere",
+    "themes": [],
+    "svgSymbolId": "overlay-smoke",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "flag-red",
+    "name": "Red Flag",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-flag-red",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "flag-blue",
+    "name": "Blue Flag",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-flag-blue",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "flag-green",
+    "name": "Green Flag",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-flag-green",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "flag-yellow",
+    "name": "Yellow Flag",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-flag-yellow",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "title-banner",
+    "name": "Title Banner",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-title-banner",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "scale-bar",
+    "name": "Scale Bar",
+    "category": "label",
+    "themes": [],
+    "svgSymbolId": "overlay-scale-bar",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "trap",
+    "name": "Trap",
+    "category": "hazard",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-trap",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "pit-trap",
+    "name": "Pit Trap",
+    "category": "hazard",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-pit-trap",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "chest",
+    "name": "Chest",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-chest",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "door-locked",
+    "name": "Locked Door",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-door-locked",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "door-open",
+    "name": "Open Door",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-door-open",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "secret-door",
+    "name": "Secret Door",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-secret-door",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "altar",
+    "name": "Altar",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-altar",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "pillar",
+    "name": "Pillar",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-pillar",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "throne",
+    "name": "Throne",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-throne",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "torch-sconce",
+    "name": "Torch Sconce",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-torch-sconce",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "barrel",
+    "name": "Barrel",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-barrel",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "crate",
+    "name": "Crate",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-crate",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "bookshelf",
+    "name": "Bookshelf",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-bookshelf",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "skeleton",
+    "name": "Skeleton",
+    "category": "hazard",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-skeleton",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "spider-web",
+    "name": "Spider Web",
+    "category": "hazard",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-spider-web",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "chains",
+    "name": "Chains",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-chains",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "portcullis",
+    "name": "Portcullis",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-portcullis",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "magic-circle",
+    "name": "Magic Circle",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-magic-circle",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "sarcophagus",
+    "name": "Sarcophagus",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-sarcophagus",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "lever",
+    "name": "Lever",
+    "category": "structure",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-lever",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "pressure-plate",
+    "name": "Pressure Plate",
+    "category": "hazard",
+    "themes": ["dungeon"],
+    "svgSymbolId": "overlay-pressure-plate",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "cannon",
+    "name": "Cannon",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-cannon",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "tent-command",
+    "name": "Command Tent",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-tent-command",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "barricade",
+    "name": "Barricade",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-barricade",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "bunker",
+    "name": "Bunker",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-bunker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "watchtower",
+    "name": "Watchtower",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-watchtower",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "catapult",
+    "name": "Catapult",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-catapult",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "supply-depot",
+    "name": "Supply Depot",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-supply-depot",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "field-hospital",
+    "name": "Field Hospital",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-field-hospital",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "pontoon-bridge",
+    "name": "Pontoon Bridge",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-pontoon-bridge",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "signal-tower",
+    "name": "Signal Tower",
+    "category": "structure",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-signal-tower",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "cavalry-marker",
+    "name": "Cavalry Marker",
+    "category": "marker",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-cavalry-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "infantry-marker",
+    "name": "Infantry Marker",
+    "category": "marker",
+    "themes": ["historical-battlefields"],
+    "svgSymbolId": "overlay-infantry-marker",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "space-station",
+    "name": "Space Station",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-space-station",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "satellite",
+    "name": "Satellite",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-satellite",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "asteroid",
+    "name": "Asteroid",
+    "category": "hazard",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-asteroid",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "comet",
+    "name": "Comet",
+    "category": "nature",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-comet",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "rocket",
+    "name": "Rocket",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-rocket",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "alien-base",
+    "name": "Alien Base",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-alien-base",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "solar-panel",
+    "name": "Solar Panel",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-solar-panel",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ring-planet",
+    "name": "Ring Planet",
+    "category": "nature",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-ring-planet",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "moon-base",
+    "name": "Moon Base",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-moon-base",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ufo",
+    "name": "UFO",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-ufo",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "probe",
+    "name": "Probe",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-probe",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "space-mine",
+    "name": "Space Mine",
+    "category": "hazard",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-space-mine",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "beacon",
+    "name": "Beacon",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-beacon",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "warp-gate",
+    "name": "Warp Gate",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-warp-gate",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "debris-field",
+    "name": "Debris Field",
+    "category": "hazard",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-debris-field",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "space-whale",
+    "name": "Space Whale",
+    "category": "wildlife",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-space-whale",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "antenna-array",
+    "name": "Antenna Array",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-antenna-array",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "dome-habitat",
+    "name": "Dome Habitat",
+    "category": "structure",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-dome-habitat",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "energy-crystal",
+    "name": "Energy Crystal",
+    "category": "nature",
+    "themes": ["space"],
+    "svgSymbolId": "overlay-energy-crystal",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "temple-ruin",
+    "name": "Temple Ruin",
+    "category": "structure",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-temple-ruin",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "totem-pole",
+    "name": "Totem Pole",
+    "category": "structure",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-totem-pole",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "vine-bridge",
+    "name": "Vine Bridge",
+    "category": "structure",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-vine-bridge",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "quicksand",
+    "name": "Quicksand",
+    "category": "hazard",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-quicksand",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "snake",
+    "name": "Snake",
+    "category": "wildlife",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-snake",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "monkey",
+    "name": "Monkey",
+    "category": "wildlife",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-monkey",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "parrot",
+    "name": "Parrot",
+    "category": "wildlife",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-parrot",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "jaguar",
+    "name": "Jaguar",
+    "category": "wildlife",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-jaguar",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "crocodile",
+    "name": "Crocodile",
+    "category": "wildlife",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-crocodile",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "tree-house",
+    "name": "Tree House",
+    "category": "structure",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-tree-house",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "canoe",
+    "name": "Canoe",
+    "category": "structure",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-canoe",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "carnivorous-plant",
+    "name": "Carnivorous Plant",
+    "category": "hazard",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-carnivorous-plant",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ancient-statue",
+    "name": "Ancient Statue",
+    "category": "structure",
+    "themes": ["jungle"],
+    "svgSymbolId": "overlay-ancient-statue",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "dam",
+    "name": "Dam",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-dam",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "watermill",
+    "name": "Watermill",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-watermill",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "fishing-boat",
+    "name": "Fishing Boat",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-fishing-boat",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "sailboat",
+    "name": "Sailboat",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-sailboat",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "dock",
+    "name": "Dock",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-dock",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "buoy",
+    "name": "Buoy",
+    "category": "navigation",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-buoy",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "canal-lock",
+    "name": "Canal Lock",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-canal-lock",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ferry",
+    "name": "Ferry",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-ferry",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "rowboat",
+    "name": "Rowboat",
+    "category": "structure",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-rowboat",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "anchor",
+    "name": "Anchor",
+    "category": "navigation",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-anchor",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "whirlpool",
+    "name": "Whirlpool",
+    "category": "hazard",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-whirlpool",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "reed-bed",
+    "name": "Reed Bed",
+    "category": "nature",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-reed-bed",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "otter",
+    "name": "Otter",
+    "category": "wildlife",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-otter",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "heron",
+    "name": "Heron",
+    "category": "wildlife",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-heron",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "frog",
+    "name": "Frog",
+    "category": "wildlife",
+    "themes": ["rivers-waterways"],
+    "svgSymbolId": "overlay-frog",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "ranch",
+    "name": "Ranch",
+    "category": "settlement",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-ranch",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "grain-silo",
+    "name": "Grain Silo",
+    "category": "structure",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-grain-silo",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "scarecrow",
+    "name": "Scarecrow",
+    "category": "structure",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-scarecrow",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "covered-wagon",
+    "name": "Covered Wagon",
+    "category": "structure",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-covered-wagon",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "tepee-village",
+    "name": "Tepee Village",
+    "category": "settlement",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-tepee-village",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "buffalo",
+    "name": "Buffalo",
+    "category": "wildlife",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-buffalo",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "eagle",
+    "name": "Eagle",
+    "category": "wildlife",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-eagle",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "prairie-dog",
+    "name": "Prairie Dog",
+    "category": "wildlife",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-prairie-dog",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "coyote",
+    "name": "Coyote",
+    "category": "wildlife",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-coyote",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "fence-post",
+    "name": "Fence Post",
+    "category": "structure",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-fence-post",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "hay-bale",
+    "name": "Hay Bale",
+    "category": "nature",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-hay-bale",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "sunflower-patch",
+    "name": "Sunflower Patch",
+    "category": "nature",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-sunflower-patch",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "dust-devil",
+    "name": "Dust Devil",
+    "category": "weather",
+    "themes": ["prairie-grasslands"],
+    "svgSymbolId": "overlay-dust-devil",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "mountain-peak",
+    "name": "Mountain Peak",
+    "category": "nature",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-mountain-peak",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "avalanche",
+    "name": "Avalanche",
+    "category": "hazard",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-avalanche",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ski-lodge",
+    "name": "Ski Lodge",
+    "category": "structure",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-ski-lodge",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "mine-entrance",
+    "name": "Mine Entrance",
+    "category": "structure",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-mine-entrance",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "eagle-nest",
+    "name": "Eagle Nest",
+    "category": "wildlife",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-eagle-nest",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "mountain-goat",
+    "name": "Mountain Goat",
+    "category": "wildlife",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-mountain-goat",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "snow-leopard",
+    "name": "Snow Leopard",
+    "category": "wildlife",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-snow-leopard",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "yeti",
+    "name": "Yeti",
+    "category": "wildlife",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-yeti",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "rope-bridge",
+    "name": "Rope Bridge",
+    "category": "structure",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-rope-bridge",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "cairn",
+    "name": "Cairn",
+    "category": "marker",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-cairn",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ice-wall",
+    "name": "Ice Wall",
+    "category": "hazard",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-ice-wall",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "crevasse",
+    "name": "Crevasse",
+    "category": "hazard",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-crevasse",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "lookout-tower",
+    "name": "Lookout Tower",
+    "category": "structure",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-lookout-tower",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "hermit-hut",
+    "name": "Hermit Hut",
+    "category": "structure",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-hermit-hut",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "prayer-flags",
+    "name": "Prayer Flags",
+    "category": "marker",
+    "themes": ["mountains"],
+    "svgSymbolId": "overlay-prayer-flags",
+    "sizeRatio": 0.6
+  },
+
+  {
+    "id": "capital-city",
+    "name": "Capital City",
+    "category": "settlement",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-capital-city",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "major-city",
+    "name": "Major City",
+    "category": "settlement",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-major-city",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "port-city",
+    "name": "Port City",
+    "category": "settlement",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-port-city",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "trade-route",
+    "name": "Trade Route",
+    "category": "navigation",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-trade-route",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "desert-marker",
+    "name": "Desert Marker",
+    "category": "marker",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-desert-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "forest-marker",
+    "name": "Forest Marker",
+    "category": "marker",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-forest-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "mountain-marker",
+    "name": "Mountain Marker",
+    "category": "marker",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-mountain-marker",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ice-cap",
+    "name": "Ice Cap",
+    "category": "nature",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-ice-cap",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "volcano",
+    "name": "Volcano",
+    "category": "hazard",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-volcano",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "island",
+    "name": "Island",
+    "category": "nature",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-island",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "sea-monster",
+    "name": "Sea Monster",
+    "category": "wildlife",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-sea-monster",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "ship",
+    "name": "Ship",
+    "category": "structure",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-ship",
+    "sizeRatio": 0.6
+  },
+  {
+    "id": "caravan",
+    "name": "Caravan",
+    "category": "navigation",
+    "themes": ["continents-world"],
+    "svgSymbolId": "overlay-caravan",
+    "sizeRatio": 0.6
   }
 ]

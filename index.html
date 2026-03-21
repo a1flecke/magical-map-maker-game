@@ -339,6 +339,15 @@
           <button role="tab" id="tab-universal-overlays" class="overlay-tab" aria-selected="false" aria-controls="panel-universal-overlays">Universal</button>
           <button role="tab" id="tab-rb-overlays" class="overlay-tab hidden" aria-selected="false" aria-controls="panel-rb-overlays">Realm Brew</button>
         </div>
+        <!-- Favorites & Recent (visible in all tabs when populated) -->
+        <div id="overlay-favorites-section" class="overlay-section hidden" aria-label="Favorite overlays">
+          <button class="category-toggle" aria-expanded="true" data-section="overlay-favorites-list">&#9733; Favorites</button>
+          <div class="overlay-list-palette" role="listbox" id="overlay-favorites-list" aria-label="Favorite overlays"></div>
+        </div>
+        <div id="overlay-recent-section" class="overlay-section hidden" aria-label="Recently used overlays">
+          <button class="category-toggle" aria-expanded="true" data-section="overlay-recent-list">&#9201; Recent</button>
+          <div class="overlay-list-palette" role="listbox" id="overlay-recent-list" aria-label="Recently used overlays"></div>
+        </div>
         <div id="panel-theme-overlays" role="tabpanel" aria-labelledby="tab-theme-overlays">
           <div class="overlay-list-palette" role="listbox" id="theme-overlay-list" aria-label="Theme overlays"></div>
         </div>
@@ -349,6 +358,49 @@
           <div id="rb-overlay-packs" aria-label="Realm Brew overlay packs"></div>
         </div>
       </aside>
+    </div>
+
+    <!-- Text Label Input Dialog -->
+    <div id="text-label-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal text-label-modal" role="dialog" aria-modal="true" aria-labelledby="text-label-dialog-title">
+        <h3 id="text-label-dialog-title">Add Label</h3>
+        <div class="form-group">
+          <label for="text-label-input">Label text:</label>
+          <input type="text" id="text-label-input" maxlength="30" placeholder="Here be dragons..." aria-label="Label text">
+        </div>
+        <div class="form-group" role="radiogroup" aria-label="Font size">
+          <span class="control-label">Size:</span>
+          <button class="size-btn" role="radio" aria-checked="false" data-font-size="small">Small</button>
+          <button class="size-btn" role="radio" aria-checked="true" data-font-size="medium">Medium</button>
+          <button class="size-btn" role="radio" aria-checked="false" data-font-size="large">Large</button>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-text-label-cancel" class="btn-secondary">Cancel</button>
+          <button id="btn-text-label-ok" class="btn-primary">Place Label</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scale Bar Input Dialog -->
+    <div id="scale-bar-dialog" class="modal-backdrop hidden" aria-hidden="true">
+      <div class="modal scale-bar-modal" role="dialog" aria-modal="true" aria-labelledby="scale-bar-dialog-title">
+        <h3 id="scale-bar-dialog-title">Add Scale Bar</h3>
+        <div class="form-group">
+          <label for="scale-bar-input">Scale text:</label>
+          <select id="scale-bar-input" aria-label="Scale text">
+            <option value="1 square = 10 feet">1 square = 10 feet</option>
+            <option value="1 hex = 1 mile">1 hex = 1 mile</option>
+            <option value="1 square = 5 feet">1 square = 5 feet</option>
+            <option value="1 hex = 10 miles">1 hex = 10 miles</option>
+            <option value="custom">Custom...</option>
+          </select>
+          <input type="text" id="scale-bar-custom" class="hidden" maxlength="40" placeholder="Enter custom scale..." aria-label="Custom scale text">
+        </div>
+        <div class="modal-actions">
+          <button id="btn-scale-bar-cancel" class="btn-secondary">Cancel</button>
+          <button id="btn-scale-bar-ok" class="btn-primary">Place Scale Bar</button>
+        </div>
+      </div>
     </div>
 
     <!-- Export dialog -->

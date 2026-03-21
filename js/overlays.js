@@ -6,7 +6,7 @@ class OverlayRenderer {
     this._loaded = false;
     this._svgDoc = null;
     this._cache = new Map(); // key: `${symbolId}-${size}-${rotation}` → ImageBitmap or canvas
-    this._maxCacheSize = 200;
+    this._maxCacheSize = 500;
   }
 
   async load() {

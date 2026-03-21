@@ -370,6 +370,109 @@
   display: none;
 }
 
+/* Overlay favorite star button */
+.overlay-option .fav-btn {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer;
+  font-size: 0.75rem;
+  opacity: 0.3;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.overlay-option:hover .fav-btn,
+.overlay-option .fav-btn.active {
+  opacity: 1;
+}
+
+.overlay-option .fav-btn.active {
+  color: #DAA520;
+}
+
+.overlay-option {
+  position: relative;
+}
+
+/* Category toggle headers */
+.category-toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 8px !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, #6B5B3E);
+  background: var(--color-surface-hover) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+  min-height: var(--min-touch);
+  touch-action: manipulation;
+}
+
+.category-toggle:hover,
+.category-toggle:focus-visible {
+  background: var(--color-border) !important;
+}
+
+.category-toggle[aria-expanded="false"] + .overlay-list-palette,
+.category-toggle[aria-expanded="false"] + .category-items {
+  display: none;
+}
+
+/* Overlay sections (favorites, recent) */
+.overlay-section {
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.overlay-section.hidden {
+  display: none;
+}
+
+.overlay-section .overlay-list-palette {
+  padding: 4px 8px;
+}
+
+/* Category group within a tab */
+.overlay-category-group {
+  margin-bottom: 2px;
+}
+
+.overlay-category-group .category-items {
+  padding: 4px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Compact overlay option for category view */
+.overlay-option.compact {
+  flex-direction: column;
+  width: 56px;
+  min-height: 56px;
+  padding: 4px;
+  margin-bottom: 0;
+}
+
+.overlay-option.compact .overlay-name {
+  font-size: 0.5625rem;
+  margin-top: 2px;
+  max-height: 2.4em;
+  overflow: hidden;
+}
+
 /* ===== PROPERTIES PANEL (BOTTOM) ===== */
 
 .properties-panel {

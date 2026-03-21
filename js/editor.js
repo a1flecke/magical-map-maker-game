@@ -51,6 +51,9 @@ class Editor {
     // Overlay state
     this._selectedOverlay = null; // overlay ID to place
     this._selectedCellOverlayIndex = -1; // which overlay in cell is selected for editing
+    this._pendingSpecialOverlay = null; // pending text-label/scale-bar placement
+    this._overlayFavorites = new Set();
+    this._overlayRecent = [];
 
     // Realm Brew
     this._realmBrew = options.realmBrew || null;
@@ -2237,9 +2240,42 @@ class Editor {
             ctx, ov.id, cx + jitterX, cy + jitterY, cellSize,
             { rotation: ov.rotation || 0, opacity: ov.opacity != null ? ov.opacity : 1.0, size: ov.size || 'medium' }
           );
+          // Draw custom text for special overlays
+          if (ov.text && (ov.id === 'text-label' || ov.id === 'title-banner')) {
+            this._drawOverlayText(ctx, ov, cx + jitterX, cy + jitterY, cellSize);
+          }
+          if (ov.scaleText && ov.id === 'scale-bar') {
+            this._drawOverlayText(ctx, ov, cx + jitterX, cy + jitterY, cellSize);
+          }
         }
       }
     });
+  }
+
+  _drawOverlayText(ctx, ov, cx, cy, cellSize) {
+    const sizeRatios = { small: 0.3, medium: 0.6, large: 0.9 };
+    const ratio = sizeRatios[ov.size || 'medium'] || 0.6;
+    const drawSize = Math.round(cellSize * ratio);
+    const text = ov.text || ov.scaleText || '';
+    if (!text) return;
+
+    ctx.save();
+    if (ov.opacity != null && ov.opacity < 1.0) ctx.globalAlpha = ov.opacity;
+
+    const fontSizes = { small: 8, medium: 11, large: 14 };
+    const fontSize = fontSizes[ov.fontSize || 'medium'] || 11;
+    const scaledFont = Math.max(6, Math.round(fontSize * (drawSize / 40)));
+
+    ctx.font = `bold ${scaledFont}px "OpenDyslexic", "Comic Sans MS", sans-serif`;
+    ctx.fillStyle = '#2C2416';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Clip text to overlay bounds
+    const maxWidth = drawSize * 0.85;
+    ctx.fillText(text, cx, cy, maxWidth);
+
+    ctx.restore();
   }
 
   /* ---- Overlay Palette Setup ---- */
@@ -2248,8 +2284,14 @@ class Editor {
     const themeOverlays = this._overlayRenderer.getThemeOverlays(this._themeId);
     const universalOverlays = this._overlayRenderer.getUniversalOverlays();
 
-    this._populateOverlayList('theme-overlay-list', themeOverlays);
-    this._populateOverlayList('universal-overlay-list', universalOverlays);
+    // Load favorites and recent from localStorage
+    this._overlayFavorites = this._loadOverlayFavorites();
+    this._overlayRecent = this._loadOverlayRecent();
+
+    this._populateOverlayListGrouped('theme-overlay-list', themeOverlays);
+    this._populateOverlayListGrouped('universal-overlay-list', universalOverlays);
+    this._refreshFavoritesSection();
+    this._refreshRecentSection();
 
     // Tab switching (supports Theme, Universal, and optional Realm Brew tabs)
     this._overlayTabs = [
@@ -2298,51 +2340,367 @@ class Editor {
 
     // Properties controls
     this._bindPropertiesControls();
+
+    // Special overlay dialogs
+    this._initTextLabelDialog();
+    this._initScaleBarDialog();
   }
 
-  _populateOverlayList(listId, overlays) {
+  /** Category display names */
+  static CATEGORY_LABELS = {
+    settlement: 'Settlements',
+    structure: 'Structures',
+    wildlife: 'Wildlife',
+    character: 'Characters',
+    marker: 'Markers',
+    numbered: 'Numbered',
+    lettered: 'Lettered',
+    navigation: 'Navigation',
+    nature: 'Nature',
+    atmosphere: 'Atmosphere',
+    weather: 'Weather',
+    hazard: 'Hazards',
+    label: 'Labels & Flags'
+  };
+
+  _populateOverlayListGrouped(listId, overlays) {
     const listEl = document.getElementById(listId);
     if (!listEl) return;
     listEl.replaceChildren();
 
+    // Group by category
+    const groups = new Map();
     for (const ov of overlays) {
-      const option = document.createElement('div');
-      option.className = 'overlay-option';
-      option.setAttribute('role', 'option');
-      option.setAttribute('aria-selected', 'false');
-      option.setAttribute('aria-label', ov.name);
-      option.setAttribute('tabindex', '0');
-      option.dataset.overlayId = ov.id;
-
-      // Preview canvas
-      const previewSize = 44;
-      const previewCanvas = document.createElement('canvas');
-      previewCanvas.width = previewSize;
-      previewCanvas.height = previewSize;
-      previewCanvas.setAttribute('aria-hidden', 'true');
-      option.appendChild(previewCanvas);
-
-      // Render preview async
-      this._overlayRenderer.renderPreview(ov.id, previewSize, (img) => {
-        const ctx = previewCanvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, previewSize, previewSize);
-      });
-
-      const nameEl = document.createElement('span');
-      nameEl.className = 'overlay-name';
-      nameEl.textContent = ov.name;
-      option.appendChild(nameEl);
-
-      option.addEventListener('click', () => this._selectOverlay(ov.id));
-      option.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this._selectOverlay(ov.id);
-        }
-      });
-
-      listEl.appendChild(option);
+      const cat = ov.category || 'other';
+      if (!groups.has(cat)) groups.set(cat, []);
+      groups.get(cat).push(ov);
     }
+
+    for (const [cat, items] of groups) {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'overlay-category-group';
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'category-toggle';
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.textContent = Editor.CATEGORY_LABELS[cat] || cat;
+      toggleBtn.addEventListener('click', () => {
+        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        toggleBtn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      });
+      groupEl.appendChild(toggleBtn);
+
+      const itemsEl = document.createElement('div');
+      itemsEl.className = 'category-items';
+
+      for (const ov of items) {
+        itemsEl.appendChild(this._createOverlayOption(ov));
+      }
+      groupEl.appendChild(itemsEl);
+      listEl.appendChild(groupEl);
+    }
+  }
+
+  _createOverlayOption(ov, compact) {
+    const option = document.createElement('div');
+    option.className = 'overlay-option' + (compact ? ' compact' : '');
+    option.setAttribute('role', 'option');
+    option.setAttribute('aria-selected', 'false');
+    option.setAttribute('aria-label', ov.name);
+    option.setAttribute('tabindex', '0');
+    option.dataset.overlayId = ov.id;
+
+    // Preview canvas
+    const previewSize = compact ? 36 : 44;
+    const previewCanvas = document.createElement('canvas');
+    previewCanvas.width = previewSize;
+    previewCanvas.height = previewSize;
+    previewCanvas.setAttribute('aria-hidden', 'true');
+    option.appendChild(previewCanvas);
+
+    // Render preview async
+    this._overlayRenderer.renderPreview(ov.id, previewSize, (img) => {
+      const ctx = previewCanvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, previewSize, previewSize);
+    });
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'overlay-name';
+    nameEl.textContent = ov.name;
+    option.appendChild(nameEl);
+
+    // Favorite star button
+    const favBtn = document.createElement('button');
+    favBtn.className = 'fav-btn' + (this._overlayFavorites.has(ov.id) ? ' active' : '');
+    favBtn.setAttribute('aria-label', 'Toggle favorite');
+    favBtn.textContent = '\u2605';
+    favBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this._toggleFavorite(ov.id);
+    });
+    option.appendChild(favBtn);
+
+    option.addEventListener('click', () => this._selectOverlay(ov.id));
+    option.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this._selectOverlay(ov.id);
+      }
+    });
+
+    return option;
+  }
+
+  /* ---- Overlay Favorites ---- */
+  _loadOverlayFavorites() {
+    try {
+      const stored = localStorage.getItem('magical-map-maker-favorites');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  }
+
+  _saveOverlayFavorites() {
+    try {
+      localStorage.setItem('magical-map-maker-favorites', JSON.stringify([...this._overlayFavorites]));
+    } catch { /* storage full */ }
+  }
+
+  _toggleFavorite(overlayId) {
+    if (this._overlayFavorites.has(overlayId)) {
+      this._overlayFavorites.delete(overlayId);
+    } else {
+      this._overlayFavorites.add(overlayId);
+    }
+    this._saveOverlayFavorites();
+
+    // Update all star buttons
+    document.querySelectorAll('.overlay-option .fav-btn').forEach(btn => {
+      const optionEl = btn.closest('.overlay-option');
+      if (optionEl) {
+        btn.classList.toggle('active', this._overlayFavorites.has(optionEl.dataset.overlayId));
+      }
+    });
+
+    this._refreshFavoritesSection();
+  }
+
+  _refreshFavoritesSection() {
+    const section = document.getElementById('overlay-favorites-section');
+    const list = document.getElementById('overlay-favorites-list');
+    if (!section || !list) return;
+
+    list.replaceChildren();
+    if (this._overlayFavorites.size === 0) {
+      section.classList.add('hidden');
+      return;
+    }
+
+    section.classList.remove('hidden');
+    for (const id of this._overlayFavorites) {
+      const ov = this._overlayRenderer.getOverlay(id);
+      if (ov) list.appendChild(this._createOverlayOption(ov, true));
+    }
+  }
+
+  /* ---- Overlay Recently Used ---- */
+  _loadOverlayRecent() {
+    try {
+      const stored = localStorage.getItem('magical-map-maker-recent-overlays');
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  }
+
+  _saveOverlayRecent() {
+    try {
+      localStorage.setItem('magical-map-maker-recent-overlays', JSON.stringify(this._overlayRecent));
+    } catch { /* storage full */ }
+  }
+
+  _addToRecent(overlayId) {
+    this._overlayRecent = this._overlayRecent.filter(id => id !== overlayId);
+    this._overlayRecent.unshift(overlayId);
+    if (this._overlayRecent.length > 8) this._overlayRecent.length = 8;
+    this._saveOverlayRecent();
+    this._refreshRecentSection();
+  }
+
+  _refreshRecentSection() {
+    const section = document.getElementById('overlay-recent-section');
+    const list = document.getElementById('overlay-recent-list');
+    if (!section || !list) return;
+
+    list.replaceChildren();
+    if (this._overlayRecent.length === 0) {
+      section.classList.add('hidden');
+      return;
+    }
+
+    section.classList.remove('hidden');
+    for (const id of this._overlayRecent) {
+      const ov = this._overlayRenderer.getOverlay(id);
+      if (ov) list.appendChild(this._createOverlayOption(ov, true));
+    }
+  }
+
+  /* ---- Special Overlay Dialogs ---- */
+  _initTextLabelDialog() {
+    const dialog = document.getElementById('text-label-dialog');
+    if (!dialog) return;
+
+    const input = document.getElementById('text-label-input');
+    const okBtn = document.getElementById('btn-text-label-ok');
+    const cancelBtn = document.getElementById('btn-text-label-cancel');
+
+    // Font size radio buttons
+    dialog.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        dialog.querySelectorAll('.size-btn').forEach(b => b.setAttribute('aria-checked', 'false'));
+        btn.setAttribute('aria-checked', 'true');
+      });
+    });
+
+    const close = () => {
+      dialog.classList.add('hidden');
+      dialog.setAttribute('aria-hidden', 'true');
+      this._pendingSpecialOverlay = null;
+      if (this._focusTrapHandler) {
+        document.removeEventListener('keydown', this._focusTrapHandler);
+        this._focusTrapHandler = null;
+      }
+      if (this._prevFocusSpecial) {
+        this._prevFocusSpecial.focus();
+        this._prevFocusSpecial = null;
+      }
+    };
+
+    cancelBtn.addEventListener('click', close);
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+    dialog.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    okBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (!text || !this._pendingSpecialOverlay) { close(); return; }
+      const fontSize = dialog.querySelector('.size-btn[aria-checked="true"]')?.dataset.fontSize || 'medium';
+      const { col, row, cellType } = this._pendingSpecialOverlay;
+      this._placeSpecialOverlay(col, row, cellType, 'text-label', { text, fontSize });
+      input.value = '';
+      close();
+    });
+  }
+
+  _initScaleBarDialog() {
+    const dialog = document.getElementById('scale-bar-dialog');
+    if (!dialog) return;
+
+    const select = document.getElementById('scale-bar-input');
+    const customInput = document.getElementById('scale-bar-custom');
+    const okBtn = document.getElementById('btn-scale-bar-ok');
+    const cancelBtn = document.getElementById('btn-scale-bar-cancel');
+
+    select.addEventListener('change', () => {
+      customInput.classList.toggle('hidden', select.value !== 'custom');
+      if (select.value === 'custom') customInput.focus();
+    });
+
+    const close = () => {
+      dialog.classList.add('hidden');
+      dialog.setAttribute('aria-hidden', 'true');
+      this._pendingSpecialOverlay = null;
+      if (this._focusTrapHandler) {
+        document.removeEventListener('keydown', this._focusTrapHandler);
+        this._focusTrapHandler = null;
+      }
+      if (this._prevFocusSpecial) {
+        this._prevFocusSpecial.focus();
+        this._prevFocusSpecial = null;
+      }
+    };
+
+    cancelBtn.addEventListener('click', close);
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+    dialog.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    okBtn.addEventListener('click', () => {
+      if (!this._pendingSpecialOverlay) { close(); return; }
+      const scaleText = select.value === 'custom' ? customInput.value.trim() : select.value;
+      if (!scaleText) { close(); return; }
+      const { col, row, cellType } = this._pendingSpecialOverlay;
+      this._placeSpecialOverlay(col, row, cellType, 'scale-bar', { scaleText });
+      select.value = select.options[0].value;
+      customInput.value = '';
+      customInput.classList.add('hidden');
+      close();
+    });
+  }
+
+  _showTextLabelDialog(col, row, cellType) {
+    this._pendingSpecialOverlay = { col, row, cellType };
+    this._prevFocusSpecial = document.activeElement;
+    const dialog = document.getElementById('text-label-dialog');
+    dialog.classList.remove('hidden');
+    dialog.removeAttribute('aria-hidden');
+    const input = document.getElementById('text-label-input');
+    input.value = '';
+    input.focus();
+    this._trapFocus(dialog);
+  }
+
+  _showScaleBarDialog(col, row, cellType) {
+    this._pendingSpecialOverlay = { col, row, cellType };
+    this._prevFocusSpecial = document.activeElement;
+    const dialog = document.getElementById('scale-bar-dialog');
+    dialog.classList.remove('hidden');
+    dialog.removeAttribute('aria-hidden');
+    document.getElementById('scale-bar-input').focus();
+    this._trapFocus(dialog);
+  }
+
+  _trapFocus(dialog) {
+    if (this._focusTrapHandler) {
+      document.removeEventListener('keydown', this._focusTrapHandler);
+    }
+    this._focusTrapHandler = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = dialog.querySelectorAll('button, input, select, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', this._focusTrapHandler);
+  }
+
+  _placeSpecialOverlay(col, row, cellType, overlayId, extraProps) {
+    const cell = this._grid.getCell(col, row, cellType);
+    if (!cell) return;
+    if (!cell.overlays) cell.overlays = [];
+    if (cell.overlays.length >= 5) {
+      this._app.announce('Maximum 5 overlays per cell');
+      return;
+    }
+
+    const overlay = {
+      id: overlayId,
+      rotation: 0,
+      opacity: 1.0,
+      size: overlayId === 'title-banner' ? 'large' : 'medium',
+      ...extraProps
+    };
+
+    const cmd = cmdPlaceOverlay(this._grid, col, row, cellType, overlay);
+    cmd.apply();
+    this._history.push(cmd);
+    this._dirty = true;
+    this._markSaveDirty();
+    this._sound.playChime();
+    this._addToRecent(overlayId);
+    this._app.announce('Placed ' + (this._overlayRenderer.getOverlay(overlayId)?.name || overlayId));
   }
 
   _selectOverlay(overlayId) {
@@ -2380,7 +2738,8 @@ class Editor {
   }
 
   _filterOverlays(query) {
-    document.querySelectorAll('.overlay-option').forEach(opt => {
+    // Filter overlay options in all panels
+    document.querySelectorAll('#theme-overlay-list .overlay-option, #universal-overlay-list .overlay-option').forEach(opt => {
       const name = opt.getAttribute('aria-label') || '';
       const match = !query || name.toLowerCase().includes(query);
       if (match) {
@@ -2389,6 +2748,22 @@ class Editor {
         opt.setAttribute('aria-hidden', 'true');
       }
     });
+
+    // Hide empty category groups
+    document.querySelectorAll('.overlay-category-group').forEach(group => {
+      const visibleItems = group.querySelectorAll('.overlay-option:not([aria-hidden="true"])');
+      group.style.display = visibleItems.length === 0 ? 'none' : '';
+    });
+
+    // When searching, show both panels so results from both tabs are visible
+    if (query) {
+      document.getElementById('panel-theme-overlays')?.classList.remove('hidden');
+      document.getElementById('panel-universal-overlays')?.classList.remove('hidden');
+    } else {
+      // Restore tab state
+      const activeTab = this._overlayTabs.find(t => t.tab.classList.contains('active'));
+      if (activeTab) this._switchOverlayTab(activeTab.tab);
+    }
   }
 
   _switchOverlayTab(activeTab) {
@@ -2681,6 +3056,16 @@ class Editor {
 
   /* ---- Overlay Placement ---- */
   _placeOverlay(col, row, cellType) {
+    // Special overlays need a dialog first
+    if (this._selectedOverlay === 'text-label' || this._selectedOverlay === 'title-banner') {
+      this._showTextLabelDialog(col, row, cellType);
+      return;
+    }
+    if (this._selectedOverlay === 'scale-bar') {
+      this._showScaleBarDialog(col, row, cellType);
+      return;
+    }
+
     const cell = this._grid.getCell(col, row, cellType);
     if (!cell) return;
     if (!cell.overlays) cell.overlays = [];
@@ -2702,6 +3087,7 @@ class Editor {
     this._dirty = true;
     this._markSaveDirty();
     this._sound.playChime();
+    this._addToRecent(this._selectedOverlay);
     let placedName;
     if (Editor.isRealmBrewOverlay(this._selectedOverlay)) {
       const rbInfo = Editor.parseRealmBrewOverlayId(this._selectedOverlay);
@@ -2832,9 +3218,13 @@ class Editor {
         removeBtn.setAttribute('aria-label', 'Remove ' + ovName);
         removeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          cell.overlays.splice(i, 1);
+          const removedOverlay = { ...cell.overlays[i] };
+          const cmd = cmdRemoveOverlay(this._grid, col, row, cellType, i, removedOverlay);
+          cmd.apply();
+          this._history.push(cmd);
           this._selectedCellOverlayIndex = -1;
           this._dirty = true;
+          this._markSaveDirty();
           this._updatePropertiesPanel();
           this._app.announce('Overlay removed');
         });
@@ -2925,9 +3315,16 @@ class Editor {
 
   _clearCellOverlays() {
     if (!this._selectedCell) return;
-    const cell = this._grid.getCell(this._selectedCell.col, this._selectedCell.row, this._selectedCell.cellType);
-    if (!cell || !cell.overlays) return;
-    cell.overlays = [];
+    const { col, row, cellType } = this._selectedCell;
+    const cell = this._grid.getCell(col, row, cellType);
+    if (!cell || !cell.overlays || cell.overlays.length === 0) return;
+    // Remove overlays one by one in reverse order so undo replays correctly
+    for (let i = cell.overlays.length - 1; i >= 0; i--) {
+      const removedOverlay = { ...cell.overlays[i] };
+      const cmd = cmdRemoveOverlay(this._grid, col, row, cellType, i, removedOverlay);
+      cmd.apply();
+      this._history.push(cmd);
+    }
     this._selectedCellOverlayIndex = -1;
     this._dirty = true;
     this._markSaveDirty();
@@ -3063,7 +3460,7 @@ class Editor {
     if (!dialog) return;
     this._clearAllPrevFocus = document.activeElement;
     dialog.classList.remove('hidden');
-    dialog.setAttribute('aria-hidden', 'false');
+    dialog.removeAttribute('aria-hidden');
     const confirmBtn = document.getElementById('btn-clear-all-confirm');
     if (confirmBtn) confirmBtn.focus();
 
@@ -3138,7 +3535,7 @@ class Editor {
     if (!dialog) return;
     this._shortcutsPrevFocus = document.activeElement;
     dialog.classList.remove('hidden');
-    dialog.setAttribute('aria-hidden', 'false');
+    dialog.removeAttribute('aria-hidden');
     const closeBtn = document.getElementById('btn-shortcuts-close');
     if (closeBtn) closeBtn.focus();
 
