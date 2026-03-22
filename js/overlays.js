@@ -158,16 +158,6 @@ class OverlayRenderer {
   }
 
   /**
-   * Pre-render overlay icons for palette preview.
-   * Returns a canvas with the icon rendered at the given size.
-   */
-  getPreviewCanvas(overlayId, size) {
-    const overlay = this.getOverlay(overlayId);
-    if (!overlay) return null;
-    return this._getCachedImage(overlay.svgSymbolId, size, 0);
-  }
-
-  /**
    * Render overlay previews asynchronously and call back when ready.
    * Used by the palette to populate preview images.
    */

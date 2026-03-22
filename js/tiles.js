@@ -468,13 +468,11 @@ class TileRenderer {
         // Invalidate all possible old cache entries for this cell
         // by removing keys matching this tile+shape+cellSize pattern
         const prefix = `${cell.base}-${shape}-${cellSize}`;
+        const keysToEvict = [];
         for (const [cacheKey] of this._atlas._atlasMap) {
-          if (cacheKey.startsWith(prefix)) {
-            this._atlas._atlasMap.delete(cacheKey);
-            const li = this._atlas._lruKeys.indexOf(cacheKey);
-            if (li > -1) this._atlas._lruKeys.splice(li, 1);
-          }
+          if (cacheKey.startsWith(prefix)) keysToEvict.push(cacheKey);
         }
+        for (const k of keysToEvict) this._atlas._atlasMap.delete(k);
         // Force re-render by calling getTileImage (creates fresh cache entry)
         this.getTileImage(cell.base, shape, cellSize, grid, col, row, cellType);
       }
