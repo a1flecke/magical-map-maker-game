@@ -115,10 +115,15 @@ class InputHandler {
     this._dragCancelled = false;
     this._lastDragCell = null;
     this._startPointerPos = this._getCanvasPos(e);
+
+    // Pan cursor feedback
+    if (this._panMode) {
+      this._canvas.style.cursor = 'grabbing';
+    }
   }
 
   _onPointerMove(e) {
-    if (!this._activePointers.has(e.pointerId)) {
+    if (!this._activePointers.has(e.pointerId) && e.buttons === 0) {
       // Hover — report hovered cell for coordinate display
       if (this._onHoverCell) {
         const pos = this._getCanvasPos(e);
@@ -128,6 +133,8 @@ class InputHandler {
       }
       return;
     }
+
+    if (!this._activePointers.has(e.pointerId)) return;
 
     this._activePointers.set(e.pointerId, this._getCanvasPos(e));
 
@@ -227,6 +234,11 @@ class InputHandler {
     this._isDragging = false;
     this._isPanning = false;
     this._lastDragCell = null;
+
+    // Restore pan cursor
+    if (this._panMode) {
+      this._canvas.style.cursor = 'grab';
+    }
   }
 
   _onPointerCancel(e) {
@@ -239,6 +251,11 @@ class InputHandler {
     this._isPanning = false;
     this._dragCancelled = false;
     this._lastDragCell = null;
+
+    // Restore pan cursor
+    if (this._panMode) {
+      this._canvas.style.cursor = 'grab';
+    }
   }
 
   /* ---- Scroll Wheel ---- */

@@ -18,6 +18,7 @@ class HistoryManager {
   /**
    * Push a command onto the undo stack.
    * Clears redo stack (new action invalidates redo history).
+   * Caller must call cmd.apply() before pushing. push() records but does not execute.
    * @param {object} command - { type, apply(), undo() }
    */
   push(command) {

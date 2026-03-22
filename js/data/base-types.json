@@ -1395,7 +1395,7 @@
     "colors": {
       "primary": "#263238",
       "secondary": "#37474F",
-      "accent": "#1A237E"
+      "accent": "#80DEEA"
     },
     "pattern": "ice-cave",
     "themes": [
@@ -1756,7 +1756,7 @@
   {
     "id": "dam",
     "name": "Dam",
-    "category": "battlefield-tactical",
+    "category": "constructed",
     "colors": {
       "primary": "#757575",
       "secondary": "#9E9E9E",
@@ -2135,7 +2135,7 @@
   {
     "id": "scorched-earth",
     "name": "Scorched Earth",
-    "category": "volcanic-hazard",
+    "category": "battlefield-tactical",
     "colors": {
       "primary": "#263238",
       "secondary": "#37474F",
@@ -2156,7 +2156,7 @@
   {
     "id": "ruins-ground",
     "name": "Ruins",
-    "category": "volcanic-hazard",
+    "category": "battlefield-tactical",
     "colors": {
       "primary": "#6D4C41",
       "secondary": "#8D6E63",
@@ -2177,7 +2177,7 @@
   {
     "id": "no-mans-land",
     "name": "No Man's Land",
-    "category": "volcanic-hazard",
+    "category": "battlefield-tactical",
     "colors": {
       "primary": "#5D4037",
       "secondary": "#795548",
@@ -2202,7 +2202,7 @@
     "colors": {
       "primary": "#78909C",
       "secondary": "#90A4AE",
-      "accent": "#4CAF50"
+      "accent": "#607D8B"
     },
     "pattern": "paved-road",
     "themes": [

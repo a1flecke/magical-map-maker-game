@@ -141,9 +141,10 @@ class SquareGrid extends Grid {
     const queue = [{ col, row }];
     const visited = new Set([`${col},${row}`]);
     const filled = [];
+    let head = 0;
 
-    while (queue.length > 0 && filled.length < maxCells) {
-      const cur = queue.shift();
+    while (head < queue.length && filled.length < maxCells) {
+      const cur = queue[head++];
       const cell = this.getCell(cur.col, cur.row);
       if (!cell || cell.base !== targetBase) continue;
       cell.base = tileId;
@@ -247,9 +248,9 @@ class HexGrid extends Grid {
 
     let bestCol = -1, bestRow = -1, bestDist = Infinity;
 
-    // Check a small neighborhood around the estimate
-    for (let dc = -1; dc <= 1; dc++) {
-      for (let dr = -1; dr <= 1; dr++) {
+    // Check a ±2 neighborhood around the estimate for robustness
+    for (let dc = -2; dc <= 2; dc++) {
+      for (let dr = -2; dr <= 2; dr++) {
         const c = estCol + dc;
         const r = estRow + dr;
         if (c < 0 || c >= this.cols || r < 0 || r >= this.rows) continue;
@@ -322,9 +323,10 @@ class HexGrid extends Grid {
     const queue = [{ col, row }];
     const visited = new Set([`${col},${row}`]);
     const filled = [];
+    let head = 0;
 
-    while (queue.length > 0 && filled.length < maxCells) {
-      const cur = queue.shift();
+    while (head < queue.length && filled.length < maxCells) {
+      const cur = queue[head++];
       const cell = this.getCell(cur.col, cur.row);
       if (!cell || cell.base !== targetBase) continue;
       cell.base = tileId;
@@ -478,9 +480,10 @@ class DiamondGrid extends Grid {
     const queue = [{ col, row }];
     const visited = new Set([`${col},${row}`]);
     const filled = [];
+    let head = 0;
 
-    while (queue.length > 0 && filled.length < maxCells) {
-      const cur = queue.shift();
+    while (head < queue.length && filled.length < maxCells) {
+      const cur = queue[head++];
       const cell = this.getCell(cur.col, cur.row);
       if (!cell || cell.base !== targetBase) continue;
       cell.base = tileId;
@@ -718,9 +721,10 @@ class OctagonGrid extends Grid {
     const queue = [{ col, row, cellType }];
     const visited = new Set([`${cellType},${col},${row}`]);
     const filled = [];
+    let head = 0;
 
-    while (queue.length > 0 && filled.length < maxCells) {
-      const cur = queue.shift();
+    while (head < queue.length && filled.length < maxCells) {
+      const cur = queue[head++];
       const cell = this.getCell(cur.col, cur.row, cur.cellType);
       if (!cell || cell.base !== targetBase) continue;
       cell.base = tileId;

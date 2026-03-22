@@ -11,6 +11,7 @@ const THUMB_QUALITY = 0.6;
 class StorageManager {
   constructor() {
     this._maps = null; // lazy-loaded
+    this._lastWarning = null;
   }
 
   /* ---- UUID ---- */
@@ -51,7 +52,7 @@ class StorageManager {
     // Proactive size check before writing
     const bytes = new Blob([json]).size;
     if (bytes >= MAX_BYTES_WARNING) {
-      console.warn('StorageManager: storage approaching limit (' + Math.round(bytes / 1024) + ' KB)');
+      this._lastWarning = 'Storage approaching limit (' + Math.round(bytes / 1024) + ' KB). Consider deleting old maps.';
     }
     try {
       localStorage.setItem(STORAGE_KEY, json);
@@ -59,6 +60,13 @@ class StorageManager {
       console.error('StorageManager: failed to save', e);
       throw new Error('Could not save map. Storage may be full.');
     }
+  }
+
+  /** Returns and clears the last warning message, if any. */
+  getLastWarning() {
+    const warning = this._lastWarning;
+    this._lastWarning = null;
+    return warning;
   }
 
   /* ---- Public API ---- */
@@ -102,6 +110,10 @@ class StorageManager {
 
     if (existing >= 0) {
       record.createdAt = this._maps[existing].createdAt || now;
+      // Preserve existing thumbnail if incoming data has none
+      if (!record.thumbnail && this._maps[existing].thumbnail) {
+        record.thumbnail = this._maps[existing].thumbnail;
+      }
       this._maps[existing] = record;
     } else {
       record.id = record.id || StorageManager.generateId();
@@ -266,8 +278,8 @@ class StorageManager {
     thumb.height = THUMB_H;
     const ctx = thumb.getContext('2d');
 
-    // Fill with white background
-    ctx.fillStyle = '#FFFFFF';
+    // Fill with cream background matching app theme
+    ctx.fillStyle = '#F5F0E8';
     ctx.fillRect(0, 0, THUMB_W, THUMB_H);
 
     // Use CSS pixel dimensions (not physical device pixels) for scaling

@@ -16,6 +16,10 @@
   --color-surface: #FAF7F2;
   --color-surface-hover: #F0EBE1;
   --color-muted: #7A7060;
+  --color-danger: #D32F2F;
+  --color-danger-hover: #B71C1C;
+  --color-warning-bg: #FFF3E0;
+  --color-warning-border: #FF9800;
   --font-primary: 'OpenDyslexic', 'Comic Sans MS', 'Comic Sans', cursive;
   --min-touch: 44px;
   --radius: 8px;
@@ -143,7 +147,7 @@ input[type="text"]:focus-visible {
   transition: top 150ms ease;
 }
 
-.skip-link:focus {
+.skip-link:focus-visible {
   top: 12px;
   outline: 3px solid var(--color-text);
   outline-offset: 2px;
@@ -206,7 +210,7 @@ input[type="text"]:focus-visible {
 }
 
 .toast.toast-error {
-  background: #D32F2F;
+  background: var(--color-danger);
   color: #FFFFFF;
 }
 
@@ -349,7 +353,6 @@ input[type="text"]:focus-visible {
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   padding: 24px;
 }
 
@@ -462,7 +465,7 @@ input[type="text"]:focus-visible {
 .shape-card[aria-checked="true"],
 .shape-card.selected {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.08);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
 }
 
 .shape-card:focus-visible {
@@ -503,7 +506,7 @@ input[type="text"]:focus-visible {
 
 .size-card[aria-checked="true"] {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.08);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
 }
 
 .size-card:focus-visible {
@@ -545,8 +548,8 @@ input[type="text"]:focus-visible {
 }
 
 .mymaps-warning {
-  background: #FFF3E0;
-  border: 2px solid #FF9800;
+  background: var(--color-warning-bg);
+  border: 2px solid var(--color-warning-border);
   border-radius: var(--radius);
   padding: 12px 16px;
   margin-bottom: 16px;
@@ -761,18 +764,18 @@ input[type="text"]:focus-visible {
 
 .size-btn[aria-checked="true"] {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.1);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
   font-weight: 700;
 }
 
 button.danger {
-  background: #D32F2F;
+  background: var(--color-danger);
   color: white;
-  border-color: #B71C1C;
+  border-color: var(--color-danger-hover);
 }
 
 button.danger:hover {
-  background: #B71C1C;
+  background: var(--color-danger-hover);
 }
 
 /* ==================== TOOLBAR MAP NAME ==================== */
@@ -946,7 +949,7 @@ button.danger:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 15;
+  z-index: 20;
 }
 
 .rb-loading-content {
@@ -1283,12 +1286,4 @@ button.danger:hover {
   }
 }
 
-/* Safe area insets for notch devices */
-@supports (padding: env(safe-area-inset-top)) {
-  body {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-}
+/* Safe area: components handle their own insets — no global body padding needed */

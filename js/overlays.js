@@ -113,8 +113,12 @@ class OverlayRenderer {
 
     let svgStr;
     if (rotation !== 0) {
+      // Derive pivot from viewBox center
+      const vbParts = viewBox.split(/\s+/);
+      const vbCx = (parseFloat(vbParts[0]) + parseFloat(vbParts[2])) / 2;
+      const vbCy = (parseFloat(vbParts[1]) + parseFloat(vbParts[3])) / 2;
       svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${size}" height="${size}">` +
-        `<g transform="rotate(${rotation} 32 32)">${innerSVG}</g></svg>`;
+        `<g transform="rotate(${rotation} ${vbCx} ${vbCy})">${innerSVG}</g></svg>`;
     } else {
       svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${size}" height="${size}">${innerSVG}</svg>`;
     }
@@ -139,6 +143,8 @@ class OverlayRenderer {
         this._cache.delete(firstKey);
       }
       this._cache.set(key, offscreen);
+      // Signal that a new overlay image is ready for rendering
+      if (this.onCachePopulated) this.onCachePopulated();
     };
 
     img.onerror = () => {
@@ -168,6 +174,11 @@ class OverlayRenderer {
   renderPreview(overlayId, size, callback) {
     const overlay = this.getOverlay(overlayId);
     if (!overlay) return;
+
+    // Check cache first to avoid duplicate work
+    const cacheKey = `${overlay.svgSymbolId}-${size}-0`;
+    const cached = this._cache.get(cacheKey);
+    if (cached) { callback(cached); return; }
 
     const symbol = this._svgDoc ? this._svgDoc.getElementById(overlay.svgSymbolId) : null;
     if (!symbol) return;

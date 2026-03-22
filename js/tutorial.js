@@ -12,26 +12,26 @@ class Tutorial {
 
   static STEPS = [
     {
-      title: 'Pick Your Tiles',
-      text: 'Choose terrain tiles from the palette on the left. Tap one to select it!',
+      title: '\u{1F3A8} Pick a Tile',
+      text: 'Tap a tile over here to pick it. This is where you choose what to paint with!',
       target: '.tile-palette',
       arrow: 'right'
     },
     {
-      title: 'Paint the Map',
-      text: 'Tap or drag on the map to paint tiles. Use the brush size buttons to paint bigger areas!',
+      title: '\u{1F5BC}\uFE0F Paint Your Map',
+      text: 'Now tap or drag on the map to paint! Made a mistake? Hit Undo to fix it.',
       target: '.canvas-container',
       arrow: 'left'
     },
     {
-      title: 'Add Details',
-      text: 'Add castles, trees, and more from the overlay palette on the right.',
+      title: '\u{1F3F0} Add Cool Stuff',
+      text: 'Add castles, trees, monsters, and more from over here!',
       target: '.overlay-palette',
       arrow: 'left'
     },
     {
-      title: 'Save and Export',
-      text: 'Save your map and export it as a PDF, PNG, or JPEG to print!',
+      title: '\u{1F4BE} Save and Print',
+      text: 'When you are done, save your map and export it to print!',
       target: '.editor-toolbar',
       arrow: 'down'
     }

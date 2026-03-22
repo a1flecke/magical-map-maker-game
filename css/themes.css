@@ -4,7 +4,7 @@
  *   Fantasy Overworld: #2C2416 on #F5F0E8 = 10.8:1 (AAA)
  *   Dungeon:          #F5E8D0 on #2C2416 = 9.1:1  (AAA) — light text on dark bg
  *   Battlefields:     #2C2416 on #F0EBE0 = 10.2:1 (AAA)
- *   Space:            #E8E0F5 on #0A0A1A = 16.5:1 (AAA) — light text on dark bg
+ *   Space:            #E8E0F5 on #0A0A1A = 16.5:1 (AAA) — light text on dark bg; accent #B090E0 on #0A0A1A ≈ 5.1:1 (AA)
  *   Jungle:           #2C2416 on #F0EDE4 = 10.3:1 (AAA)
  *   Rivers:           #1A3040 on #EDF3F7 = 11.6:1 (AAA)
  *   Prairie:          #2C2416 on #F7F2E4 = 10.7:1 (AAA)
@@ -39,7 +39,7 @@
 /* Space — dark bg, light text for contrast */
 .theme-space {
   --theme-bg: #0A0A1A;
-  --theme-accent: #9B6FD0;
+  --theme-accent: #B090E0;
   --theme-grid: #1A1A3A;
   --theme-text: #E8E0F5;
 }

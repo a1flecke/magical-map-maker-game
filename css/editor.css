@@ -1,6 +1,6 @@
 /* Magical Map Maker — Editor Layout */
 
-/* Z-index stacking: canvas(0) < sidebars(10) < toolbar(20) < properties(30) < modals(100) < toasts(200) */
+/* Z-index stacking: canvas(0) < sidebars(10) < drawer-tabs(15) < toolbar(20) < properties(30) < modals(100) < toasts(200) < tutorial(300-302) < skip-link(1000) */
 
 /* Editor screen uses CSS Grid */
 #editor-screen {
@@ -160,7 +160,6 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Tile option in palette */
@@ -186,7 +185,7 @@
 
 .tile-option[aria-selected="true"] {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.1);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 
 .tile-option:focus-visible {
@@ -266,8 +265,8 @@
 }
 
 .search-clear-btn {
-  min-width: 32px !important;
-  min-height: 32px !important;
+  min-width: var(--min-touch) !important;
+  min-height: var(--min-touch) !important;
   padding: 2px 6px !important;
   font-size: 0.75rem;
   line-height: 1;
@@ -311,7 +310,6 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
 [role="tabpanel"].hidden {
@@ -346,7 +344,7 @@
 
 .overlay-option[aria-selected="true"] {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.1);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 
 .overlay-option:focus-visible {
@@ -375,16 +373,16 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 32px;
-  height: 32px;
+  width: var(--min-touch);
+  height: var(--min-touch);
   padding: 0;
   border: none !important;
   background: transparent !important;
   cursor: pointer;
   font-size: 0.75rem;
   opacity: 0.3;
-  min-width: 32px !important;
-  min-height: 32px !important;
+  min-width: var(--min-touch) !important;
+  min-height: var(--min-touch) !important;
   line-height: 1;
   color: var(--color-text);
 }
@@ -467,10 +465,13 @@
 }
 
 .overlay-option.compact .overlay-name {
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   margin-top: 2px;
-  max-height: 2.4em;
+  max-height: 1.3em;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 /* ===== PROPERTIES PANEL (BOTTOM) ===== */
@@ -499,7 +500,7 @@
   border-radius: 0 !important;
   background: var(--color-surface) !important;
   cursor: pointer;
-  min-height: 36px;
+  min-height: var(--min-touch);
   touch-action: manipulation;
 }
 
@@ -512,7 +513,6 @@
   padding: 8px 12px;
   max-height: 120px;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .properties-content.hidden {
@@ -556,19 +556,19 @@
   gap: 4px;
   padding: 2px 8px;
   font-size: 0.6875rem;
-  background: rgba(74, 124, 89, 0.1);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 12px;
 }
 
 .overlay-chip.selected {
   border-color: var(--color-accent);
-  background: rgba(74, 124, 89, 0.2);
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
 }
 
 .overlay-chip .chip-remove {
-  min-width: 24px !important;
-  min-height: 24px !important;
+  min-width: var(--min-touch) !important;
+  min-height: var(--min-touch) !important;
   padding: 0 !important;
   font-size: 0.75rem;
   line-height: 1;
@@ -608,8 +608,8 @@
 
 .rot-btn,
 .size-sel-btn {
-  min-width: 32px !important;
-  min-height: 32px !important;
+  min-width: var(--min-touch) !important;
+  min-height: var(--min-touch) !important;
   padding: 2px 4px !important;
   font-size: 0.6875rem;
   border: 1px solid var(--color-border) !important;
@@ -638,7 +638,7 @@
   padding: 4px 8px !important;
   font-size: 0.6875rem;
   min-width: auto !important;
-  min-height: 32px !important;
+  min-height: var(--min-touch) !important;
 }
 
 /* Toolbar separators */
@@ -657,7 +657,6 @@
 
 /* Active tool indicator */
 .editor-toolbar button[aria-pressed="true"] {
-  background: rgba(74, 124, 89, 0.15);
   background: color-mix(in srgb, var(--color-accent) 15%, transparent);
   border-color: var(--color-accent);
 }

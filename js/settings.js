@@ -6,7 +6,7 @@ const SETTINGS_VERSION = 1;
 const DEFAULT_SETTINGS = {
   version: SETTINGS_VERSION,
   fontSize: 'medium',    // small (16px), medium (18px), large (22px)
-  soundEnabled: false,
+  soundEnabled: true,
   autoSave: true,
   gridLines: true,
   showCoordinates: false,

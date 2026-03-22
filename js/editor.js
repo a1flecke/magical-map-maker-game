@@ -86,6 +86,7 @@ class Editor {
     this._themeManager = new ThemeManager();
     this._tileRenderer = new TileRenderer();
     this._overlayRenderer = new OverlayRenderer();
+    this._overlayRenderer.onCachePopulated = () => { this._dirty = true; };
     await Promise.all([
       this._themeManager.load(),
       this._tileRenderer.load(),
@@ -162,6 +163,7 @@ class Editor {
       this._updatePropertiesPanel();
       this._state = this._fillMode ? EditorState.FILL_MODE : EditorState.TILE_SELECTED;
       this._dirty = true;
+      this._updateCursor();
     }, this._shape);
     this._palette.populate(tileIds);
 
@@ -202,6 +204,8 @@ class Editor {
     // Map name display
     const nameDisplay = document.getElementById('map-name-display');
     if (nameDisplay) nameDisplay.textContent = this._mapName;
+    const printTitle = document.getElementById('print-title');
+    if (printTitle) printTitle.textContent = this._mapName;
 
     // Edit name button
     const editNameBtn = document.getElementById('btn-edit-name');
@@ -238,6 +242,7 @@ class Editor {
 
     // Auto-save every 30 seconds (only if dirty and auto-save enabled) — silent, no screen reader announcement
     this._autoSaveTimer = setInterval(() => {
+      if (!this._running) return;
       const autoSaveEnabled = this._settingsManager ? this._settingsManager.get('autoSave') !== false : true;
       if (this._saveDirty && this._storage && autoSaveEnabled) {
         this.saveMap();
@@ -294,6 +299,11 @@ class Editor {
     // Close any open modals to clean up their keydown trap handlers
     this._closeShortcuts();
     this._closeClearAllDialog();
+    this._closeExportDialog();
+    // Clean up export close timer
+    if (this._exportCloseTimer) { clearTimeout(this._exportCloseTimer); this._exportCloseTimer = null; }
+    // Clean up rename input if open
+    if (this._renameInput) { this._renameInput.remove(); this._renameInput = null; }
   }
 
   /* ---- RAF Loop (single owner) ---- */
@@ -1740,6 +1750,7 @@ class Editor {
       this._state = this._fillMode ? EditorState.FILL_MODE : EditorState.TILE_SELECTED;
     }
     this._app.announce(this._fillMode ? 'Fill mode on' : 'Fill mode off');
+    this._updateCursor();
   }
 
   _togglePanMode() {
@@ -1751,23 +1762,38 @@ class Editor {
       panBtn.setAttribute('aria-pressed', this._panMode ? 'true' : 'false');
     }
     this._app.announce(this._panMode ? 'Pan mode on' : 'Pan mode off');
+    this._updateCursor();
+  }
+
+  /** Update canvas cursor based on current editor mode */
+  _updateCursor() {
+    if (!this._canvas) return;
+    if (this._panMode) {
+      this._canvas.style.cursor = 'grab';
+    } else if (this._fillMode) {
+      this._canvas.style.cursor = 'cell';
+    } else if (this._selectedTile || this._eraserMode || this._selectedOverlay) {
+      this._canvas.style.cursor = 'crosshair';
+    } else {
+      this._canvas.style.cursor = 'default';
+    }
   }
 
   _cycleMapLife() {
     const newMode = this._animation.cycleMapLife();
     this._updateMapLifeUI();
     this._dirty = true;
-    const labels = { full: 'Full', subtle: 'Subtle', still: 'Still' };
-    this._app.announce('Map Life: ' + labels[newMode]);
+    const labels = { full: 'On', subtle: 'Subtle', still: 'Off' };
+    this._app.announce('Animations: ' + labels[newMode]);
   }
 
   _updateMapLifeUI() {
     const btn = document.getElementById('btn-map-life');
     if (!btn || !this._animation) return;
     const mode = this._animation.mapLifeMode;
-    const labels = { full: 'Life: Full', subtle: 'Life: Subtle', still: 'Life: Still' };
-    btn.textContent = labels[mode] || 'Life: Full';
-    btn.setAttribute('aria-label', 'Map Life animation mode: ' + mode + '. Click to cycle.');
+    const labels = { full: 'Animations: On', subtle: 'Animations: Subtle', still: 'Animations: Off' };
+    btn.textContent = labels[mode] || 'Animations: On';
+    btn.setAttribute('aria-label', 'Animation mode: ' + mode + '. Click to cycle.');
     btn.classList.toggle('active', mode === 'full');
   }
 
@@ -1861,7 +1887,7 @@ class Editor {
       content.classList.remove('hidden');
       if (toggleBtn) {
         toggleBtn.setAttribute('aria-expanded', 'true');
-        toggleBtn.innerHTML = 'Properties &#9660;';
+        toggleBtn.textContent = 'Properties \u25BC';
       }
       this._resizeCanvas();
     }
@@ -2096,6 +2122,7 @@ class Editor {
 
     // Use requestAnimationFrame to let the progress bar render before the blocking export
     this._exportRafId = requestAnimationFrame(() => {
+      if (!this._running) return; // Editor was destroyed between RAFs
       this._exportRafId = requestAnimationFrame(() => {
         this._exportRafId = null;
         if (!this._running) return; // Editor was destroyed
@@ -2117,11 +2144,11 @@ class Editor {
           this._app.announce('Map exported as ' + format.toUpperCase());
           this._app.showToast('Map exported as ' + format.toUpperCase());
 
-          setTimeout(() => this._closeExportDialog(), 500);
+          this._exportCloseTimer = setTimeout(() => { this._exportCloseTimer = null; this._closeExportDialog(); }, 500);
         } catch (err) {
           console.error('Export failed:', err);
-          this._app.announce('Export failed. Try a smaller map or lower quality.', true);
-          this._app.showToast('Export failed. Try a smaller map or lower quality.', { isError: true });
+          this._app.announce('Something went wrong with the export. Try a smaller map!', true);
+          this._app.showToast('Something went wrong with the export. Try a smaller map!', { isError: true });
           if (progress) progress.classList.add('hidden');
         }
       });
@@ -2138,10 +2165,13 @@ class Editor {
       data.thumbnail = StorageManager.generateThumbnail(this._canvasEl);
       this._mapId = this._storage.saveMap(data);
       this._saveDirty = false;
+      // Show storage warning if approaching limit
+      const warning = this._storage.getLastWarning();
+      if (warning) this._app.showToast(warning);
     } catch (e) {
       console.error('Save failed:', e);
-      this._app.announce('Save failed. Storage may be full.', true);
-      this._app.showToast('Save failed. Storage may be full.', { isError: true });
+      this._app.announce('Could not save your map. Try deleting some old maps in My Maps!', true);
+      this._app.showToast('Could not save your map. Try deleting some old maps in My Maps!', { isError: true });
     }
   }
 
@@ -2165,6 +2195,7 @@ class Editor {
     nameDisplay.classList.add('hidden');
     if (editBtn) editBtn.classList.add('hidden');
     nameDisplay.parentNode.insertBefore(input, nameDisplay);
+    this._renameInput = input;
     input.focus();
     input.select();
 
@@ -2173,9 +2204,12 @@ class Editor {
       if (newName) {
         this._mapName = newName;
         nameDisplay.textContent = this._mapName;
+        const pt = document.getElementById('print-title');
+        if (pt) pt.textContent = this._mapName;
         this._markSaveDirty();
       }
       input.remove();
+      this._renameInput = null;
       nameDisplay.classList.remove('hidden');
       if (editBtn) editBtn.classList.remove('hidden');
     };
@@ -2439,7 +2473,7 @@ class Editor {
       toggleBtn.addEventListener('click', () => {
         const isHidden = content.classList.toggle('hidden');
         toggleBtn.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
-        toggleBtn.innerHTML = 'Properties ' + (isHidden ? '&#9650;' : '&#9660;');
+        toggleBtn.textContent = 'Properties ' + (isHidden ? '\u25B2' : '\u25BC');
         // Resize canvas since properties panel changed height
         this._resizeCanvas();
         this._dirty = true;
@@ -2852,15 +2886,17 @@ class Editor {
       const match = !query || name.toLowerCase().includes(query);
       if (match) {
         opt.removeAttribute('aria-hidden');
+        opt.classList.remove('hidden');
       } else {
         opt.setAttribute('aria-hidden', 'true');
+        opt.classList.add('hidden');
       }
     });
 
     // Hide empty category groups
     document.querySelectorAll('.overlay-category-group').forEach(group => {
       const visibleItems = group.querySelectorAll('.overlay-option:not([aria-hidden="true"])');
-      group.style.display = visibleItems.length === 0 ? 'none' : '';
+      group.classList.toggle('hidden', visibleItems.length === 0);
     });
 
     // When searching, show both panels so results from both tabs are visible
@@ -3472,6 +3508,7 @@ class Editor {
     const fillBtn = document.getElementById('btn-fill-tool');
     if (fillBtn) fillBtn.setAttribute('aria-pressed', 'false');
     this._app.announce(this._eraserMode ? 'Eraser on' : 'Eraser off');
+    this._updateCursor();
   }
 
   _eraseCell(col, row, cellType) {

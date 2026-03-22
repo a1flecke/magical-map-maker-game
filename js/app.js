@@ -787,7 +787,7 @@ class App {
         ? '<img class="map-card-thumb" src="' + escHtml(map.thumbnail) + '" alt="Map thumbnail" loading="lazy">'
         : '<div class="map-card-thumb-empty" aria-hidden="true">\uD83D\uDDFA</div>';
 
-      return '<div class="map-card" tabindex="0" data-map-id="' + escHtml(map.id) + '" role="button" aria-label="Open ' + escHtml(map.name) + '">'
+      return '<div class="map-card" tabindex="0" data-map-id="' + escHtml(map.id) + '" role="listitem" aria-label="Open ' + escHtml(map.name) + '">'
         + thumbHtml
         + '<div class="map-card-info">'
         + '<div class="map-card-name">' + escHtml(map.name) + '</div>'

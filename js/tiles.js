@@ -104,22 +104,20 @@ const MAX_ATLAS_ENTRIES = 200;
 class TileAtlas {
   constructor() {
     this._atlases = [];
-    this._atlasMap = new Map(); // cacheKey → { atlasIdx, sx, sy, sw, sh }
-    this._lruKeys = [];         // ordered by most-recent-use
+    this._atlasMap = new Map(); // cacheKey → { atlasIdx, sx, sy, sw, sh } — insertion order = LRU order
     this._currentAtlas = -1;
     this._packX = 0;
     this._packY = 0;
     this._packRowHeight = 0;
   }
 
-  /** Get a cached tile region, or null */
+  /** Get a cached tile region, or null. O(1) LRU touch via Map delete+re-insert. */
   get(key) {
     const entry = this._atlasMap.get(key);
     if (!entry) return null;
-    // LRU touch
-    const idx = this._lruKeys.indexOf(key);
-    if (idx > -1) this._lruKeys.splice(idx, 1);
-    this._lruKeys.push(key);
+    // LRU touch: delete and re-insert to move to end (most recently used)
+    this._atlasMap.delete(key);
+    this._atlasMap.set(key, entry);
     return entry;
   }
 
@@ -136,7 +134,6 @@ class TileAtlas {
       if (slot) {
         const entry = { atlasIdx: this._currentAtlas, sx: slot.x, sy: slot.y, sw: w, sh: h };
         this._atlasMap.set(key, entry);
-        this._lruKeys.push(key);
         return { canvas: this._atlases[this._currentAtlas], entry };
       }
     }
@@ -151,7 +148,6 @@ class TileAtlas {
     if (!slot) return null; // tile too large for atlas
     const entry = { atlasIdx: this._currentAtlas, sx: slot.x, sy: slot.y, sw: w, sh: h };
     this._atlasMap.set(key, entry);
-    this._lruKeys.push(key);
     return { canvas: this._atlases[this._currentAtlas], entry };
   }
 
@@ -164,7 +160,6 @@ class TileAtlas {
   clear() {
     this._atlases = [];
     this._atlasMap.clear();
-    this._lruKeys = [];
     this._currentAtlas = -1;
     this._packX = 0;
     this._packY = 0;
@@ -203,20 +198,19 @@ class TileAtlas {
   }
 
   _evictOldest() {
-    if (this._lruKeys.length === 0) return;
-    const oldKey = this._lruKeys.shift();
+    if (this._atlasMap.size === 0) return;
+    // Map iterator yields in insertion order — first key is least recently used
+    const oldKey = this._atlasMap.keys().next().value;
     this._atlasMap.delete(oldKey);
   }
 
   _wipeAtlas(idx) {
-    // Remove all entries pointing to this atlas
+    // Collect keys to delete first to avoid mutating during iteration
+    const keysToDelete = [];
     for (const [key, entry] of this._atlasMap) {
-      if (entry.atlasIdx === idx) {
-        this._atlasMap.delete(key);
-        const li = this._lruKeys.indexOf(key);
-        if (li > -1) this._lruKeys.splice(li, 1);
-      }
+      if (entry.atlasIdx === idx) keysToDelete.push(key);
     }
+    for (const key of keysToDelete) this._atlasMap.delete(key);
     // Shift atlas indices
     this._atlases.splice(idx, 1);
     for (const [, entry] of this._atlasMap) {

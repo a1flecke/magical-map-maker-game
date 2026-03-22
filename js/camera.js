@@ -3,6 +3,7 @@
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 4.0;
 const ZOOM_LERP_DURATION = 150; // ms
+const FIT_PADDING = 40;
 
 class Camera {
   constructor() {
@@ -61,8 +62,10 @@ class Camera {
   /** Start a smooth zoom animation toward targetZoom centered at screen point */
   zoomSmooth(targetZoom, screenCenterX, screenCenterY) {
     targetZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetZoom));
+    // If already animating, chain from the previous target for smoother rapid taps
+    const startZoom = this._zoomAnim ? this._zoomAnim.targetZoom : this.zoom;
     this._zoomAnim = {
-      startZoom: this.zoom,
+      startZoom,
       targetZoom,
       centerX: screenCenterX,
       centerY: screenCenterY,
@@ -92,7 +95,7 @@ class Camera {
 
   /** Fit the grid into the canvas viewport with some padding */
   fitToGrid(gridWidth, gridHeight, canvasWidth, canvasHeight) {
-    const padding = 40;
+    const padding = FIT_PADDING;
     const availW = canvasWidth - padding * 2;
     const availH = canvasHeight - padding * 2;
     const scaleX = availW / gridWidth;

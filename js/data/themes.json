@@ -179,7 +179,7 @@
     "description": "Explore the cosmos: nebulae, planets, black holes, and star fields.",
     "colors": {
       "bg": "#0A0A1A",
-      "accent": "#9B6FD0",
+      "accent": "#B090E0",
       "grid": "#1A1A3A"
     },
     "transitionMode": "cosmic",

@@ -261,7 +261,16 @@ class ExportManager {
   /* ---- PDF Export ---- */
 
   static exportPDF(editor, options = {}) {
+    if (typeof jspdf === 'undefined') {
+      throw new Error('PDF library not loaded. Please try again.');
+    }
+
     const { canvas } = ExportManager.renderExportCanvas(editor, options);
+
+    if (!canvas || canvas.width === 0 || canvas.height === 0) {
+      throw new Error('Could not render map for export.');
+    }
+
     const legend = options.includeLegend ? ExportManager.generateLegend(editor._grid, editor._tileRenderer) : null;
     const mapName = editor._mapName || 'Map';
 
@@ -308,6 +317,11 @@ class ExportManager {
 
     // Add map image
     const imgData = canvas.toDataURL('image/jpeg', PDF_IMAGE_QUALITY);
+
+    // Release export canvas GPU memory
+    canvas.width = 0;
+    canvas.height = 0;
+
     pdf.addImage(imgData, 'JPEG', imgX, imgY, imgW, imgH);
 
     // Legend
@@ -349,10 +363,18 @@ class ExportManager {
 
   static exportPNG(editor, options = {}) {
     const { canvas } = ExportManager.renderExportCanvas(editor, options);
+
+    if (!canvas || canvas.width === 0 || canvas.height === 0) {
+      throw new Error('Could not render map for export.');
+    }
+
     const filename = ExportManager._filename(editor._mapName || 'Map', 'png');
 
     canvas.toBlob((blob) => {
       ExportManager._downloadBlob(blob, filename, 'image/png');
+      // Release export canvas GPU memory
+      canvas.width = 0;
+      canvas.height = 0;
     }, 'image/png');
   }
 
@@ -361,17 +383,51 @@ class ExportManager {
   static exportJPEG(editor, options = {}) {
     const quality = options.quality || JPEG_EXPORT_QUALITY;
     const { canvas } = ExportManager.renderExportCanvas(editor, options);
+
+    if (!canvas || canvas.width === 0 || canvas.height === 0) {
+      throw new Error('Could not render map for export.');
+    }
+
     const filename = ExportManager._filename(editor._mapName || 'Map', 'jpg');
 
     canvas.toBlob((blob) => {
       ExportManager._downloadBlob(blob, filename, 'image/jpeg');
+      // Release export canvas GPU memory
+      canvas.width = 0;
+      canvas.height = 0;
     }, 'image/jpeg', quality);
   }
 
   /* ---- Print ---- */
 
-  static print() {
-    window.print();
+  static print(editor) {
+    if (editor && editor._camera && editor._grid) {
+      // Save current camera state
+      const savedOffsetX = editor._camera.offsetX;
+      const savedOffsetY = editor._camera.offsetY;
+      const savedZoom = editor._camera.zoom;
+
+      // Fit camera to show the full map
+      const canvasEl = editor._canvas || document.querySelector('canvas');
+      if (canvasEl) {
+        editor._camera.fitToGrid(
+          editor._grid.widthPx, editor._grid.heightPx,
+          canvasEl.clientWidth, canvasEl.clientHeight
+        );
+        // Trigger a synchronous redraw before printing
+        if (editor._drawFrame) editor._drawFrame();
+      }
+
+      window.print();
+
+      // Restore camera state
+      editor._camera.offsetX = savedOffsetX;
+      editor._camera.offsetY = savedOffsetY;
+      editor._camera.zoom = savedZoom;
+      if (editor._drawFrame) editor._drawFrame();
+    } else {
+      window.print();
+    }
   }
 
   /* ---- Download Helpers ---- */
